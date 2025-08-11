@@ -364,7 +364,7 @@ app.post('/produtos', (req, res) => {
 app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 
 // Rodar servidor:
-node index.js
+// node index.js
 ```
 
 #### Rodar servidor:
@@ -372,6 +372,54 @@ node index.js
 ```bash
 node index.js
 ```
+
+#### Um exemplo mais completo
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+// "Banco de dados" em memória
+let produtos = [
+  { id: 1, nome: 'Teclado', preco: 199.90 },
+  { id: 2, nome: 'Mouse', preco: 89.90 }
+];
+
+// Rota GET
+app.get('/produtos', (req, res) => {
+  res.json([...produtos]); // cópia para evitar alteração acidental
+});
+
+// Rota POST
+app.post('/produtos', (req, res) => {
+  const novoId = produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
+  const novoProduto = { id: novoId, ...req.body };
+
+  produtos.push(novoProduto);
+
+  res.status(201).json({
+    message: 'Produto criado com sucesso',
+    dados: novoProduto
+  });
+});
+
+app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+```
+
+#### Explicação do código
+
+Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inclusive mantendo:
+
+* Lista de produtos em memória.
+* POST que adiciona e retorna o novo item junto com mensagem.
+* Geração automática de id.
+
+Diferenças em relação ao FastAPI:
+* No Express, não temos tipagem automática nem validação de entrada por padrão (equivalente ao que o Pydantic faz no FastAPI).
+* A rota POST usa req.body diretamente, por isso seria interessante depois incluir uma validação para manter a mesma segurança de tipos.
+* A estrutura da resposta (message + dados) foi mantida idêntica à versão Python para facilitar comparação lado a lado.
 
 ### 4. Testando com Postman / Insomnia
 
