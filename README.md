@@ -69,12 +69,12 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
 
 # Aula 1 – Introdução à Disciplina e Fundamentos de APIs
 
-## 🎯 Objetivo da Aula
+## Objetivo da Aula
 Compreender o que é uma API, como funciona o protocolo HTTP e como interagir com APIs públicas que trazem informações úteis para o dia a dia.
 
 ---
 
-## 📋 Conteúdo
+## Conteúdo
 
 ### 1. Apresentação da disciplina
 - Ementa, objetivos e formas de avaliação.
@@ -135,6 +135,7 @@ O servidor sempre responde com um **código numérico** indicando o resultado da
   - `401 Unauthorized` → Autenticação necessária
   - `403 Forbidden` → Acesso negado
   - `404 Not Found` → Recurso não encontrado
+  - `409 Conflict` → Conflito de requisição
 - **5xx – Erros do servidor**
   - `500 Internal Server Error`
   - `503 Service Unavailable`
@@ -158,7 +159,7 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-## 🛠️ Atividade Prática
+## Atividade Prática
 **Objetivo:** Usar Postman ou Insomnia para explorar APIs públicas úteis.
 
 1. Escolher **uma** API da lista acima.
@@ -171,7 +172,7 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-## 📝 Tarefa de Casa
+## Atividades de Fixação
 Escolha **uma API pública diferente das apresentadas** e:
 - Faça **3 requisições** (GET, POST e DELETE, se suportado).
 - Salve prints das requisições e respostas.
@@ -185,10 +186,6 @@ Sugestões:
 
 ---
 
-## 📚 Recursos e Links
+## Recursos e Links
 - [Postman](https://www.postman.com/)
 - [Insomnia](https://insomnia.rest/)
-- [ViaCEP](https://viacep.com.br/)
-- [AwesomeAPI – Economia](https://docs.awesomeapi.com.br/api-de-moedas)
-- [Open-Meteo](https://open-meteo.com/)
-
