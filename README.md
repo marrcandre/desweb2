@@ -65,3 +65,130 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
 
 ### 13. Apresentação e Avaliação dos Projetos
 
+---
+
+# Aula 1 – Introdução à Disciplina e Fundamentos de APIs
+
+## 🎯 Objetivo da Aula
+Compreender o que é uma API, como funciona o protocolo HTTP e como interagir com APIs públicas que trazem informações úteis para o dia a dia.
+
+---
+
+## 📋 Conteúdo
+
+### 1. Apresentação da disciplina
+- Ementa, objetivos e formas de avaliação.
+- Projeto final e avaliação teórica no meio do semestre.
+- Expectativas e forma de trabalho (teoria + prática).
+
+---
+
+### 2. O que é uma API
+**API** (*Application Programming Interface*) é um conjunto de regras e definições que permite que sistemas diferentes se comuniquem.
+Ela define **como** um sistema pode ser usado por outro.
+
+- Exemplos do dia a dia:
+  - Aplicativo de clima pegando dados de um serviço meteorológico.
+  - Aplicativo de transporte usando mapas do Google.
+  - Sites de e-commerce consultando meios de pagamento.
+- **API Web**: acessada via internet, geralmente usando o protocolo HTTP.
+- **Cliente** (quem faz a requisição) ↔ **Servidor** (quem responde com os dados).
+
+---
+
+### 3. REST – Princípios básicos
+**REST** (*Representational State Transfer*) é um conjunto de boas práticas para criar APIs web.
+Principais características:
+1. **Stateless** – cada requisição contém todas as informações necessárias; o servidor não guarda o “estado” do cliente.
+2. **Recursos identificados por URL** – cada tipo de dado tem um endereço único (ex: `/usuarios/1` para o usuário com id 1).
+3. **Operações com métodos HTTP** – ações claras para cada tipo de operação.
+4. **Formato de dados padronizado** – normalmente **JSON** (mas pode incluir outros formatos, como XML).
+
+**Principais métodos HTTP e uso comum**:
+- **GET** → Ler dados.
+  Ex: `GET /usuarios`
+- **POST** → Criar novos dados.
+  Ex: `POST /usuarios`
+- **PUT** → Atualizar completamente um recurso existente.
+  Ex: `PUT /usuarios/1`
+- **PATCH** → Atualizar parcialmente um recurso existente.
+  Ex: `PATCH /usuarios/1`
+- **DELETE** → Remover dados.
+  Ex: `DELETE /usuarios/1`
+
+---
+
+### 4. Status codes HTTP
+O servidor sempre responde com um **código numérico** indicando o resultado da requisição.
+
+**Principais categorias**:
+- **1xx – Informativo** (raramente usado diretamente pelo dev)
+- **2xx – Sucesso**
+  - `200 OK` → Requisição bem-sucedida
+  - `201 Created` → Recurso criado com sucesso
+  - `204 No Content` → Sucesso sem conteúdo no corpo da resposta
+- **3xx – Redirecionamento**
+  - `301 Moved Permanently`
+  - `302 Found`
+- **4xx – Erros do cliente**
+  - `400 Bad Request` → Requisição inválida
+  - `401 Unauthorized` → Autenticação necessária
+  - `403 Forbidden` → Acesso negado
+  - `404 Not Found` → Recurso não encontrado
+- **5xx – Erros do servidor**
+  - `500 Internal Server Error`
+  - `503 Service Unavailable`
+
+---
+
+### 5. Demonstração – APIs Públicas Úteis
+Vamos explorar APIs reais que trazem dados práticos para Araquari/SC.
+
+1. **Consultar um CEP (ViaCEP):** https://viacep.com.br/ws/89211120/json/
+
+2. **Cotação do dólar (AwesomeAPI):**
+https://economia.awesomeapi.com.br/json/last/USD-BRL
+
+3. **Previsão do tempo (Open-Meteo):**
+- Latitude/Longitude de Araquari: **-26.3747**, **-48.7181**
+https://api.open-meteo.com/v1/forecast?latitude=-26.3747&longitude=-48.7181&current_weather=true
+
+
+Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, para comparar resultados.
+
+---
+
+## 🛠️ Atividade Prática
+**Objetivo:** Usar Postman ou Insomnia para explorar APIs públicas úteis.
+
+1. Escolher **uma** API da lista acima.
+2. Fazer uma requisição **GET**.
+3. Registrar:
+- URL utilizada
+- Método HTTP
+- Status code
+- Conteúdo JSON retornado
+
+---
+
+## 📝 Tarefa de Casa
+Escolha **uma API pública diferente das apresentadas** e:
+- Faça **3 requisições** (GET, POST e DELETE, se suportado).
+- Salve prints das requisições e respostas.
+- Anote status code e conteúdo retornado.
+
+Sugestões:
+- [BrasilAPI](https://brasilapi.com.br/) (CNPJs, feriados, dados de bancos)
+- [IBGE – Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
+- [Cat Facts](https://catfact.ninja/) (fatos aleatórios sobre gatos)
+- [JSONPlaceholder](https://jsonplaceholder.typicode.com/) (API falsa para testes)
+
+---
+
+## 📚 Recursos e Links
+- [Postman](https://www.postman.com/)
+- [Insomnia](https://insomnia.rest/)
+- [ViaCEP](https://viacep.com.br/)
+- [AwesomeAPI – Economia](https://docs.awesomeapi.com.br/api-de-moedas)
+- [Open-Meteo](https://open-meteo.com/)
+
