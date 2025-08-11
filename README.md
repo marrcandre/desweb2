@@ -189,3 +189,215 @@ Sugestões:
 ## Recursos e Links
 - [Postman](https://www.postman.com/)
 - [Insomnia](https://insomnia.rest/)
+
+# Aula 2 – Estrutura e Teste de Requisições HTTP
+
+## Objetivo
+Compreender como estruturar e testar uma API simples em duas tecnologias diferentes (Python + FastAPI e Node.js + Express), reforçando que os conceitos de HTTP e REST são independentes da stack utilizada.
+
+---
+
+## Conteúdo
+
+### 1. Revisão rápida
+- Métodos HTTP (GET, POST, PUT/PATCH, DELETE).
+- Status codes.
+- Estrutura de uma resposta JSON.
+
+---
+
+### 2. Criando uma API com FastAPI (Python)
+**Objetivo:** Montar um servidor que responda a requisições de teste.
+
+#### Instalação
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install fastapi uvicorn
+```
+
+#### Código - `main.py`
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Modelo para POST
+class Item(BaseModel):
+    nome: str
+    preco: float
+
+# Rota GET
+@app.get("/produtos")
+def listar_produtos():
+    return [
+        {"id": 1, "nome": "Mouse", "preco": 89.90},
+        {"id": 2, "nome": "Teclado", "preco": 199.90}
+    ]
+
+# Rota POST
+@app.post("/produtos")
+def criar_produto(item: Item):
+    return {"mensagem": "Produto criado com sucesso", "dados": item}
+
+# Rodar servidor:
+# uvicorn main:app --reload
+```
+
+#### Rodar servidor:
+
+```bash
+uvicorn main:app --reload
+```
+
+#### Explicação do código
+
+- **FastAPI:** Framework para construção de APIs em Python.
+- **Pydantic:** Biblioteca para validação de dados e criação de modelos.
+- **Item:** Modelo que representa um produto, com campos para nome e preço.
+- **Rotas:**
+  - `GET /produtos`: Retorna uma lista de produtos.
+  - `POST /produtos`: Cria um novo produto a partir dos dados enviados no corpo da requisição.
+- **Execução:** Para rodar o servidor, utilize o comando `uvicorn main:app --reload`.
+- **Testes:** Utilize ferramentas como Postman ou Insomnia para testar as rotas da API.
+- **Documentação:** Acesse a documentação automática gerada pelo FastAPI em `http://localhost:8000/docs`.
+- **Exemplos de Requisições:**
+  - `GET /produtos`: Retorna todos os produtos.
+  - `POST /produtos`: Cria um novo produto.
+
+---
+
+#### Um exemplo mais completo
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Modelo para itens
+class Item(BaseModel):
+    id: int
+    nome: str
+    preco: float
+
+# Modelo para POST
+class ItemInput(BaseModel):
+    nome: str
+    preco: float
+
+# Modelo para resposta de POST
+class ItemInputResponse(BaseModel):
+    message: str
+    dados: Item
+
+# Lista de itens em memória
+items = [Item(id=1, nome="Teclado", preco=199.90), Item(id=2, nome="Mouse", preco=89.90)]
+
+# Rota GET
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos():
+    return [
+       {"id": item.id, "nome": item.nome, "preco": item.preco} for item in items
+    ]
+
+# Rota POST
+@app.post("/produtos", response_model=ItemInputResponse)
+def criar_produto(item: ItemInput):
+    novo_id = max(item.id for item in items) + 1
+    novo_item = Item(id=novo_id, **item.model_dump())
+    items.append(novo_item)
+    response = ItemInputResponse(message="Produto criado com sucesso", dados=novo_item)
+    return response.model_dump()
+
+# Rodar servidor:
+# uvicorn main:app --reload
+```
+
+#### Diferenças neste código
+
+- **Modelos:** Foram adicionados modelos mais específicos para entrada e saída de dados, utilizando o Pydantic.
+- **Rota GET:** A rota GET agora utiliza o modelo de resposta para garantir que a estrutura dos dados retornados esteja correta.
+- **Rota POST:** A rota POST agora utiliza um modelo de entrada e um modelo de resposta, melhorando a validação e a documentação automática da API.
+- **Lista em memória:** A lista de itens é mantida em memória, permitindo a adição de novos produtos via POST.
+- **Validação:** O Pydantic garante que os dados enviados nas requisições estejam no formato correto, retornando erros de validação automaticamente quando necessário.
+- **Documentação:** A documentação automática gerada pelo FastAPI é atualizada com base nos modelos utilizados, facilitando a compreensão da API.
+
+
+### 3. Criando uma API com Node.js + Express
+
+**Objetivo:** Implementar o mesmo comportamento usando JavaScript.
+
+#### Instalação
+
+```bash
+npm init -y
+npm install express
+```
+
+#### Código - `index.js`
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+// Rota GET
+app.get('/produtos', (req, res) => {
+  res.json([
+    { id: 1, nome: 'Mouse', preco: 89.90 },
+    { id: 2, nome: 'Teclado', preco: 199.90 }
+  ]);
+});
+
+// Rota POST
+app.post('/produtos', (req, res) => {
+  res.json({
+    mensagem: 'Produto criado com sucesso',
+    dados: req.body
+  });
+});
+
+app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+
+// Rodar servidor:
+node index.js
+```
+
+#### Rodar servidor:
+
+```bash
+node index.js
+```
+
+### 4. Testando com Postman / Insomnia
+
+* Fazer requisição GET para /produtos.
+* Fazer requisição POST para /produtos com corpo JSON:
+
+```json
+{
+  "nome": "Monitor",
+  "preco": 1299.90
+}
+```
+
+* Comparar:
+  * Estrutura da resposta.
+  * Status code retornado.
+  * Diferenças na implementação entre FastAPI e Express.
+
+### 5. Discussão
+
+* O conceito de rota, método e resposta é **igual** em ambas as stacks.
+* Diferenças estão apenas na sintaxe e ferramentas.
+* Importância de entender HTTP antes de aprender frameworks.
+
+## Atividade de Fixação
+
+* Adicionar uma rota **DELETE** em ambas as implementações, removendo um produto pelo id.
+* Testar no Postman e registrar o status code.
+
