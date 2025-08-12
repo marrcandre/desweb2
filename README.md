@@ -84,7 +84,7 @@ Compreender o que é uma API, como funciona o protocolo HTTP e como interagir co
 ---
 
 ### 2. O que é uma API
-**API** (*Application Programming Interface*) é um conjunto de regras e definições que permite que sistemas diferentes se comuniquem.
+**[API](https://aws.amazon.com/what-is/api/)** (*Application Programming Interface*) é um conjunto de regras e definições que permite que sistemas diferentes se comuniquem.
 Ela define **como** um sistema pode ser usado por outro.
 
 - Exemplos do dia a dia:
@@ -97,7 +97,7 @@ Ela define **como** um sistema pode ser usado por outro.
 ---
 
 ### 3. REST – Princípios básicos
-**REST** (*Representational State Transfer*) é um conjunto de boas práticas para criar APIs web.
+**[REST](https://aws.amazon.com/what-is/api/#seo-faq-pairs#what-are-rest-apis)** (*Representational State Transfer*) é um conjunto de boas práticas para criar APIs web.
 Principais características:
 1. **Stateless** – cada requisição contém todas as informações necessárias; o servidor não guarda o “estado” do cliente.
 2. **Recursos identificados por URL** – cada tipo de dado tem um endereço único (ex: `/usuarios/1` para o usuário com id 1).
@@ -187,6 +187,8 @@ Sugestões:
 ---
 
 ## Recursos e Links
+- [Roadmap.sh - Backend](https://roadmap.sh/backend)
+- [O que é uma API](https://aws.amazon.com/what-is/api/)?
 - [Postman](https://www.postman.com/)
 - [Insomnia](https://insomnia.rest/)
 
