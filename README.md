@@ -161,13 +161,13 @@ https://economia.awesomeapi.com.br/json/last/USD-BRL
 https://api.open-meteo.com/v1/forecast?latitude=-26.3747&longitude=-48.7181&current_weather=true
 
 
-Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, para comparar resultados.
+Cada requisição será feita usando **navegador**, **Postman** e **Thunder Client**, para comparar resultados.
 
 ---
 
 **6. Atividade Prática**
 
-**Objetivo:** Usar Postman ou Insomnia para explorar APIs públicas úteis.
+**Objetivo:** Usar   ou Thunder Client para explorar APIs públicas úteis.
 
 1. Escolher **uma** API da lista acima.
 2. Fazer uma requisição **GET**.
@@ -200,7 +200,6 @@ Escolha **uma API pública diferente das apresentadas** e:
 - [Roadmap.sh - Backend](https://roadmap.sh/backend)
 - [O que é uma API](https://aws.amazon.com/what-is/api/)?
 - [Postman](https://www.postman.com/)
-- [Insomnia](https://insomnia.rest/)
 
 ---
 
@@ -280,7 +279,7 @@ uvicorn main:app --reload
   - `GET /produtos`: Retorna uma lista de produtos.
   - `POST /produtos`: Cria um novo produto a partir dos dados enviados no corpo da requisição.
 - **Execução:** Para rodar o servidor, utilize o comando `uvicorn main:app --reload`.
-- **Testes:** Utilize ferramentas como Postman ou Insomnia para testar as rotas da API.
+- **Testes:** Utilize ferramentas como **Postman** ou **Thunder Client** para testar as rotas da API.
 - **Documentação:** Acesse a documentação automática gerada pelo FastAPI em `http://localhost:8000/docs`.
 - **Exemplos de Requisições:**
   - `GET /produtos`: Retorna todos os produtos.
@@ -444,7 +443,7 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 
 ---
 
-**4. Testando com Postman / Insomnia**
+**4. Testando com Postman / Thunder Client**
 
 * Fazer requisição GET para /produtos.
 * Fazer requisição POST para /produtos com corpo JSON:
@@ -474,7 +473,7 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 **Atividade de Fixação**
 
 * Adicionar uma rota **DELETE** em ambas as implementações, removendo um produto pelo id.
-* Testar no Postman e registrar o status code.
+* Testar no **Postman** ou **Thunder Client** e registrar o status code.
 
 ---
 
