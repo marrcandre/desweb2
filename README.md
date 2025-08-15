@@ -1,11 +1,10 @@
-**Desenvolvimento WEB II**
+**DESENVOLVIMENTO WEB II**
 
-# Disciplina: Desenvolvimento Web II
+**OBJETIVO GERAL**
 
-##  Objetivo Geral
 Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, utilizando Django + Django REST Framework como framework de referência, mas compreendendo conceitos aplicáveis a qualquer stack de desenvolvimento.
 
-##  Objetivos Específicos
+**OBJETIVOS ESPECÍFICOS**
 1. Entender os fundamentos de APIs, HTTP e REST.
 2. Implementar CRUDs com Django REST Framework utilizando `ModelViewSet` e `ModelSerializer`.
 3. Trabalhar com autenticação, permissões, filtros, paginação e upload de arquivos.
@@ -14,46 +13,35 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
 6. Trabalhar com versionamento de código e boas práticas de commits no GitHub.
 7. Desenvolver projeto final com requisitos mínimos, mas liberdade para escolha de tecnologias.
 
-## Conteúdo Programático
+**CONTEÚDO PROGRAMÁTICO**
 
-### 1. Fundamentos de APIs
+1. Fundamentos de APIs
 - O que é uma API
 - HTTP: métodos, status codes, headers
 - JSON e serialização
 - Diferenças entre APIs REST, GraphQL e outras arquiteturas
-
-### 2. Introdução ao Django REST Framework
+2. Introdução ao Django REST Framework
 - Criação de projeto e app
 - Configuração inicial e boas práticas
-
-### 3. Modelos e Serializers
+3. Modelos e Serializers
 - `ModelSerializer` e campos customizados
-
-### 4. Views e ViewSets
+4. Views e ViewSets
 - `ModelViewSet` e actions personalizadas
-
-### 5. URLs e Roteamento
+5. URLs e Roteamento
 - `routers` e `paths` customizados
-
-### 6. Autenticação e Permissões
+6. Autenticação e Permissões
 - SessionAuth, TokenAuth, JWT
 - Permissões customizadas
-
-### 7. Filtros, Ordenação e Paginação
-
-### 8. Upload de Arquivos e Integração com Cloudinary
-
-### 9. Documentação de APIs
+7. Filtros, Ordenação e Paginação
+8. Upload de Arquivos e Integração com Cloudinary
+9. Documentação de APIs
 - Swagger/OpenAPI (`drf-spectacular` ou `drf-yasg`)
-
-### 10. Boas Práticas e Padrões
+10. Boas Práticas e Padrões
 - Estrutura de projeto
 - Versionamento no Git
-
-### 11. Deploy
+11. Deploy
 - Render, Supabase, AWS, Railway
-
-### 12. Projeto Final
+12. Projeto Final
 - Requisitos mínimos:
   - CRUD
   - Autenticação e permissões
@@ -62,28 +50,43 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
   - Documentação
   - Deploy
 - Liberdade de stack (Node, Flask, Laravel, etc.)
+13. Apresentação e Avaliação dos Projetos
 
-### 13. Apresentação e Avaliação dos Projetos
+---
+
+**LINKS ÚTEIS**
+
+- Tutorial de Django: https://github.com/marrcandre/django-drf-tutorial
+- Documentação do Django: https://docs.djangoproject.com/
+- Documentação oficial do Django REST Framework: https://www.django-rest-framework.org/
+- Roadmap de backend: https://roadmap.sh/backend
+- Vídeos:
+  - [A Forma Ideal de Projetos Web | Os 12 Fatores - Fábio Akita](https://www.youtube.com/watch?v=gpJgtED36U4)
+  - [Série "Começando aos 40 - Fábio Akita"](https://www.youtube.com/watch?v=O76ZfAIEukE&list=PLjuQ-0yGqLjcFmMkiYvHPraSptrhPlOuK)
+
 
 ---
 
 # Aula 1 – Introdução à Disciplina e Fundamentos de APIs
 
-## Objetivo da Aula
+**Objetivo da Aula**
+
 Compreender o que é uma API, como funciona o protocolo HTTP e como interagir com APIs públicas que trazem informações úteis para o dia a dia.
 
 ---
 
-## Conteúdo
+**Conteúdo**
 
-### 1. Apresentação da disciplina
+**1. Apresentação da disciplina**
+
 - Ementa, objetivos e formas de avaliação.
 - Projeto final e avaliação teórica no meio do semestre.
 - Expectativas e forma de trabalho (teoria + prática).
 
 ---
 
-### 2. O que é uma API
+**2. O que é uma API**
+
 **[API](https://aws.amazon.com/what-is/api/)** (*Application Programming Interface*) é um conjunto de regras e definições que permite que sistemas diferentes se comuniquem.
 Ela define **como** um sistema pode ser usado por outro.
 
@@ -96,7 +99,8 @@ Ela define **como** um sistema pode ser usado por outro.
 
 ---
 
-### 3. REST – Princípios básicos
+**3. REST – Princípios básicos**
+
 **[REST](https://aws.amazon.com/what-is/api/#seo-faq-pairs#what-are-rest-apis)** (*Representational State Transfer*) é um conjunto de boas práticas para criar APIs web.
 Principais características:
 1. **Stateless** – cada requisição contém todas as informações necessárias; o servidor não guarda o “estado” do cliente.
@@ -118,7 +122,8 @@ Principais características:
 
 ---
 
-### 4. Status codes HTTP
+4**. Status codes HTTP**
+
 O servidor sempre responde com um **código numérico** indicando o resultado da requisição.
 
 **Principais categorias**:
@@ -142,7 +147,8 @@ O servidor sempre responde com um **código numérico** indicando o resultado da
 
 ---
 
-### 5. Demonstração – APIs Públicas Úteis
+**5. Demonstração – APIs Públicas Úteis**
+
 Vamos explorar APIs reais que trazem dados práticos para Araquari/SC.
 
 1. **Consultar um CEP (ViaCEP):** https://viacep.com.br/ws/89211120/json/
@@ -159,7 +165,8 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-## Atividade Prática
+**Atividade Prática**
+
 **Objetivo:** Usar Postman ou Insomnia para explorar APIs públicas úteis.
 
 1. Escolher **uma** API da lista acima.
@@ -172,13 +179,14 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-## Atividades de Fixação
+**Atividades de Fixação**
+
 Escolha **uma API pública diferente das apresentadas** e:
 - Faça **3 requisições** (GET, POST e DELETE, se suportado).
 - Salve prints das requisições e respostas.
 - Anote status code e conteúdo retornado.
 
-Sugestões:
+**Sugestões:**
 - [BrasilAPI](https://brasilapi.com.br/) (CNPJs, feriados, dados de bancos)
 - [IBGE – Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
 - [Cat Facts](https://catfact.ninja/) (fatos aleatórios sobre gatos)
@@ -186,7 +194,7 @@ Sugestões:
 
 ---
 
-## Recursos e Links
+**Recursos e Links**
 - [Roadmap.sh - Backend](https://roadmap.sh/backend)
 - [O que é uma API](https://aws.amazon.com/what-is/api/)?
 - [Postman](https://www.postman.com/)
@@ -194,24 +202,26 @@ Sugestões:
 
 # Aula 2 – Estrutura e Teste de Requisições HTTP
 
-## Objetivo
+**Objetivo**
+
 Compreender como estruturar e testar uma API simples em duas tecnologias diferentes (Python + FastAPI e Node.js + Express), reforçando que os conceitos de HTTP e REST são independentes da stack utilizada.
 
 ---
 
-## Conteúdo
+**Conteúdo**
 
-### 1. Revisão rápida
+1. Revisão rápida
 - Métodos HTTP (GET, POST, PUT/PATCH, DELETE).
 - Status codes.
 - Estrutura de uma resposta JSON.
 
 ---
 
-### 2. Criando uma API com FastAPI (Python)
+**2. Criando uma API com FastAPI (Python)**
 **Objetivo:** Montar um servidor que responda a requisições de teste.
 
-#### Instalação
+**Instalação**
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -219,7 +229,8 @@ pip install --upgrade pip
 pip install fastapi uvicorn
 ```
 
-#### Código - `main.py`
+**Código - `main.py`**
+
 ```python
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -248,13 +259,13 @@ def criar_produto(item: Item):
 # uvicorn main:app --reload
 ```
 
-#### Rodar servidor:
+**Rodar servidor:**
 
 ```bash
 uvicorn main:app --reload
 ```
 
-#### Explicação do código
+**Explicação do código**
 
 - **FastAPI:** Framework para construção de APIs em Python.
 - **Pydantic:** Biblioteca para validação de dados e criação de modelos.
@@ -271,7 +282,7 @@ uvicorn main:app --reload
 
 ---
 
-#### Um exemplo mais completo
+**Um exemplo mais completo**
 
 ```python
 from fastapi import FastAPI
@@ -318,7 +329,7 @@ def criar_produto(item: ItemInput):
 # uvicorn main:app --reload
 ```
 
-#### Diferenças neste código
+**Diferenças neste código**
 
 - **Modelos:** Foram adicionados modelos mais específicos para entrada e saída de dados, utilizando o Pydantic.
 - **Rota GET:** A rota GET agora utiliza o modelo de resposta para garantir que a estrutura dos dados retornados esteja correta.
@@ -328,18 +339,18 @@ def criar_produto(item: ItemInput):
 - **Documentação:** A documentação automática gerada pelo FastAPI é atualizada com base nos modelos utilizados, facilitando a compreensão da API.
 
 
-### 3. Criando uma API com Node.js + Express
+**3. Criando uma API com Node.js + Express**
 
 **Objetivo:** Implementar o mesmo comportamento usando JavaScript.
 
-#### Instalação
+**Instalação**
 
 ```bash
 npm init -y
 npm install express
 ```
 
-#### Código - `index.js`
+**Código - `index.js`**
 
 ```javascript
 const express = require('express');
@@ -369,13 +380,13 @@ app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 // node index.js
 ```
 
-#### Rodar servidor:
+**Rodar servidor:**
 
 ```bash
 node index.js
 ```
 
-#### Um exemplo mais completo
+**Um exemplo mais completo**
 
 ```javascript
 const express = require('express');
@@ -410,7 +421,7 @@ app.post('/produtos', (req, res) => {
 app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 ```
 
-#### Explicação do código
+**Explicação do código**
 
 Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inclusive mantendo:
 
@@ -418,12 +429,13 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 * POST que adiciona e retorna o novo item junto com mensagem.
 * Geração automática de id.
 
-Diferenças em relação ao FastAPI:
+**Diferenças em relação ao FastAPI:**
+
 * No Express, não temos tipagem automática nem validação de entrada por padrão (equivalente ao que o Pydantic faz no FastAPI).
 * A rota POST usa req.body diretamente, por isso seria interessante depois incluir uma validação para manter a mesma segurança de tipos.
 * A estrutura da resposta (message + dados) foi mantida idêntica à versão Python para facilitar comparação lado a lado.
 
-### 4. Testando com Postman / Insomnia
+**4. Testando com Postman / Insomnia**
 
 * Fazer requisição GET para /produtos.
 * Fazer requisição POST para /produtos com corpo JSON:
@@ -440,13 +452,13 @@ Diferenças em relação ao FastAPI:
   * Status code retornado.
   * Diferenças na implementação entre FastAPI e Express.
 
-### 5. Discussão
+**5. Discussão**
 
 * O conceito de rota, método e resposta é **igual** em ambas as stacks.
 * Diferenças estão apenas na sintaxe e ferramentas.
 * Importância de entender HTTP antes de aprender frameworks.
 
-## Atividade de Fixação
+**Atividade de Fixação**
 
 * Adicionar uma rota **DELETE** em ambas as implementações, removendo um produto pelo id.
 * Testar no Postman e registrar o status code.
