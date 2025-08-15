@@ -122,7 +122,7 @@ Principais características:
 
 ---
 
-4**. Status codes HTTP**
+**4. Status codes HTTP**
 
 O servidor sempre responde com um **código numérico** indicando o resultado da requisição.
 
@@ -165,7 +165,7 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-**Atividade Prática**
+**6. Atividade Prática**
 
 **Objetivo:** Usar Postman ou Insomnia para explorar APIs públicas úteis.
 
@@ -179,14 +179,16 @@ Cada requisição será feita usando **navegador**, **Postman** e **Insomnia**, 
 
 ---
 
-**Atividades de Fixação**
+**7. Atividades de Fixação**
 
 Escolha **uma API pública diferente das apresentadas** e:
 - Faça **3 requisições** (GET, POST e DELETE, se suportado).
 - Salve prints das requisições e respostas.
 - Anote status code e conteúdo retornado.
 
-**Sugestões:**
+---
+
+**8. Sugestões:**
 - [BrasilAPI](https://brasilapi.com.br/) (CNPJs, feriados, dados de bancos)
 - [IBGE – Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
 - [Cat Facts](https://catfact.ninja/) (fatos aleatórios sobre gatos)
@@ -200,6 +202,8 @@ Escolha **uma API pública diferente das apresentadas** e:
 - [Postman](https://www.postman.com/)
 - [Insomnia](https://insomnia.rest/)
 
+---
+
 # Aula 2 – Estrutura e Teste de Requisições HTTP
 
 **Objetivo**
@@ -210,7 +214,8 @@ Compreender como estruturar e testar uma API simples em duas tecnologias diferen
 
 **Conteúdo**
 
-1. Revisão rápida
+**1. Revisão rápida**
+
 - Métodos HTTP (GET, POST, PUT/PATCH, DELETE).
 - Status codes.
 - Estrutura de uma resposta JSON.
@@ -218,6 +223,7 @@ Compreender como estruturar e testar uma API simples em duas tecnologias diferen
 ---
 
 **2. Criando uma API com FastAPI (Python)**
+
 **Objetivo:** Montar um servidor que responda a requisições de teste.
 
 **Instalação**
@@ -338,6 +344,7 @@ def criar_produto(item: ItemInput):
 - **Validação:** O Pydantic garante que os dados enviados nas requisições estejam no formato correto, retornando erros de validação automaticamente quando necessário.
 - **Documentação:** A documentação automática gerada pelo FastAPI é atualizada com base nos modelos utilizados, facilitando a compreensão da API.
 
+---
 
 **3. Criando uma API com Node.js + Express**
 
@@ -435,6 +442,8 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 * A rota POST usa req.body diretamente, por isso seria interessante depois incluir uma validação para manter a mesma segurança de tipos.
 * A estrutura da resposta (message + dados) foi mantida idêntica à versão Python para facilitar comparação lado a lado.
 
+---
+
 **4. Testando com Postman / Insomnia**
 
 * Fazer requisição GET para /produtos.
@@ -452,14 +461,20 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
   * Status code retornado.
   * Diferenças na implementação entre FastAPI e Express.
 
+---
+
 **5. Discussão**
 
 * O conceito de rota, método e resposta é **igual** em ambas as stacks.
 * Diferenças estão apenas na sintaxe e ferramentas.
 * Importância de entender HTTP antes de aprender frameworks.
 
+---
+
 **Atividade de Fixação**
 
 * Adicionar uma rota **DELETE** em ambas as implementações, removendo um produto pelo id.
 * Testar no Postman e registrar o status code.
+
+---
 
