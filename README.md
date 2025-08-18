@@ -251,8 +251,11 @@ class Item(BaseModel):
 @app.get("/produtos")
 def listar_produtos():
     return [
-        {"id": 1, "nome": "Mouse", "preco": 89.90},
-        {"id": 2, "nome": "Teclado", "preco": 199.90}
+    {"id": 1, "nome": "Notebook", "preco": 3500},
+    {"id": 2, "nome": "Mouse", "preco": 80},
+    {"id": 3, "nome": "Teclado", "preco": 150},
+    {"id": 4, "nome": "Monitor", "preco": 1200},
+    {"id": 5, "nome": "Impressora", "preco": 300},
     ]
 
 # Rota POST
@@ -310,7 +313,13 @@ class ItemInputResponse(BaseModel):
     dados: Item
 
 # Lista de itens em memória
-items = [Item(id=1, nome="Teclado", preco=199.90), Item(id=2, nome="Mouse", preco=89.90)]
+items = [
+    Item(id=1, nome="Notebook", preco=3500.00),
+    Item(id=2, nome="Mouse", preco=80.00),
+    Item(id=3, nome="Teclado", preco=150.00),
+    Item(id=4, nome="Monitor", preco=1200.00),
+    Item(id=5, nome="Impressora", preco=300.00),
+]
 
 # Rota GET
 @app.get("/produtos", response_model=list[Item])
@@ -523,8 +532,10 @@ app = FastAPI()
 
 produtos = [
     {"id": 1, "nome": "Notebook", "preco": 3500},
-    {"id": 2, "nome": "Mouse", "preco": 120},
-    {"id": 3, "nome": "Teclado", "preco": 250},
+    {"id": 2, "nome": "Mouse", "preco": 80},
+    {"id": 3, "nome": "Teclado", "preco": 150},
+    {"id": 4, "nome": "Monitor", "preco": 1200},
+    {"id": 5, "nome": "Impressora", "preco": 300},
 ]
 
 @app.get("/produtos/{id_produto}")
@@ -588,4 +599,194 @@ app.listen(3000, () => {
 - Criar uma rota que busque produtos com base em **query params** `min_preco` e `max_preco`.
 - Implementar no **FastAPI** ou **Express**.
 - Testar com **Postman**.
+
+# Aula 4 – CRUD Completo em APIs REST
+
+**Objetivo da Aula:**
+
+Capacitar os alunos a implementar operações completas de CRUD em APIs REST, utilizando FastAPI e Node.js + Express, reforçando conceitos de HTTP, rotas, status codes e resposta estruturada.
+
+---
+
+**Revisão rápida**
+
+- Conceitos revisados:
+  - Métodos HTTP: GET, POST, PUT, DELETE
+  - Status codes: 200, 201, 204, 404
+  - Estrutura de resposta JSON
+
+- Pergunta:
+  - _"Como podemos manipular dados de uma lista de produtos usando apenas requisições HTTP?"_
+
+---
+
+**Conteúdo**
+
+**1. CRUD completo com FastAPI**
+
+**Código exemplo:**
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Modelo para itens
+class Item(BaseModel):
+    id: int
+    nome: str
+    preco: float
+
+# Modelo para entrada de dados (POST/PUT)
+class ItemInput(BaseModel):
+    nome: str
+    preco: float
+
+# Modelo para resposta de POST
+class ItemInputResponse(BaseModel):
+    message: str
+    dados: Item
+
+# Lista de itens em memória
+items = [
+    Item(id=1, nome="Notebook", preco=3500.00),
+    Item(id=2, nome="Mouse", preco=80.00),
+    Item(id=3, nome="Teclado", preco=150.00),
+    Item(id=4, nome="Monitor", preco=1200.00),
+    Item(id=5, nome="Impressora", preco=300.00),
+]
+
+# Listar todos os produtos (GET)
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos():
+    return items
+
+# Listar produto por ID (GET)
+@app.get("/produtos/{item_id}", response_model=Item)
+def listar_produto_por_id(item_id: int):
+    for item in items:
+        if item.id == item_id:
+            return item
+    raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+# Criar novo produto (POST)
+@app.post("/produtos", response_model=ItemInputResponse)
+def criar_produto(item: ItemInput):
+    novo_id = max(item_existente.id for item_existente in items) + 1
+    novo_item = Item(id=novo_id, **item.model_dump())
+    items.append(novo_item)
+    return ItemInputResponse(message="Produto criado com sucesso", dados=novo_item)
+
+# Atualizar produto (PUT)
+@app.put("/produtos/{item_id}", response_model=ItemInputResponse)
+def atualizar_produto(item_id: int, item_atualizado: ItemInput):
+    for i, item in enumerate(items):
+        if item.id == item_id:
+            items[i] = Item(id=item_id, **item_atualizado.model_dump())
+            return ItemInputResponse(message="Produto atualizado com sucesso", dados=items[i])
+    raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+# Remover produto (DELETE)
+@app.delete("/produtos/{item_id}")
+def remover_produto(item_id: int):
+    for i, item in enumerate(items):
+        if item.id == item_id:
+            items.pop(i)
+            return {"message": "Produto removido com sucesso"}
+    raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+# Rodar servidor:
+# uvicorn aula4_crud_completo:app --reload
+
+# Acesse a documentação da API em http://localhost:8000/docs
+```
+
+**Demonstração prática:**
+
+- Rodar o servidor com: `uvicorn main:app --reload`
+- Testar todas as rotas usando **Postman** ou **Thunder Client**:
+  - `GET /produtos` → listar todos
+  - `GET /produtos/1` → listar por id
+  - `POST /produtos` → criar novo produto
+  - `PUT /produtos/1` → atualizar produto
+  - `DELETE /produtos/1` → remover produto
+
+---
+
+**2. CRUD completo com Express**
+
+**Código exemplo:**
+
+```javascript
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+let produtos = [
+    { id: 1, nome: "Notebook", preco: 3500.00 },
+    { id: 2, nome: "Mouse", preco: 80.00 },
+    { id: 3, nome: "Teclado", preco: 150.00 },
+    { id: 4, nome: "Monitor", preco: 1200.00 },
+    { id: 5, nome: "Impressora", preco: 300.00 }
+];
+
+app.get('/produtos', (req, res) => res.json(produtos));
+
+app.get('/produtos/:id', (req, res) => {
+    const produto = produtos.find(p => p.id === parseInt(req.params.id));
+    if (!produto) return res.status(404).json({ error: "Produto não encontrado" });
+    res.json(produto);
+});
+
+app.post('/produtos', (req, res) => {
+    const { nome, preco } = req.body;
+    const novoId = produtos.length ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
+    const novoProduto = { id: novoId, nome, preco };
+    produtos.push(novoProduto);
+    res.json({ message: "Produto criado com sucesso", dados: novoProduto });
+});
+
+app.put('/produtos/:id', (req, res) => {
+    const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
+    if (index === -1) return res.status(404).json({ error: "Produto não encontrado" });
+    produtos[index] = { id: parseInt(req.params.id), ...req.body };
+    res.json({ message: "Produto atualizado com sucesso", dados: produtos[index] });
+});
+
+app.delete('/produtos/:id', (req, res) => {
+    const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
+    if (index === -1) return res.status(404).json({ error: "Produto não encontrado" });
+    produtos.splice(index, 1);
+    res.json({ message: "Produto removido com sucesso" });
+});
+
+app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+```
+
+---
+
+**Demonstração prática:**
+
+- Rodar o servidor: `node index.js`
+- Testar todas as rotas no Postman ou **Thunder Client**, da mesma forma que no FastAPI.
+
+---
+
+**Discussão**
+
+- Comparar FastAPI e Express:
+  - Sintaxe diferente, mesma lógica de CRUD.
+  - Status codes, rotas e payloads JSON são iguais.
+  - FastAPI gera documentação automática; Express depende de ferramentas externas (Swagger, Postman Collection).
+- Reforçar conceitos de **HTTP**, **REST** e **boas práticas**.
+
+---
+
+**Atividade prática**
+
+- Adicionar no projeto:
+  - Filtrar produtos por min_preco e max_preco (query params).
+  - Implementar validação básica de dados (preço > 0, nome não vazio).
+- Testar todas as rotas e anotar status codes e respostas.
 
