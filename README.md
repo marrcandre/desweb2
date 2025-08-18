@@ -165,7 +165,7 @@ Cada requisição será feita usando **navegador**, **Postman** e **Thunder Clie
 
 ---
 
-**6. Atividade Prática**
+**Atividade Prática**
 
 **Objetivo:** Usar   ou Thunder Client para explorar APIs públicas úteis.
 
@@ -179,7 +179,7 @@ Cada requisição será feita usando **navegador**, **Postman** e **Thunder Clie
 
 ---
 
-**7. Atividades de Fixação**
+**Atividades de Fixação**
 
 Escolha **uma API pública diferente das apresentadas** e:
 - Faça **3 requisições** (GET, POST e DELETE, se suportado).
@@ -188,7 +188,7 @@ Escolha **uma API pública diferente das apresentadas** e:
 
 ---
 
-**8. Sugestões:**
+**Sugestões:**
 - [BrasilAPI](https://brasilapi.com.br/) (CNPJs, feriados, dados de bancos)
 - [IBGE – Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
 - [Cat Facts](https://catfact.ninja/) (fatos aleatórios sobre gatos)
@@ -284,8 +284,6 @@ uvicorn main:app --reload
 - **Exemplos de Requisições:**
   - `GET /produtos`: Retorna todos os produtos.
   - `POST /produtos`: Cria um novo produto.
-
----
 
 **Um exemplo mais completo**
 
@@ -462,7 +460,7 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 
 ---
 
-**5. Discussão**
+**Discussão**
 
 * O conceito de rota, método e resposta é **igual** em ambas as stacks.
 * Diferenças estão apenas na sintaxe e ferramentas.
@@ -476,4 +474,118 @@ Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inc
 * Testar no **Postman** ou **Thunder Client** e registrar o status code.
 
 ---
+
+# Aula 3 – Rotas com parâmetros e retorno estruturado
+
+**Objetivo**
+
+Ampliar o conhecimento sobre APIs explorando rotas dinâmicas com parâmetros e retornos mais elaborados em JSON, preparando o terreno para integração com banco de dados.
+
+---
+
+
+**Revisão da aula anterior**
+
+Relembrar rapidamente:
+- Diferença entre GET e POST.
+- Corpo de requisição (body) e retorno (response).
+- Conceito de status code e mensagens de resposta.
+
+---
+**Conteúdo**
+
+**1. Introdução aos parâmetros de rota e query**
+
+**Conceitos:**
+
+- **Parâmetros de rota (path params):** parte da URL que representa um dado variável.
+  - Ex.: `/produtos/123` → `123` é o ID do produto.
+
+- **Parâmetros de query (query params):** enviados na URL após `?` para filtros, ordenação e paginação.
+  - Ex.: `/produtos?categoria=livros&ordem=preco`.
+
+**Boas práticas:**
+
+- Usar parâmetros de rota para identificar recursos.
+- Usar parâmetros de query para filtragem, paginação e ordenação.
+
+---
+
+**2. Demonstração prática – FastAPI**
+
+**Exemplo de aplicação:**
+
+```python
+from fastapi import FastAPI
+from typing import Optional
+
+app = FastAPI()
+
+produtos = [
+    {"id": 1, "nome": "Notebook", "preco": 3500},
+    {"id": 2, "nome": "Mouse", "preco": 120},
+    {"id": 3, "nome": "Teclado", "preco": 250},
+]
+
+@app.get("/produtos/{id_produto}")
+def get_produto(id_produto: int):
+    for produto in produtos:
+        if produto["id"] == id_produto:
+            return produto
+    return {"erro": "Produto não encontrado"}
+
+@app.get("/produtos")
+def listar_produtos(categoria: Optional[str] = None):
+    # Como ainda não temos banco, o filtro é apenas ilustrativo
+    return produtos
+```
+
+**Testar no navegador e no Postman:**
+
+- GET http://localhost:8000/produtos/1
+- GET http://localhost:8000/produtos?categoria=eletronico
+
+---
+
+**3. Demonstração prática – Node.js com Express**
+
+```javascript
+const produtos = [
+  { id: 1, nome: 'Notebook', preco: 3500 },
+  { id: 2, nome: 'Mouse', preco: 120 },
+  { id: 3, nome: 'Teclado', preco: 250 }
+];
+
+app.get('/produtos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const produto = produtos.find(p => p.id === id);
+  if (produto) {
+    res.json(produto);
+  } else {
+    res.status(404).json({ erro: 'Produto não encontrado' });
+  }
+});
+
+app.get('/produtos', (req, res) => {
+  // Filtro fictício
+  res.json(produtos);
+});
+
+app.listen(3000, () => {
+  console.log('Servidor rodando na porta 3000');
+});
+```
+
+**Testar no navegador e no Postman:**
+
+- GET http://localhost:3000/produtos/1
+- GET http://localhost:3000/produtos?categoria=eletronicos
+
+---
+
+**Exercício prático**
+
+- Criar uma rota que busque produtos com base em **query params** `min_preco` e `max_preco`.
+- Implementar no **FastAPI** ou **Express**.
+- Testar com **Postman**.
 
