@@ -511,7 +511,7 @@ Relembrar rapidamente:
   - Ex.: `/produtos/123` → `123` é o ID do produto.
 
 - **Parâmetros de query (query params):** enviados na URL após `?` para filtros, ordenação e paginação.
-  - Ex.: `/produtos?categoria=livros&ordem=preco`.
+  - Ex.: `/produtos?categoria=eletronicos&ordem=preco`.
 
 **Boas práticas:**
 
@@ -604,7 +604,7 @@ app.listen(3000, () => {
 
 **Objetivo da Aula:**
 
-Capacitar os alunos a implementar operações completas de CRUD em APIs REST, utilizando FastAPI e Node.js + Express, reforçando conceitos de HTTP, rotas, status codes e resposta estruturada.
+Implementar operações completas de CRUD em APIs REST, utilizando FastAPI e Node.js + Express, reforçando conceitos de HTTP, rotas, status codes e resposta estruturada.
 
 ---
 
@@ -790,3 +790,99 @@ app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
   - Implementar validação básica de dados (preço > 0, nome não vazio).
 - Testar todas as rotas e anotar status codes e respostas.
 
+---
+
+# Aula 5 – CRUD com validação, filtros, paginação e ordenação (FastAPI)
+
+**Objetivo da Aula:**
+
+Implementar um CRUD completo com validação de dados, filtros, paginação e ordenação em FastAPI, reforçando conceitos de boas práticas em APIs REST.
+
+---
+
+**Revisão rápida:**
+
+- CRUD básico da Aula anterio.
+- Relembrar: métodos HTTP, status codes e resposta JSON.
+- Pergunta:
+  - _"Se nossa lista tiver 10 mil produtos, como facilitar a busca e listagem?"_
+
+---
+**Conteúdo**
+
+**1. CRUD com validação**
+
+- Validação no **Pydantic**: `nome` não pode ser vazio, `preco` deve ser maior que zero.
+- Exemplo:
+
+```python
+from pydantic import BaseModel, Field
+
+class ItemInput(BaseModel):
+    nome: str = Field(..., min_length=1, description="Nome não pode ser vazio")
+    preco: float = Field(..., gt=0, description="Preço deve ser maior que zero")
+```
+
+**2. Listagem com filtros**
+
+- `min_preco` e `max_preco` como parâmetros de query.
+- Exemplo de rota:
+
+```python
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos(min_preco: float | None = None, max_preco: float | None = None):
+    resultado = items
+    if min_preco is not None:
+        resultado = [item for item in resultado if item.preco >= min_preco]
+    if max_preco is not None:
+        resultado = [item for item in resultado if item.preco <= max_preco]
+    return resultado
+```
+
+**3. Paginação**
+
+- Adicionar parâmetros `pagina` e `por_pagina`.
+- Exemplo:
+
+```python
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos(pagina: int = 0, por_pagina: int = 10):
+    return items[pagina * por_pagina : (pagina + 1) * por_pagina]
+```
+
+**4. Ordenação**
+
+- Parâmetro `ordenar_por` (nome | preco) e `ordem` (asc | desc).
+- Exemplo:
+
+```python
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos(
+    ordenar_por: str = "id",
+    ordem: str = "asc",
+):
+    resultado = items
+    resultado.sort(key=lambda x: getattr(x, ordenar_por), reverse=(ordem == "desc"))
+```
+
+**5. Combinação dos recursos**
+
+- Filtros, paginação e ordenação juntos na mesma rota.
+- Discussão:
+  - _"O código está ficando repetitivo e verboso. Como frameworks mais completos (como DRF) ajudam a reduzir isso?"_
+
+---
+
+**Atividade prática**
+
+- Exercício:
+- Implementar validação, filtros, paginação e ordenação juntos.
+- Testar diferentes combinações no Swagger UI (http://localhost:8000/docs).
+
+**Conclusão**
+
+À medida em que vamos o sistema vai crescendo e vamos implementando mais recursos, é importante manter a organização e a clareza do código. O uso de frameworks e boas práticas de desenvolvimento pode ajudar a gerenciar a complexidade e a escalabilidade da aplicação.
+
+---
+
+# Aula 6 - 
