@@ -885,4 +885,99 @@ def listar_produtos(
 
 ---
 
-# Aula 6 - 
+# Aula 6 – CRUD com validação, filtros, paginação e ordenação (Express)
+
+**Objetivo da Aula:**
+
+Implementar um CRUD completo com validação de dados, filtros, paginação e ordenação em Express, reforçando a comparação entre Python (FastAPI) e JavaScript (Node.js/Express).
+
+---
+**Revisão rápida:**
+
+- CRUD básico com Express (**Aula 4**).
+- Na **Aula 5** fizemos isso no FastAPI com validações, filtros e paginação.
+- Pergunta para reflexão:
+  - *"Qual código ficou mais verboso: FastAPI ou Express?"*
+
+---
+
+**Conteúdo**
+
+**1. CRUD com validação**
+
+- No Express fazemos validações manualmente.
+- Exemplo de validação no `POST`:
+
+```javascript
+if (!nome || nome.trim() === "") {
+    return res.status(400).json({ error: "O nome não pode ser vazio" });
+}
+if (typeof preco !== "number" || preco <= 0) {
+    return res.status(400).json({ error: "O preço deve ser maior que zero" });
+}
+```
+
+**2. Listagem com filtros**
+
+- Podemos passar parâmetros de query:
+  - `min_preco` → filtra produtos com preço mínimo.
+  - `max_preco` → filtra produtos com preço máximo.
+
+Exemplo:
+
+```javascript
+if (min_preco) resultado = resultado.filter(p => p.preco >= parseFloat(min_preco));
+if (max_preco) resultado = resultado.filter(p => p.preco <= parseFloat(max_preco));
+```
+
+**3. Paginação**
+
+- Usamos `pagina` e `por_pagina`.
+- Implementação:
+
+```javascript
+pagina = parseInt(pagina) || 0;
+por_pagina = parseInt(por_pagina) || resultado.length;
+resultado = resultado.slice(pagina, pagina + por_pagina);
+```
+
+**4. Ordenação**
+
+- `ordenar_por` → nome ou preço.
+- `ordem` → asc ou desc.
+
+Exemplo:
+
+```javascript
+if (ordenar_por) {
+    resultado.sort((a, b) => {
+        if (a[ordenar_por] < b[ordenar_por]) return ordem === "desc" ? 1 : -1;
+        if (a[ordenar_por] > b[ordenar_por]) return ordem === "desc" ? -1 : 1;
+        return 0;
+    });
+}
+```
+
+---
+
+**Atividade prática**
+
+- Testar a API com os seguintes endpoints:
+
+  - **Listar todos os produtos:** `http://localhost:8000/produtos`
+  - **Ordenar por preço (crescente):** `http://localhost:8000/produtos?ordenar_por=preco&ordem=asc`
+  - **Ordenar por nome (decrescente):** `http://localhost:8000/produtos?ordenar_por=nome&ordem=desc`
+  - **Filtrar por preço mínimo:** `http://localhost:8000/produtos?min_preco=100`
+  - **Filtrar por preço máximo:** `http://localhost:8000/produtos?max_preco=1000`
+  - **Filtrar por preço mínimo e máximo:** `http://localhost:8000/produtos?min_preco=100&max_preco=1000`
+  - **Paginação:** `http://localhost:8000/produtos?pagina=1&por_pagina=2`
+
+---
+
+**Conclusão**
+
+- No **FastAPI (Python)**, usamos **Pydantic** para validação automática.
+- No **Express (Node.js)**, precisamos implementar manualmente as validações.
+- O código em **Express** tende a ser **mais verboso e repetitivo**, mas também é **mais flexível**.
+
+# Aula 7 
