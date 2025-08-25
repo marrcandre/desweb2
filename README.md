@@ -792,11 +792,11 @@ app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 
 ---
 
-# Aula 5 – CRUD com validação, filtros, paginação e ordenação (FastAPI)
+# Aula 5 – CRUD com validação, filtros, ordenação e paginação (FastAPI)
 
 **Objetivo da Aula:**
 
-Implementar um CRUD completo com validação de dados, filtros, paginação e ordenação em FastAPI, reforçando conceitos de boas práticas em APIs REST.
+Implementar um CRUD completo com validação de dados, filtros, ordenação  e paginaçãoem FastAPI, reforçando conceitos de boas práticas em APIs REST.
 
 ---
 
@@ -823,6 +823,8 @@ class ItemInput(BaseModel):
     preco: float = Field(..., gt=0, description="Preço deve ser maior que zero")
 ```
 
+---
+
 **2. Listagem com filtros**
 
 - `min_preco` e `max_preco` como parâmetros de query.
@@ -839,18 +841,9 @@ def listar_produtos(min_preco: float | None = None, max_preco: float | None = No
     return resultado
 ```
 
-**3. Paginação**
+---
 
-- Adicionar parâmetros `pagina` e `por_pagina`.
-- Exemplo:
-
-```python
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos(pagina: int = 0, por_pagina: int = 10):
-    return items[pagina * por_pagina : (pagina + 1) * por_pagina]
-```
-
-**4. Ordenação**
+**3. Ordenação**
 
 - Parâmetro `ordenar_por` (nome | preco) e `ordem` (asc | desc).
 - Exemplo:
@@ -865,6 +858,21 @@ def listar_produtos(
     resultado.sort(key=lambda x: getattr(x, ordenar_por), reverse=(ordem == "desc"))
 ```
 
+---
+
+**4. Paginação**
+
+- Adicionar parâmetros `pagina` e `por_pagina`.
+- Exemplo:
+
+```python
+@app.get("/produtos", response_model=list[Item])
+def listar_produtos(pagina: int = 0, por_pagina: int = 10):
+    return items[pagina * por_pagina : (pagina + 1) * por_pagina]
+```
+
+---
+
 **5. Combinação dos recursos**
 
 - Filtros, paginação e ordenação juntos na mesma rota.
@@ -876,8 +884,10 @@ def listar_produtos(
 **Atividade prática**
 
 - Exercício:
-- Implementar validação, filtros, paginação e ordenação juntos.
+- Implementar validação, filtros, ordenação e paginação juntos.
 - Testar diferentes combinações no Swagger UI (http://localhost:8000/docs).
+
+---
 
 **Conclusão**
 
@@ -885,17 +895,17 @@ def listar_produtos(
 
 ---
 
-# Aula 6 – CRUD com validação, filtros, paginação e ordenação (Express)
+# Aula 6 – CRUD com validação, filtros, ordenação e paginação (Express)
 
 **Objetivo da Aula:**
 
-Implementar um CRUD completo com validação de dados, filtros, paginação e ordenação em Express, reforçando a comparação entre Python (FastAPI) e JavaScript (Node.js/Express).
+Implementar um CRUD completo com validação de dados, filtros, ordenação e paginação em Express, reforçando a comparação entre Python (FastAPI) e JavaScript (Node.js/Express).
 
 ---
 **Revisão rápida:**
 
 - CRUD básico com Express (**Aula 4**).
-- Na **Aula 5** fizemos isso no FastAPI com validações, filtros e paginação.
+- Na **Aula 5** fizemos isso no FastAPI com validações, filtros, ordenação e paginação.
 - Pergunta para reflexão:
   - *"Qual código ficou mais verboso: FastAPI ou Express?"*
 
@@ -917,6 +927,8 @@ if (typeof preco !== "number" || preco <= 0) {
 }
 ```
 
+---
+
 **2. Listagem com filtros**
 
 - Podemos passar parâmetros de query:
@@ -930,18 +942,9 @@ if (min_preco) resultado = resultado.filter(p => p.preco >= parseFloat(min_preco
 if (max_preco) resultado = resultado.filter(p => p.preco <= parseFloat(max_preco));
 ```
 
-**3. Paginação**
+---
 
-- Usamos `pagina` e `por_pagina`.
-- Implementação:
-
-```javascript
-pagina = parseInt(pagina) || 0;
-por_pagina = parseInt(por_pagina) || resultado.length;
-resultado = resultado.slice(pagina, pagina + por_pagina);
-```
-
-**4. Ordenação**
+**3. Ordenação**
 
 - `ordenar_por` → nome ou preço.
 - `ordem` → asc ou desc.
@@ -956,6 +959,19 @@ if (ordenar_por) {
         return 0;
     });
 }
+```
+
+---
+
+**4. Paginação**
+
+- Usamos `pagina` e `por_pagina`.
+- Exemplo:
+
+```javascript
+pagina = parseInt(pagina) || 0;
+por_pagina = parseInt(por_pagina) || resultado.length;
+resultado = resultado.slice(pagina, pagina + por_pagina);
 ```
 
 ---
@@ -980,4 +996,6 @@ if (ordenar_por) {
 - No **Express (Node.js)**, precisamos implementar manualmente as validações.
 - O código em **Express** tende a ser **mais verboso e repetitivo**, mas também é **mais flexível**.
 
-# Aula 7 
+---
+
+# Aula 7
