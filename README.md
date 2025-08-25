@@ -998,4 +998,188 @@ resultado = resultado.slice(pagina, pagina + por_pagina);
 
 ---
 
-# Aula 7
+# Aula 7 - Introdução ao Django
+
+**Objetivo:**
+
+Apresentar o **Django** como framework web completo, comparando-o com **FastAPI** e **Express**. Criar a primeira aplicação e compreender sua estrutura de projeto.
+
+---
+
+**Conteúdo da Aula:**
+
+**1. Contextualização: o que é Django?**
+
+- Django é um **framework web full-stack** para Python, criado em 2005.
+- Filosofia: *“O framework web para perfeccionistas com prazos”*.
+- Diferença de abordagem:
+  - **FastAPI/Express** → minimalistas, você escolhe os pacotes.
+  - **Django** → traz tudo pronto (ORM, templates, autenticação, administração, rotas, segurança).
+
+---
+
+**2. Preparando o ambiente**
+
+**Criar pasta do projeto:**
+
+```bash
+mkdir django_intro && cd django_intro
+python -m venv .venv
+source .venv/bin/activate   # Linux/Mac
+.venv\Scripts\activate      # Windows
+pip install --upgrade pip
+```
+
+**Instalar Django:**
+
+```bash
+pip install django
+```
+
+**Salvar dependências:**
+
+```bash
+pip freeze > requirements.txt
+```
+
+**Conferir versão:**
+
+```bash
+python -m django --version
+```
+
+---
+
+**3. Criando o primeiro projeto Django**
+
+**Criar projeto:**
+
+```bash
+django-admin startproject config .
+```
+
+**Entrar no vscode**
+
+```bash
+code .
+```
+
+**Estrutura criada:**
+
+```
+config/
+  manage.py
+  config/
+    __init__.py
+    settings.py
+    urls.py
+    asgi.py
+    wsgi.py
+```
+
+**Comparação:**
+
+- **Express/FastAPI**: 1 arquivo principal (`app.js` / `main.py`).
+- **Django**: projeto organizado em múltiplos arquivos, com **configurações centrais** (`settings.py`) e entrada administrativa (`manage.py`).
+
+**Rodar servidor:**
+
+```bash
+python manage.py runserver
+```
+
+Acessar `http://127.0.0.1:8000`.
+
+---
+
+**4. Criando a primeira aplicação Django**
+
+**Criar app:**
+
+```bash
+python manage.py startapp produtos
+```
+
+**Estrutura criada:**
+
+```
+produtos/
+  admin.py
+  apps.py
+  models.py
+  tests.py
+  views.py
+```
+
+**Registrar app em settings.py:**
+
+```python
+INSTALLED_APPS = [
+    ...
+    'produtos',
+]
+```
+
+**Criar primeira view (produtos/views.py):**
+
+```python
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Bem-vindo à BSI4 Store!")
+```
+
+**Mapear rota (config/urls.py):**
+
+```python
+from django.contrib import admin
+from django.urls import path
+from produtos.views import home
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', home),
+]
+```
+
+Agora a raiz (`/`) exibe: *“Bem-vindo à Loja!”*.
+
+---
+
+**Atividade prática**
+
+- Criar uma nova view `sobre` em `produtos/views.py` retornando “Loja feita em Django”.
+- Mapear rota /sobre.
+- Testar no navegador.
+
+---
+
+**Fechamento e comparação**
+
+- **FastAPI/Express**: frameworks leves, onde tudo precisa ser adicionado.
+- **Django**: já traz camadas completas: ORM, admin, autenticação, segurança, templates.
+- **Demonstração rápida:** mostrar a página do admin (criar superusuário):
+
+```bash
+python manage.py createsuperuser
+```
+
+- Antes, é necessário criar as tabelas do banco (SQLite por padrão):
+
+```bash
+python manage.py migrate
+```
+
+Entrar em `/admin/`.
+
+---
+
+**Resumo da Aula**
+
+- O Django é **mais opinativo e estruturado** do que FastAPI/Express.
+- Criamos nosso primeiro **projeto** e **app**.
+- Configuramos **rotas** e **views** simples.
+- Exploramos o **admin** como diferencial.
+
+# Aula 8
+
