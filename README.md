@@ -796,13 +796,13 @@ app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 
 **Objetivo da Aula:**
 
-Implementar um CRUD completo com validação de dados, filtros, ordenação  e paginaçãoem FastAPI, reforçando conceitos de boas práticas em APIs REST.
+Implementar um CRUD completo com validação de dados, filtros, ordenação  e paginação em FastAPI, reforçando conceitos de boas práticas em APIs REST.
 
 ---
 
 **Revisão rápida:**
 
-- CRUD básico da Aula anterio.
+- CRUD básico da Aula anterior.
 - Relembrar: métodos HTTP, status codes e resposta JSON.
 - Pergunta:
   - _"Se nossa lista tiver 10 mil produtos, como facilitar a busca e listagem?"_
