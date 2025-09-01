@@ -1142,14 +1142,14 @@ urlpatterns = [
 ]
 ```
 
-Agora a raiz (`/`) exibe: *“Bem-vindo à Loja!”*.
+Agora a raiz (`/`) exibe: *“Bem-vindo à BSI4 Store!”*.
 
 ---
 
 **Atividade prática**
 
-- Criar uma nova view `sobre` em `produtos/views.py` retornando “Loja feita em Django”.
-- Mapear rota /sobre.
+- Criar uma nova view `sobre` em `produtos/views.py` retornando _“Loja feita em Django”_.
+- Mapear rota `/sobre`.
 - Testar no navegador.
 
 ---
@@ -1428,8 +1428,6 @@ Acessar no navegador:
 Nesta aula, aprendemos a expor um modelo Django como API REST usando o DRF, com endpoints automáticos para CRUD. Na próxima aula, veremos como customizar a API com campos extras, filtros, buscas e paginação.
 
 ---
-
-
 
 # Aula 10 – Customizando a API: Filtros, Buscas e Ordenação
 
