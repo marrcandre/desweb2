@@ -1181,5 +1181,123 @@ Entrar em `/admin/`.
 - Configuramos **rotas** e **views** simples.
 - Exploramos o **admin** como diferencial.
 
-# Aula 8
+# Aula 8 - Criando o primeiro modelo no Django
 
+**Objetivo:**
+
+Entender como o Django lida com persistência de dados através de models e migrações, e aprender a cadastrar e visualizar dados no admin.
+
+---
+
+**1. Introdução**
+
+Para armazenar dados de forma eficiente e organizada, o Django utiliza um sistema de ORM (Object Relational Mapper). Um ORM (Object Relational Mapper) é uma ferramenta que permite interagir com bancos de dados utilizando a linguagem de programação, sem a necessidade de escrever SQL diretamente.
+
+No **FastAPI/Express**, a modelagem de dados é feita via ORMs externos (SQLAlchemy, Prisma, Mongoose).
+
+No **Django**, o ORM já está integrado ao framework.
+
+Cada app tem seus próprios `models.py`, que descrevem as tabelas do banco.
+
+---
+
+**2. Criando a primeira Model**
+
+No arquivo `produtos/models.py`:
+
+```python
+from django.db import models
+
+class Produto(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField(blank=True)
+    preco = models.DecimalField(max_digits=8, decimal_places=2)
+    estoque = models.IntegerField(default=0)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nome
+```
+
+**Explicação dos campos**
+
+- `CharField`: texto curto, exige `max_length`.
+- `TextField`: textos longos (ex: descrição).
+- `DecimalField`: valores numéricos precisos (bom para dinheiro).
+- `IntegerField`: números inteiros.
+- `DateTimeField`: datas automáticas (`auto_now_add` = quando criado, `auto_now` = quando alterado).
+- `__str__`: como o objeto aparece no admin.
+
+---
+
+**3. Criando e aplicando migrações**
+
+Comandos no terminal:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+- `makemigrations`: cria os arquivos de migração baseados nas models.
+- `migrate`: aplica ao banco de dados.
+
+Verifique no diretório `produtos/migrations/` que foi criado um arquivo.
+
+---
+
+**4. Registrando a Model no Admin**
+
+No arquivo `produtos/admin.py`:
+
+```python
+from django.contrib import admin
+from .models import Produto
+
+@admin.register(Produto)
+class ProdutoAdmin(admin.ModelAdmin):
+    list_display = ("id", "nome", "preco", "estoque", "criado_em", "atualizado_em")
+    search_fields = ("nome",)
+    list_filter = ("criado_em", "atualizado_em")
+```
+
+- `list_display`: colunas exibidas na listagem.
+- `search_fields`: campos pesquisáveis.
+- `list_filter`: filtros laterais.
+
+---
+
+**5. Testando no Admin**
+
+Criar um superusuário:
+
+```bash
+python manage.py createsuperuser
+```
+
+Rodar o servidor:
+
+```bash
+python manage.py runserver
+```
+
+Acessar: http://127.0.0.1:8000/admin/
+
+Fazer login e cadastrar alguns produtos.
+
+---
+
+**6. Exercícios práticos**
+
+- Criar 3 produtos de teste no admin.
+- Adicionar um campo `categoria` (`CharField` com até 50 caracteres).
+- Refazer as migrações.
+- Verificar se o campo aparece no admin.
+
+---
+
+**Encerramento:**
+
+Nesta aula, aprendemos a criar uma `Model`, aplicar migrações e gerenciar dados no admin.
+Na próxima aula (Aula 9), vamos expor este modelo como uma API REST usando o Django REST Framework, comparando com FastAPI/Express.
