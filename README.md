@@ -13,57 +13,20 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
 6. Trabalhar com versionamento de código e boas práticas de commits no GitHub.
 7. Desenvolver projeto final com requisitos mínimos, mas liberdade para escolha de tecnologias.
 
-**CONTEÚDO PROGRAMÁTICO**
-
-1. Fundamentos de APIs
-- O que é uma API
-- HTTP: métodos, status codes, headers
-- JSON e serialização
-- Diferenças entre APIs REST, GraphQL e outras arquiteturas
-2. Introdução ao Django REST Framework
-- Criação de projeto e app
-- Configuração inicial e boas práticas
-3. Modelos e Serializers
-- `ModelSerializer` e campos customizados
-4. Views e ViewSets
-- `ModelViewSet` e actions personalizadas
-5. URLs e Roteamento
-- `routers` e `paths` customizados
-6. Autenticação e Permissões
-- SessionAuth, TokenAuth, JWT
-- Permissões customizadas
-7. Filtros, Ordenação e Paginação
-8. Upload de Arquivos e Integração com Cloudinary
-9. Documentação de APIs
-- Swagger/OpenAPI (`drf-spectacular` ou `drf-yasg`)
-10. Boas Práticas e Padrões
-- Estrutura de projeto
-- Versionamento no Git
-11. Deploy
-- Render, Supabase, AWS, Railway
-12. Projeto Final
-- Requisitos mínimos:
-  - CRUD
-  - Autenticação e permissões
-  - Upload de arquivos
-  - Filtros e paginação
-  - Documentação
-  - Deploy
-- Liberdade de stack (Node, Flask, Laravel, etc.)
-13. Apresentação e Avaliação dos Projetos
-
 ---
 
 **LINKS ÚTEIS**
 
-- Tutorial de Django: https://github.com/marrcandre/django-drf-tutorial
-- Documentação do Django: https://docs.djangoproject.com/
-- Documentação oficial do Django REST Framework: https://www.django-rest-framework.org/
-- Roadmap de backend: https://roadmap.sh/backend
+- Django:
+  - [Tutorial de Django](https://github.com/marrcandre/django-drf-tutorial)
+  - [Documentação do Django](https://docs.djangoproject.com/)
+  - [Documentação oficial do Django REST Framework](https://www.django-rest-framework.org/)
+- [Roadmap de backend](https://roadmap.sh/backend)
 - Vídeos:
   - [A Forma Ideal de Projetos Web | Os 12 Fatores - Fábio Akita](https://www.youtube.com/watch?v=gpJgtED36U4)
   - [Série "Começando aos 40 - Fábio Akita"](https://www.youtube.com/watch?v=O76ZfAIEukE&list=PLjuQ-0yGqLjcFmMkiYvHPraSptrhPlOuK)
-
+- Cursos:
+  - [FastAPI do ZERO](https://fastapidozero.dunossauro.com/estavel/)
 
 ---
 
