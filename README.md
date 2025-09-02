@@ -1372,34 +1372,25 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
 **4. Criando as rotas**
 
-Arquivo: `produtos/urls.py`
+Arquivo: `config/urls.py`
 
 ```python
+from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProdutoViewSet
+from produtos.views import ProdutoViewSet
 
+# Criando o router
 router = DefaultRouter()
 router.register(r'produtos', ProdutoViewSet)
 
+# Definindo as rotas
 urlpatterns = [
-  path('', include(router.urls)),
+    path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
 ]
 ```
 
-No `urls.py` principal do projeto:
-
-```python
-from django.urls import path, include
-
-urlpatterns = [
-  path('api/', include('produtos.urls')),
-]
-```
-
----
-
-**5. Testando a API**
 
 Rodar o servidor:
 
@@ -1429,7 +1420,142 @@ Nesta aula, aprendemos a expor um modelo Django como API REST usando o DRF, com 
 
 ---
 
-# Aula 10 – Customizando a API: Filtros, Buscas e Ordenação
+# Aula 10 – Documentando a API com Swagger e Redoc no Django REST Framework
+
+**Objetivo da Aula:**
+
+Ensinar como habilitar a documentação automática da API no Django usando **drf-spectacular**, permitindo acesso via **Swagger UI** e **Redoc**.
+
+---
+
+**Revisão rápida:**
+
+- No **FastAPI**, a documentação já vem pronta em `/docs`.
+- No **Express**, usamos pacotes externos como `swagger-ui-express`.
+- No **Django REST Framework**, a documentação precisa ser configurada, mas oferece opções avançadas.
+
+---
+
+**Conteúdo**
+
+**1. Introdução ao drf-spectacular**
+
+- O **drf-spectacular** é uma biblioteca moderna recomendada para gerar documentação OpenAPI no Django REST Framework.
+- Permite criar documentação interativa (Swagger UI, Redoc) e exportar o schema OpenAPI em JSON.
+
+---
+
+**2. Instalação e configuração**
+
+**Instalar o pacote:**
+
+```bash
+pip install drf-spectacular
+```
+
+**Adicionar ao `INSTALLED_APPS` no `settings.py`:**
+
+```python
+INSTALLED_APPS = [
+  ...,
+  "rest_framework",
+  "drf_spectacular",
+]
+```
+
+**Configurar o DRF para usar o schema do drf-spectacular:**
+
+```python
+REST_FRAMEWORK = {
+  "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+```
+
+---
+
+**3. Configuração das rotas**
+
+No arquivo `urls.py` principal do projeto:
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+from drf_spectacular.views import (
+  SpectacularAPIView,
+  SpectacularSwaggerView,
+  SpectacularRedocView,
+)
+
+urlpatterns = [
+  path("admin/", admin.site.urls),
+  path("api/", include("produtos.urls")),
+
+  # Rota para gerar o schema (JSON do OpenAPI)
+  path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+
+  # Swagger UI
+  path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+
+  # Redoc
+  path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+]
+```
+
+---
+
+**4. Testando a documentação**
+
+**Rodar o servidor:**
+
+```bash
+python manage.py runserver
+```
+
+**Acessar no navegador:**
+
+- `/api/schema/` → retorna o JSON da especificação OpenAPI.
+- `/api/docs/` → abre o Swagger UI.
+- `/api/redoc/` → abre o Redoc.
+
+Os endpoints da API aparecem automaticamente na documentação.
+
+---
+
+**5. Personalizando a documentação**
+
+Adicionar no `settings.py`:
+
+```python
+SPECTACULAR_SETTINGS = {
+  "TITLE": "API de Produtos",
+  "DESCRIPTION": "Documentação da API de Produtos feita em Django REST Framework",
+  "VERSION": "1.0.0",
+  "SERVE_INCLUDE_SCHEMA": False,
+}
+```
+
+- O título, descrição e versão aparecem no Swagger e Redoc.
+- É possível documentar endpoints e serializers com docstrings.
+
+---
+
+**6. Exercício prático**
+
+- Acessar `/api/docs/` e `/api/redoc/`.
+- Alterar o título e descrição da API no `settings.py` e verificar a mudança.
+- Adicionar uma nova view (ex: categorias `/api/categorias/`) e conferir se aparece na documentação.
+
+---
+
+**Conclusão**
+
+- No Django REST Framework, a documentação precisa ser configurada, mas é poderosa e detalhada.
+- Comparar com FastAPI (documentação automática) e Express (pacotes externos).
+- O drf-spectacular facilita a geração de documentação interativa e padronizada.
+
+---
+
+# Aula 11 – Customizando a API: Filtros, Buscas e Ordenação
 
 **Objetivo:**
 
@@ -1531,6 +1657,4 @@ Testar diferentes combinações de filtros, busca e ordenação.
 Nesta aula, aprendemos a customizar a API com filtros, busca e ordenação usando DRF e django-filter, tornando a API mais flexível e útil para o consumidor. Na próxima aula, veremos como adicionar paginação e campos extras.
 
 ---
-
-# Aula 11
 
