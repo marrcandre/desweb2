@@ -1718,3 +1718,83 @@ Exemplos de URLs para testar no navegador ou Postman:
 
 ---
 
+# Aula 13 – Paginação Personalizada com Django REST Framework
+
+**Objetivo**
+
+Implementar paginação personalizada para APIs com Django REST Framework, adaptando o formato da resposta para incluir página atual, tamanho da página, total de páginas e resultados.
+
+---
+
+**Conteúdo**
+
+**1. Configuração global no `settings.py`**
+
+No arquivo `settings.py`, configure a paginação global para usar sua classe personalizada:
+
+```python
+REST_FRAMEWORK = {
+    # Outras configurações do DRF...
+    'DEFAULT_PAGINATION_CLASS': 'app.pagination.CustomPagination',  # ajuste o caminho conforme seu app
+    'PAGE_SIZE': 10,  # quantidade padrão de itens por página
+}
+```
+
+**2. Criando a páginação personalizada (arquivo `pagination.py` na sua app)**
+
+Crie o arquivo `pagination.py` na sua aplicação e defina a classe `CustomPagination`:
+
+```python
+from rest_framework import pagination
+from rest_framework.response import Response
+
+class CustomPagination(pagination.PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'page': self.page.number,
+            'page_size': self.page.paginator.per_page,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data,
+        })
+```
+
+- Esta classe herda `PageNumberPagination`.
+- Sobrescreve o método `get_paginated_response` para modificar o formato padrão da resposta.
+- Os campos na resposta JSON serão:
+  - `page`: página atual.
+  - `page_size`: tamanho da página.
+  - `total_pages`: total de páginas disponíveis.
+  - `results`: lista dos itens da página atual.
+
+**3. Testando a paginação**
+
+- A paginação será aplicada automaticamente em todas as views que retornem listas pois foi configurada globalmente.
+- Exemplos de URLs para obter as páginas:
+
+```
+GET /api/produtos/?page=1
+GET /api/produtos/?page=2
+```
+
+- A resposta será algo assim:
+
+```json
+{
+  "page": 1,
+  "page_size": 10,
+  "total_pages": 5,
+  "results": [
+    // lista de produtos da página 1
+  ]
+}
+```
+
+**4. Exercícios práticos**
+
+- Faça requisições para diferentes páginas e observe como os resultados mudam.
+- Altere o valor padrão `PAGE_SIZE` e teste o comportamento da API.
+- Analise como a paginação interage com filtros e ordenação já implementados.
+
+---
+
+
