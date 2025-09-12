@@ -1622,10 +1622,6 @@ Nesta aula, aprendemos a customizar a API com filtros, busca e ordenação usand
 
 ---
 
-Segue o conteúdo detalhado para incluir no seu tutorial da Aula 12, focado em filtros avançados no Django REST Framework com django-filter, considerando que a instalação e uso básico do django-filter já foram feitos na aula anterior.
-
-***
-
 # Aula 12 – Filtros Avançados com django-filter no Django REST Framework
 
 **Objetivo**
@@ -1797,4 +1793,84 @@ GET /api/produtos/?page=2
 
 ---
 
+# Aula 14 – Validação Avançada em Serializers com Django REST Framework
+
+**Objetivos**
+
+- Entender os diferentes níveis de validação que podem ser feitos em serializers.
+- Implementar validações específicas em campos individuais (`validate_<field_name>`).
+- Criar validações que envolvem múltiplos campos ao mesmo tempo (validação a nível do objeto).
+- Personalizar mensagens de erro e garantir que a API retorne respostas claras a clientes.
+
+---
+
+**Conteúdo**
+
+**1. Revisão rápida dos serializers**
+
+- Serializers transformam dados entre formatos JSON e objetos Python.
+- Além dessa conversão, serializers fazem validação automática baseada no modelo.
+- Para regras específicas, é possível criar métodos de validação customizados.
+
+**2. Validação em campos individuais**
+
+Exemplo com validação para o campo `preco`, que precisa ser sempre maior que zero:
+
+```python
+from rest_framework import serializers
+from .models import Produto
+
+class ProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = '__all__'
+
+    def validate_preco(self, value):
+        if value <= 0:
+            raise serializers.ValidationError('O preço deve ser maior que zero.')
+        return value
+```
+
+- O método deve ser nomeado como `validate_<nome_do_campo>`.
+- Recebe o valor do campo e deve retornar o valor validado ou lançar um erro.
+
+**3. Validação cruzada entre campos (validação ao nível do objeto)**
+
+Para validar múltiplos campos em conjunto, use o método `validate`:
+
+```python
+    def validate(self, data):
+        preco = data.get('preco')
+        estoque = data.get('estoque')
+
+        if estoque > 0 and (preco is None or preco <= 0):
+            raise serializers.ValidationError('Produto com estoque deve ter preço maior que zero.')
+        return data
+```
+
+- Recebe um dicionário com todos os campos validados até o momento.
+- Deve retornar o dicionário de dados ou lançar `serializers.ValidationError`.
+
+**4. Mensagens de erro personalizadas**
+
+- As mensagens lançadas por `ValidationError` aparecem no corpo da resposta com status HTTP 400.
+- Exemplo de retorno JSON em caso de erro:
+
+```json
+{
+  "preco": [
+    "O preço deve ser maior que zero."
+  ]
+}
+```
+
+- Isso ajuda o cliente a entender o que corrigir.
+
+**5. Exercícios práticos**
+
+- Adicione validação para o campo `nome` para garantir que não seja vazio.
+- Valide que o campo `estoque` não possa ser negativo.
+- Teste inserções inválidas via Postman ou browser e interprete as mensagens de erro da API.
+
+---
 
