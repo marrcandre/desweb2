@@ -1566,17 +1566,18 @@ REST_FRAMEWORK = {
 Arquivo: `produtos/views.py`
 
 ```python
-from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.viewsets import ModelViewSet
 from .models import Produto
 from .serializers import ProdutoSerializer
 
-class ProdutoViewSet(viewsets.ModelViewSet):
+class ProdutoViewSet(ModelViewSet):
   queryset = Produto.objects.all()
   serializer_class = ProdutoSerializer
 
   # Filtros
-  filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+  filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
   filterset_fields = ['preco', 'estoque']  # Filtragem exata por preço e estoque
   search_fields = ['nome']  # Busca textual
   ordering_fields = ['nome', 'preco']  # Ordenação
@@ -1618,6 +1619,102 @@ Testar diferentes combinações de filtros, busca e ordenação.
 **Encerramento:**
 
 Nesta aula, aprendemos a customizar a API com filtros, busca e ordenação usando DRF e django-filter, tornando a API mais flexível e útil para o consumidor. Na próxima aula, veremos como adicionar paginação e campos extras.
+
+---
+
+Segue o conteúdo detalhado para incluir no seu tutorial da Aula 12, focado em filtros avançados no Django REST Framework com django-filter, considerando que a instalação e uso básico do django-filter já foram feitos na aula anterior.
+
+***
+
+# Aula 12 – Filtros Avançados com django-filter no Django REST Framework
+
+**Objetivo**
+
+Demonstrar como criar filtros avançados personalizados para a API com django-filter, incluindo filtros para faixa de preço (`preco_minimo`, `preco_maximo`) e filtros múltiplos para estoque sem a necessidade de filtros customizados.
+
+---
+
+**Conteúdo**
+
+**1. Filtros personalizados para faixa de preço**
+
+Crie (ou edite) o arquivo `filters.py` na app `produtos`:
+
+```python
+import django_filters
+from .models import Produto
+
+class ProdutoFilter(django_filters.FilterSet):
+    preco_minimo = django_filters.NumberFilter(field_name='preco', lookup_expr='gte')
+    preco_maximo = django_filters.NumberFilter(field_name='preco', lookup_expr='lte')
+
+    class Meta:
+        model = Produto
+        fields = ['preco_minimo', 'preco_maximo', 'estoque']
+```
+
+- Explicação:
+  - `preco_minimo` filtra produtos com preço maior ou igual a um valor.
+  - `preco_maximo` filtra produtos com preço menor ou igual a um valor.
+
+**2. Filtros múltiplos para estoque sem filtros personalizados**
+
+No `views.py`, na sua ViewSet do Produto, você pode especificar no atributo `filterset_fields` que deseja permitir múltiplas operações para estoque, assim:
+
+```python
+filterset_fields = {
+    'estoque': ['exact', 'gte', 'lte'],  # permite filtro exato, maior ou igual e menor ou igual
+}
+```
+
+Dessa forma, sem precisar criar filtros customizados para estoque, a API suportará URLs do tipo:
+
+- `?estoque=10` (estoque exatamente 10)
+- `?estoque__gte=5` (estoque maior ou igual a 5)
+- `?estoque__lte=20` (estoque menor ou igual a 20)
+
+**3. Ajuste na ViewSet para integrar os filtros**
+
+Exemplo completo da ViewSet com filtros customizados e filtros múltiplos:
+
+```python
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import SearchFilter, OrderingFilter
+from .models import Produto
+from .serializers import ProdutoSerializer
+from .filters import ProdutoFilter
+
+class ProdutoViewSet(ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ProdutoFilter
+    filterset_fields = {
+        'estoque': ['exact', 'gte', 'lte']
+    }
+    search_fields = ['nome']
+    ordering_fields = ['nome', 'preco']
+    ordering = ['id']
+```
+
+**4. Testando os filtros**
+
+Exemplos de URLs para testar no navegador ou Postman:
+
+- `/api/produtos/?preco_minimo=100&preco_maximo=500`
+- `/api/produtos/?estoque__gte=10&estoque__lte=50`
+- `/api/produtos/?search=Mouse` (busca textual pelo nome)
+- `/api/produtos/?ordering=-preco` (ordenação por preço decrescente)
+- `/api/produtos/?preco_minimo=100&estoque__gte=10&search=Notebook&ordering=nome`
+
+**5. Exercícios sugeridos**
+
+- Filtrar produtos por faixa de preço usando `preco_minimo` e `preco_maximo`.
+- Filtrar produtos com estoque entre valores mínimo e máximo usando os operadores `gte` e `lte`.
+- Combinar filtros de preço, estoque, busca textual e ordenação.
+- Testar as respostas da API nestes diferentes cenários para entender o comportamento.
 
 ---
 
