@@ -1637,12 +1637,13 @@ Demonstrar como criar filtros avançados personalizados para a API com django-fi
 Crie (ou edite) o arquivo `filters.py` na app `produtos`:
 
 ```python
-import django_filters
+from django_filters import FilterSet, NumberFilter
 from .models import Produto
 
-class ProdutoFilter(django_filters.FilterSet):
-    preco_minimo = django_filters.NumberFilter(field_name='preco', lookup_expr='gte')
-    preco_maximo = django_filters.NumberFilter(field_name='preco', lookup_expr='lte')
+class ProdutoFilter(FilterSet):
+    preco_minimo = NumberFilter(field_name='preco', lookup_expr='gte')
+    preco_maximo = NumberFilter(field_name='preco', lookup_expr='lte')
+    preco = NumberFilter(field_name='preco', lookup_expr='exact')
 
     class Meta:
         model = Produto
@@ -1652,6 +1653,8 @@ class ProdutoFilter(django_filters.FilterSet):
 - Explicação:
   - `preco_minimo` filtra produtos com preço maior ou igual a um valor.
   - `preco_maximo` filtra produtos com preço menor ou igual a um valor.
+  - `preco` filtra produtos com preço exatamente igual a um valor.
+  - `estoque` pode ser filtrado diretamente.
 
 **2. Filtros múltiplos para estoque sem filtros personalizados**
 
@@ -1671,7 +1674,7 @@ Dessa forma, sem precisar criar filtros customizados para estoque, a API suporta
 
 **3. Ajuste na ViewSet para integrar os filtros**
 
-Exemplo completo da ViewSet com filtros customizados e filtros múltiplos:
+Exemplo completo da ViewSet com filtros customizados e filtros múltiplos (sabendo que você pode usar `filterset_class` ou `filterset_fields`, mas não ambos ao mesmo tempo):
 
 ```python
 from django_filters.rest_framework import DjangoFilterBackend
@@ -1686,10 +1689,10 @@ class ProdutoViewSet(ModelViewSet):
     serializer_class = ProdutoSerializer
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_class = ProdutoFilter
+    filterset_class = ProdutoFilter  # Ou usa filterset_fields
     filterset_fields = {
         'estoque': ['exact', 'gte', 'lte']
-    }
+    }  # ou usa filterset_class
     search_fields = ['nome']
     ordering_fields = ['nome', 'preco']
     ordering = ['id']
@@ -1731,14 +1734,14 @@ No arquivo `settings.py`, configure a paginação global para usar sua classe pe
 ```python
 REST_FRAMEWORK = {
     # Outras configurações do DRF...
-    'DEFAULT_PAGINATION_CLASS': 'app.pagination.CustomPagination',  # ajuste o caminho conforme seu app
+    'DEFAULT_PAGINATION_CLASS': 'config.pagination.CustomPagination',  # ajuste o caminho conforme seu app
     'PAGE_SIZE': 10,  # quantidade padrão de itens por página
 }
 ```
 
-**2. Criando a páginação personalizada (arquivo `pagination.py` na sua app)**
+**2. Criando a páginação personalizada (arquivo `pagination.py` no seu projeto)**
 
-Crie o arquivo `pagination.py` na sua aplicação e defina a classe `CustomPagination`:
+Crie o arquivo `pagination.py` no seu projeto e defina a classe `CustomPagination`:
 
 ```python
 from rest_framework import pagination
@@ -1817,18 +1820,18 @@ GET /api/produtos/?page=2
 Exemplo com validação para o campo `preco`, que precisa ser sempre maior que zero:
 
 ```python
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import Produto
 
-class ProdutoSerializer(serializers.ModelSerializer):
+class ProdutoSerializer(ModelSerializer):
     class Meta:
         model = Produto
         fields = '__all__'
 
-    def validate_preco(self, value):
-        if value <= 0:
-            raise serializers.ValidationError('O preço deve ser maior que zero.')
-        return value
+    def validate_preco(self, preco):
+        if preco <= 0:
+            raise ValidationError('O preço deve ser maior que zero.')
+        return preco
 ```
 
 - O método deve ser nomeado como `validate_<nome_do_campo>`.
@@ -1839,13 +1842,13 @@ class ProdutoSerializer(serializers.ModelSerializer):
 Para validar múltiplos campos em conjunto, use o método `validate`:
 
 ```python
-    def validate(self, data):
-        preco = data.get('preco')
-        estoque = data.get('estoque')
+    def validate(self, produto):
+        preco = produto.get('preco')
+        estoque = produto.get('estoque')
 
         if estoque > 0 and (preco is None or preco <= 0):
-            raise serializers.ValidationError('Produto com estoque deve ter preço maior que zero.')
-        return data
+            raise ValidationError('Produto com estoque deve ter preço maior que zero.')
+        return produto
 ```
 
 - Recebe um dicionário com todos os campos validados até o momento.
