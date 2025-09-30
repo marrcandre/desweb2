@@ -27,6 +27,7 @@ Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, util
   - [Série "Começando aos 40 - Fábio Akita"](https://www.youtube.com/watch?v=O76ZfAIEukE&list=PLjuQ-0yGqLjcFmMkiYvHPraSptrhPlOuK)
 - Cursos:
   - [FastAPI do ZERO](https://fastapidozero.dunossauro.com/estavel/)
+  - Aplicação Front-end de Músicas: https://github.com/marrcandre/song-vue
 
 ---
 
