@@ -372,9 +372,134 @@ FastAPI → ordenação
 
 A paginação será introduzida depois que filtros, busca e ordenação estiverem compreendidos.
 
-Será utilizado um **padrão comum entre as três APIs**, evitando que o aluno precise aprender três formas diferentes de solicitar uma página de resultados.
+Será adotado como padrão comum o modelo de paginação baseado em **número da página**, semelhante ao `PageNumberPagination` do Django REST Framework.
 
-A definição concreta dos parâmetros de paginação deverá ser preservada como parte do contrato comum da API antes da implementação dessa etapa.
+A decisão é utilizar **um único contrato de paginação para Express, FastAPI e Django**, permitindo que o aluno aprenda uma única forma de solicitar e interpretar páginas de resultados.
+
+Os parâmetros serão:
+
+```text
+page
+page_size
+```
+
+Exemplos:
+
+```http
+GET /api/produtos/?page=1
+```
+
+```http
+GET /api/produtos/?page=2&page_size=20
+```
+
+O comportamento padrão será:
+
+```text
+page_size padrão: 10
+page_size máximo: 100
+```
+
+Portanto:
+
+* se `page_size` não for informado, serão retornados até 10 itens;
+* o cliente poderá solicitar outro tamanho utilizando `page_size`;
+* nenhum cliente poderá solicitar mais de 100 itens por página.
+
+### Contrato da resposta paginada
+
+Uma listagem paginada deverá retornar um objeto JSON com a seguinte estrutura:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": [
+        {
+            "id": 1,
+            "nome": "Notebook",
+            "preco": 3500.00
+        },
+        {
+            "id": 2,
+            "nome": "Mouse",
+            "preco": 80.00
+        }
+    ]
+}
+```
+
+Os campos possuem os seguintes significados:
+
+| Campo         | Significado                                  |
+| ------------- | -------------------------------------------- |
+| `page`        | número da página atual                       |
+| `page_size`   | quantidade de itens solicitada para a página |
+| `total_pages` | quantidade total de páginas disponíveis      |
+| `results`     | coleção de produtos daquela página           |
+
+Não será necessário incluir inicialmente:
+
+```text
+count
+next
+previous
+```
+
+A intenção é manter o contrato pequeno e suficiente para os objetivos pedagógicos da disciplina.
+
+### Combinação com filtros, busca e ordenação
+
+A paginação deverá funcionar em conjunto com os demais parâmetros de consulta.
+
+Exemplo:
+
+```http
+GET /api/produtos/?search=mouse&ordering=-preco&page=2&page_size=10
+```
+
+A ordem conceitual do processamento será:
+
+```text
+dados
+  ↓
+filtros
+  ↓
+busca
+  ↓
+ordenação
+  ↓
+paginação
+  ↓
+resposta
+```
+
+Isso permitirá demonstrar que a paginação não substitui filtros, busca ou ordenação: ela é aplicada sobre o conjunto de resultados produzido por essas operações.
+
+### Implementação nas tecnologias
+
+No Express:
+
+```text
+paginação implementada manualmente
+```
+
+No FastAPI:
+
+```text
+paginação implementada explicitamente
+```
+
+No Django REST Framework:
+
+```text
+PageNumberPagination
+        ↓
+CustomPagination
+```
+
+A implementação poderá ser diferente, mas o contrato observado pelo cliente deverá ser equivalente.
 
 A sequência será:
 
@@ -382,6 +507,10 @@ A sequência será:
 Express → paginação
         ↓
 FastAPI → paginação
+        ↓
+Comparação
+        ↓
+Django → paginação com abstração do DRF
 ```
 
 O princípio é:
@@ -517,7 +646,7 @@ No caso de Express e FastAPI, a comparação será feita imediatamente após a i
 
 As respostas de sucesso deverão utilizar **JSON direto**, sem envelopes genéricos como `data`, `dados` ou `message`.
 
-Por exemplo, a criação de um produto deverá retornar:
+Para operações sobre um único recurso, como criação, consulta individual ou atualização, será retornado diretamente o objeto:
 
 ```json
 {
@@ -527,21 +656,26 @@ Por exemplo, a criação de um produto deverá retornar:
 }
 ```
 
-Uma listagem deverá retornar diretamente uma coleção:
+Entretanto, a **listagem de produtos será paginada** e, portanto, utilizará o contrato específico definido na seção 7.5:
 
 ```json
-[
-    {
-        "id": 1,
-        "nome": "Notebook",
-        "preco": 3500.00
-    },
-    {
-        "id": 2,
-        "nome": "Mouse",
-        "preco": 80.00
-    }
-]
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": [
+        {
+            "id": 1,
+            "nome": "Notebook",
+            "preco": 3500.00
+        },
+        {
+            "id": 2,
+            "nome": "Mouse",
+            "preco": 80.00
+        }
+    ]
+}
 ```
 
 Não será utilizado como padrão:
@@ -558,6 +692,28 @@ Não será utilizado como padrão:
 ```
 
 A intenção é aproximar as APIs de um padrão REST simples e facilitar o consumo posterior pelo Vue.js.
+
+A diferença entre:
+
+```text
+GET /api/produtos/{id}/
+```
+
+e:
+
+```text
+GET /api/produtos/
+```
+
+é intencional:
+
+```text
+recurso individual
+→ objeto JSON direto
+
+coleção
+→ objeto JSON contendo os metadados da paginação e results
+```
 
 ---
 
@@ -673,7 +829,8 @@ Os alunos deverão trabalhar diretamente com conceitos como:
 * códigos HTTP;
 * validação;
 * manipulação dos dados;
-* persistência.
+* persistência;
+* paginação.
 
 O objetivo não é tornar o Express uma API excessivamente sofisticada.
 
@@ -700,7 +857,8 @@ Deverá permitir trabalhar com:
 * validação;
 * respostas;
 * documentação automática;
-* persistência simples.
+* persistência simples;
+* paginação.
 
 A comparação com Express deverá mostrar principalmente como tipagem, validação e documentação podem ser integradas ao framework.
 
@@ -1000,18 +1158,18 @@ Uma das partes mais importantes da disciplina será comparar as soluções.
 
 A tabela inicial poderá seguir esta estrutura:
 
-| Conceito     | Express      | FastAPI              | Django REST Framework |
-| ------------ | ------------ | -------------------- | --------------------- |
-| Rota         | `app.get()`  | `@app.get()`         | Router/ViewSet        |
-| POST         | `app.post()` | `@app.post()`        | `create()`            |
-| Validação    | Manual       | Pydantic             | Serializer/Model      |
-| Persistência | Manual       | Manual               | ORM                   |
-| Filtros      | Manual       | Manual               | Django Filter         |
-| Busca        | Manual       | Manual               | SearchFilter          |
-| Ordenação    | Manual       | Manual               | OrderingFilter        |
-| Paginação    | Manual       | Manual               | Paginação do DRF      |
-| Documentação | Configuração | Automática           | OpenAPI/Swagger       |
-| CRUD         | Manual       | Relativamente manual | ViewSet               |
+| Conceito     | Express      | FastAPI              | Django REST Framework  |
+| ------------ | ------------ | -------------------- | ---------------------- |
+| Rota         | `app.get()`  | `@app.get()`         | Router/ViewSet         |
+| POST         | `app.post()` | `@app.post()`        | `create()`             |
+| Validação    | Manual       | Pydantic             | Serializer/Model       |
+| Persistência | Manual       | Manual               | ORM                    |
+| Filtros      | Manual       | Manual               | Django Filter          |
+| Busca        | Manual       | Manual               | SearchFilter           |
+| Ordenação    | Manual       | Manual               | OrderingFilter         |
+| Paginação    | Manual       | Manual               | `PageNumberPagination` |
+| Documentação | Configuração | Automática           | OpenAPI/Swagger        |
+| CRUD         | Manual       | Relativamente manual | ViewSet                |
 
 A tabela poderá ser ampliada conforme novos conceitos forem introduzidos.
 
@@ -1133,7 +1291,8 @@ Na etapa comum, espera-se que os alunos sejam capazes de construir uma interface
 * cadastrar;
 * editar;
 * excluir;
-* pesquisar ou filtrar.
+* pesquisar ou filtrar;
+* navegar entre páginas de resultados.
 
 A partir daí, os projetos individuais poderão aprofundar o frontend conforme suas necessidades.
 
@@ -1195,7 +1354,9 @@ preco:
 - máximo de 2 casas decimais
 ```
 
-As respostas de sucesso utilizarão JSON direto.
+As respostas de sucesso de recursos individuais utilizarão JSON direto.
+
+As listagens utilizarão o contrato de paginação definido na seção 7.5.
 
 Os erros utilizarão o campo:
 
@@ -1218,6 +1379,31 @@ ou, para validações estruturadas:
 O `PUT` será tratado como atualização completa.
 
 O `PATCH` ficará fora da etapa inicial.
+
+A paginação utilizará:
+
+```text
+page
+page_size
+```
+
+com:
+
+```text
+page_size padrão: 10
+page_size máximo: 100
+```
+
+e resposta:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": []
+}
+```
 
 ---
 
@@ -1286,6 +1472,7 @@ Perguntas importantes:
 * Como os parâmetros são tratados?
 * Como a documentação é gerada?
 * Como a persistência é implementada?
+* Como a paginação é implementada?
 * Onde existe mais abstração?
 * O que ficou mais explícito em cada tecnologia?
 
@@ -1340,6 +1527,17 @@ Antes do Vue, os alunos deverão consumir a API utilizando ferramentas simples:
 
 O objetivo é reforçar que uma API pode ser consumida independentemente do frontend.
 
+Também deverá ser demonstrado o consumo de uma coleção paginada, incluindo:
+
+```text
+page
+page_size
+total_pages
+results
+```
+
+O aluno deverá compreender que o frontend precisa interpretar os metadados da paginação para construir a navegação entre páginas.
+
 ---
 
 ## Etapa 8 — Vue.js
@@ -1361,7 +1559,23 @@ PUT
 DELETE
 ```
 
-Finalmente, poderão ser adicionados filtros, busca e outros recursos.
+Finalmente, poderão ser adicionados:
+
+```text
+filtros
+busca
+ordenação
+paginação
+```
+
+A paginação no frontend deverá utilizar o mesmo contrato definido para as APIs:
+
+```text
+page
+page_size
+total_pages
+results
+```
 
 ---
 
@@ -1462,6 +1676,10 @@ A aplicação atual deverá ser revisada para:
 * implementar busca;
 * revisar ordenação;
 * implementar paginação;
+* utilizar `page` e `page_size`;
+* utilizar `page_size` padrão de 10;
+* limitar `page_size` a 100;
+* retornar `page`, `page_size`, `total_pages` e `results` nas listagens;
 * padronizar respostas de sucesso;
 * padronizar respostas de erro;
 * utilizar os códigos HTTP definidos;
@@ -1487,6 +1705,10 @@ A aplicação atual deverá ser revisada para:
 * implementar busca;
 * revisar ordenação;
 * implementar paginação;
+* utilizar `page` e `page_size`;
+* utilizar `page_size` padrão de 10;
+* limitar `page_size` a 100;
+* retornar `page`, `page_size`, `total_pages` e `results` nas listagens;
 * padronizar respostas de sucesso;
 * padronizar respostas de erro;
 * utilizar os códigos HTTP definidos;
@@ -1511,6 +1733,53 @@ Produto
 - id
 - nome
 - preco
+```
+
+A paginação deverá utilizar o mecanismo de paginação baseado em número de página do Django REST Framework.
+
+A configuração pedagógica de referência será equivalente a:
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':
+        'app.pagination.CustomPagination',
+
+    'PAGE_SIZE': 10,
+}
+```
+
+Com uma classe de paginação baseada em:
+
+```python
+from rest_framework import pagination
+from rest_framework.response import Response
+
+
+class CustomPagination(pagination.PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'page': self.page.number,
+            'page_size': self.page.paginator.per_page,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data,
+        })
+```
+
+A configuração poderá conter também as demais opções necessárias da aplicação, como autenticação, permissões e documentação.
+
+O importante para o contrato pedagógico é que a resposta observada pelo cliente seja:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": []
+}
 ```
 
 Depois poderá evoluir para:
@@ -1639,13 +1908,39 @@ máximo de 2 casas decimais
 
 ## 29.6 Respostas de sucesso
 
-JSON direto, sem envelopes genéricos:
+Recursos individuais utilizarão JSON direto, sem envelopes genéricos:
 
 ```json
 {
     "id": 1,
     "nome": "Notebook",
     "preco": 3500.00
+}
+```
+
+Listagens utilizarão o contrato de paginação:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": [
+        {
+            "id": 1,
+            "nome": "Notebook",
+            "preco": 3500.00
+        }
+    ]
+}
+```
+
+Não serão utilizados envelopes genéricos como:
+
+```json
+{
+    "message": "Produto criado com sucesso",
+    "dados": {}
 }
 ```
 
@@ -1687,7 +1982,94 @@ Não encontrado   → 404
 
 ---
 
-## 29.9 Arquivos progressivos
+## 29.9 Paginação
+
+A paginação seguirá o padrão de **número da página**, inspirado no Django REST Framework.
+
+Parâmetros:
+
+```text
+page
+page_size
+```
+
+Exemplos:
+
+```http
+GET /api/produtos/?page=1
+```
+
+```http
+GET /api/produtos/?page=2&page_size=20
+```
+
+Configuração conceitual:
+
+```text
+page_size padrão → 10
+page_size máximo  → 100
+```
+
+Contrato da resposta:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": []
+}
+```
+
+Campos:
+
+```text
+page
+→ página atual
+
+page_size
+→ quantidade de itens solicitada para a página
+
+total_pages
+→ quantidade total de páginas
+
+results
+→ resultados da página atual
+```
+
+A paginação deverá funcionar em conjunto com:
+
+```text
+filtros
+busca
+ordenação
+```
+
+A ordem conceitual será:
+
+```text
+dados
+  ↓
+filtros
+  ↓
+busca
+  ↓
+ordenação
+  ↓
+paginação
+  ↓
+resposta
+```
+
+No Express e FastAPI a paginação será implementada manualmente.
+
+No Django REST Framework será utilizada uma implementação baseada em `PageNumberPagination`, com `page_size_query_param = 'page_size'` e `max_page_size = 100`.
+
+O contrato externo deverá ser equivalente nas três tecnologias.
+
+---
+
+## 29.10 Arquivos progressivos
 
 A convenção será:
 
@@ -1706,7 +2088,7 @@ Exemplo:
 
 ---
 
-## 29.10 Arquivo da API completa
+## 29.11 Arquivo da API completa
 
 A versão completa de cada sequência deverá utilizar:
 
@@ -1727,7 +2109,7 @@ A convenção `-completo` também não será utilizada.
 
 ---
 
-## 29.11 README
+## 29.12 README
 
 Haverá:
 
@@ -1749,7 +2131,7 @@ Não haverá um README independente para cada aula.
 
 ---
 
-## 29.12 Metodologia Express → FastAPI
+## 29.13 Metodologia Express → FastAPI
 
 A ordem de desenvolvimento será:
 
@@ -1797,7 +2179,7 @@ Esse trabalho deverá seguir esta ordem:
 12. revisar o Django;
 13. definir a etapa de evolução do Django;
 14. estruturar o README único com capítulos numerados;
-15. preparar o conteúdo de consumo da API;
+15. preparar o conteúdo de consumo da API, incluindo o consumo de listas paginadas;
 16. introduzir Vue.js;
 17. iniciar os projetos individuais.
 
