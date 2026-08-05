@@ -85,7 +85,7 @@ Rota padrão: **`/produtos`** (sem `/api/`, sem barra final). Documentação aut
 | CRUD completo | `aula4_crud_completo.js` | `aula4_crud_completo.py` | **alinhado** | mesmo comportamento |
 | Validação | `aula5` (manual) | `aula5` (Pydantic) | **alinhado em conceito, diferente em mecanismo** | esperado pelo plano (comparação manual x Pydantic) |
 | Ordenação | `aula5` | `aula5` | **alinhado** | ambos `ordenar_por`/`ordem` |
-| Paginação | `aula5` | `aula5` | **alinhado (semântica divergente)** | Express: `slice(pagina,pagina+por_pagina)` (offset); FastAPI: `pagina*por_pagina` (0-index) — significados diferentes |
+| Paginação | `aula5` | `aula5` | **divergente do contrato fechado** | Hoje usam `pagina`/`por_pagina` e com **semântica diferente** (Express: offset; FastAPI: página 0-based). O contrato fechado no plan é `page`/`page_size`/`total_pages`/`results` (ver seções 8‑6 e 17) |
 | Busca (`search`) | **—** | **—** | **ausente em ambos** | lacuna |
 | Persistência JSON | **—** | `aula6_json_persistente.py` | **FastAPI adiantado** | Express não tem equivalente |
 
@@ -172,7 +172,7 @@ Os arquivos são numerados por **"aula"** (nomenclatura `aulaN`), mas essa numer
 - **Filtros:** `min_preco`/`max_preco` — **alinhados** ao plano. ✔
 - **Busca:** inexistente em ambos. ✘
 - **Ordenação:** `ordenar_por`/`ordem` **divergem** do padrão do plano (`ordering=nome`, `ordering=-preco`). ✘
-- **Paginação:** `pagina`/`por_pagina` **divergem** do padrão comum ainda a definir; além disso Express e FastAPI **interpretam `pagina` de forma diferente** (offset vs. página 0-based). ✘✘
+- **Paginação:** `pagina`/`por_pagina` **divergem** do contrato comum **já fechado** no plan (`page`, `page_size`, `total_pages`, `results`); além disso Express e FastAPI **interpretam `pagina` de forma diferente** (offset vs. página 0-based). ✘✘ (detalhe completo na seção 8‑6)
 - **Formato das respostas (sucesso):** **divergente** — usam envelope `{message, dados}`/`{mensagem, dados}` (POST/PUT/DELETE) e, na listagem, ora array direto ora `{produtos:…}`. O plano exige **JSON direto**, sem envelopes. ✘
 - **Formato dos erros:** **divergente** — usam `{"erro":…}`/`{"error":…}` em vez de `{"detail": …}`. ✘
 - **Códigos HTTP:** **divergentes** — POST retorna 200 (deveria 201); DELETE retorna 200 com corpo (deveria 204); GET por ID inexistente: Express 404 / FastAPI 200 (no `aula3a`). ✘
@@ -202,6 +202,42 @@ Os arquivos são numerados por **"aula"** (nomenclatura `aulaN`), mas essa numer
 ### 5. Convenção `NN-api-completa`
 - **Compatível:** nada. Nenhum arquivo usa `NN-…` nem `-api-completa` (usam `aulaN_…`). **Diverge 100%.**
 - Precisarão ser **renomeados/reorganizados** para `NN-descricao` e o final para `NN-api-completa`. (Mais detalhe na seção 13.)
+
+### 6. Paginação (contrato comum fechado)
+
+**Decisão fechada** no plan (além das cinco anteriores). As três APIs devem expor o mesmo contrato:
+
+```text
+GET /api/produtos/?page=1
+GET /api/produtos/?page=2
+GET /api/produtos/?page=2&page_size=20
+```
+
+- `page`: página solicitada (base 1);
+- `page_size`: opcional, itens por página (**padrão 10**, **máximo 100**);
+- resposta paginada com estrutura **exata**:
+
+```json
+{
+    "page": 1,
+    "page_size": 10,
+    "total_pages": 5,
+    "results": [
+        {
+            "id": 1,
+            "nome": "Notebook",
+            "preco": 3500.00
+        }
+    ]
+}
+```
+
+- **Não** serão usados `count`, `next`, `previous`, `total` etc. (nada além de `page`, `page_size`, `total_pages`, `results`).
+
+**Estado atual vs. decisão:**
+- **Divergente em ambas:** Express e FastAPI usam `pagina`/`por_pagina`, retornam **array direto** (sem `page`/`page_size`/`total_pages`/`results`) e com **semântica de página divergente entre si** (Express trata `pagina` como offset; FastAPI trata como página 0-based).
+- **Django:** paginação **ainda não configurada** no código (nem `PAGE_SIZE`, nem `DEFAULT_PAGINATION_CLASS`); a Aula 13 do README descreve justamente o formato `page/page_size/total_pages/results`, alinhado ao contrato — falta apenas implementar.
+- **Alteração futura:** Express e FastAPI deverão adotar `page`/`page_size` e retornar o envelope `{page, page_size, total_pages, results}` na listagem; Django deverá ser configurado para o mesmo formato.
 
 ---
 
@@ -261,7 +297,7 @@ Baseada nos arquivos reais e no plano, dividindo a atual `aula5` e criando lacun
 07 — Filtros (preco_minimo/preco_maximo) → Express aula3b/aula5    → FastAPI aula3b/aula5
 08 — Busca (search)                      → (criar)                 → (criar)
 09 — Ordenação (ordering, -preco)        → Express aula5           → FastAPI aula5/aula6
-10 — Paginação (padrão comum a definir)  → Express aula5           → FastAPI aula5/aula6
+10 — Paginação (page/page_size/total_pages/results) → Express aula5 → FastAPI aula5/aula6
 11 — Persistência JSON                   → (criar Express)         → FastAPI aula6
 12 — API completa (NN-api-completa)      → (criar)                 → (criar)
 ```
@@ -317,13 +353,13 @@ Princípios da convenção:
 6. **Códigos HTTP incorretos** (POST deve ser 201; DELETE deve ser 204; GET-id inexistente deve ser 404 uniformemente).
 7. **Validação incompleta** (nome sem 2–100/trim; preço sem teto de 2 casas decimais).
 8. **Ordenação divergente** do contrato (`ordenar_por/ordem` em vez de `ordering` com `-`).
-9. **Paginação divergente e semântica diferente** entre as duas (e sem padrão comum definido no código).
+9. **Paginação divergente do contrato fechado:** o padrão comum do plan (`page`/`page_size`/`total_pages`/`results`, padrão 10, máx. 100) **não está implementado**. Express e FastAPI usam `pagina`/`por_pagina` com semântica diferente entre si.
 10. **Nomes de parâmetros inconsistentes** (`id`, `item_id`, `id_produto`).
 
 ### Pode aguardar
 11. Convenção `NN-…`/`NN-api-completa` (renomeação — só após o mapa estar estável).
 12. Unificação em README único (reorganização editorial, pode vir depois do código).
-13. Paginação do Django (já descrita na doc; implementar quando for trabalhada a evolução).
+13. **Paginação no Django** (contrato já está definido no plan e descrito na Aula 13; implementar quando o Django for trabalhado na evolução).
 14. Validação customizada no Django (idem).
 15. Vue (depende da consolidação do backend).
 
@@ -339,7 +375,7 @@ Princípios da convenção:
 - Riscos: quebrar a correspondência de numeração; volume de edições.
 
 **FASE 2 — Padronização do contrato**
-- Objetivo: aplicar rotas `/api/produtos/`, JSON direto, `detail`, códigos 201/204, validação completa, `ordering`, e **definir o padrão comum de paginação**.
+- Objetivo: aplicar rotas `/api/produtos/`, JSON direto, `detail`, códigos 201/204, validação completa, `ordering`, e **aplicar o padrão comum de paginação já fechado** (`page`/`page_size`/`total_pages`/`results`, padrão 10, máx. 100).
 - Arquivos: etapas avançadas (validacao, filtros, busca, ordenacao, paginacao) de ambas.
 - Alterações: rotas, respostas de POST/PUT/DELETE, formato de erro, validações.
 - Dependências: Fase 1 (arquivos reorganizados).
@@ -406,8 +442,140 @@ Princípios da convenção:
 9. **Primeira alteração a fazer:** **FASE 1 + FASE 2**, ou seja, num primeiro momento **padronizar rotas (`/api/produtos/`), formato de resposta (JSON direto em POST/PUT/DELETE), erro `detail`, códigos 201/204 e validação completa**, começando pela revisão/criação da **persistência e busca** e pela **divisão da `aula5` em etapas por conceito**. Em termos de "primeiro passo concreto": **criar a etapa de busca e a persistência no Express para equilibrar as duas tecnologias**, e só depois padronizar o contrato.
 
 10. **Problemas técnicos/pedagógicos a resolver antes de mexer nos códigos:**
-    - **Definir o padrão comum de paginação** do contrato (página 1-based com `page`/`page_size`, ou `pagina`/`por_pagina` 0-based?) — sem isso Express e FastAPI continuarão com semântica divergente.
+    - **Padrão comum de paginação — JÁ FECHADO** no plan (`page`/`page_size`/`total_pages`/`results`, padrão 10, máx. 100). Não é mais uma decisão em aberto; resta **aplicá-lo** em Express, FastAPI e Django.
     - **Alinhar o nome dos parâmetros** de rota (`id`/`item_id`/`id_produto`) e a chave de ordenação (`ordering` com `-`).
     - **Resolver a divergência de status do GET-por-ID inexistente** no FastAPI `aula3a` (hoje retorna 200 com `{erro}`, deve ser 404 `{detail}`).
     - **Decidir como tratar a "evolução" do Django** sem reduzir o modelo, e harmonizar a **paginação/validação que já são documentadas nas Aulas 13–14 mas ainda não implementadas**.
     - **Definir a política do README único** (numeração de capítulos conceituais) e como integrar os READMEs por subprojeto, para que a documentação não fique "à frente" do código.
+
+---
+
+## 17. Comparativo com o plan.md (decisões fechadas) — status atual
+
+Classificação do estado atual de cada item do planejamento, com base no código real e no contrato fechado (incluindo a paginação):
+
+| # | Decisão fechada (plan) | Status | Detalhe |
+|---|---|---|---|
+| 1 | Modelo `Produto(id, nome, preco)` | **Correto ✅** | Express e FastAPI usam id/nome/preco. Django extrapola (evolução prevista, não reduzir). |
+| 2 | URL-base `/api/produtos/` | **Divergente ✘** | Nenhum exemplo usa prefixo `/api` nem barra final (usam `/produtos`). |
+| 3 | CRUD completo | **Parcial/Divergente** | CRUD existe, mas com respostas em envelope e códigos HTTP errados (POST 200, DELETE 200). |
+| 4 | `PUT` como atualização completa | **Parcial ✅** | Já trata o recurso por inteiro; falta padronizar a resposta (objeto direto, 200). |
+| 5 | Ausência de `PATCH` na etapa inicial | **Correto ✅** | Nenhum exemplo implementa `PATCH` (coerente). |
+| 6 | Validação `nome` (trim, 2–100) e `preco` (>0, ≤2 casas) | **Parcial ✘** | Validação básica existe, mas faltam `trim`/2–100 no nome e teto de 2 casas no preço. |
+| 7 | Filtros (`preco_minimo`/`preco_maximo`) | **Correto ✅** | Nomes coincidem com o plan nas duas tecnologias. |
+| 8 | Busca (`search`) | **Faltando ✘** | Inexistente em Express e FastAPI; implementada no Django. |
+| 9 | Ordenação (`ordering`, com `-`) | **Divergente ✘** | Usam `ordenar_por`/`ordem` em vez de `ordering`/`-campo`. |
+| 10 | Paginação (`page`/`page_size`/`total_pages`/`results`) | **Divergente ✘** | Usam `pagina`/`por_pagina`, array direto e semântica divergente entre si; Django sem paginação no código. |
+| 11 | Contrato de respostas (JSON direto, sem envelopes) | **Divergente ✘** | POST/PUT/DELETE usam `{message, dados}`; listagem varia entre array e `{produtos:…}`. |
+| 12 | Contrato de erros (`detail`) | **Divergente ✘** | Usam `{erro}`/`{error}`; FastAPI usa estrutura Pydantic própria. |
+| 13 | Códigos HTTP (200/201/204/400/404) | **Divergente ✘** | POST não retorna 201; DELETE não retorna 204; GET-id inexistente divergente (200 vs 404). |
+| 14 | Persistência (memória → JSON) | **Parcial** | Memória nas duas; JSON só no FastAPI (`aula6`); falta no Express. |
+
+## 18. Alterações de código necessárias posteriormente
+
+### Express (`express-bsi4/`)
+- Adotar rotas `/api/produtos/` e `/api/produtos/:id/` (prefixo `/api` + barra final).
+- Padronizar o nome do parâmetro de rota para `id`.
+- Retornar **JSON direto** em POST (201), PUT (200) e DELETE (204 sem corpo).
+- Usar `detail` no erro (404 do GET por ID inexistente e nas validações).
+- Completar validação: `trim`, nome 2–100, preço >0 e ≤2 casas decimais.
+- Trocar a ordenação para `ordering` (aceitar `-campo`).
+- Trocar a paginação para `page`/`page_size` e retornar `{page, page_size, total_pages, results}`.
+- Adicionar **busca (`search`)**.
+- Adicionar **persistência JSON** (contraparte de `aula6` do FastAPI).
+- Dividir `aula5` em etapas por conceito; renomear para `NN-descricao` e criar `NN-api-completa`.
+- Remover o envelope `{produtos:…}` da listagem em `aula3b`.
+
+### FastAPI (`fastapi-bsi4/`)
+- Adotar rotas `/api/produtos/` e `/api/produtos/{id}/` (prefixo `/api` + barra final).
+- Padronizar o nome do parâmetro de rota (`item_id`/`id_produto` → `id`).
+- Corrigir o GET por ID inexistente no `aula3a` (hoje retorna 200 com `{"erro":…}` → 404 com `{"detail": "Produto não encontrado."}`).
+- Retornar **JSON direto** em POST (201), PUT (200) e DELETE (204 sem corpo).
+- Padronizar os erros de validação Pydantic para o formato `{"detail": {campo: msg}}`.
+- Completar a validação: `trim` e nome 2–100; preço >0 e ≤2 casas decimais.
+- Trocar a ordenação para `ordering` (aceitar `-campo`).
+- Trocar a paginação para `page`/`page_size` e retornar `{page, page_size, total_pages, results}`.
+- Adicionar **busca (`search`)** (em `aula5`/`aula6`).
+- Dividir `aula5`/`aula6` em etapas por conceito; renomear para `NN-descricao` e criar `NN-api-completa`.
+
+### Django (`django-bsi4/`)
+- **Não reduzir** o modelo (`Categoria`, campos extras, relacionamento) — é a evolução prevista.
+- Implementar **paginação** (`DEFAULT_PAGINATION_CLASS` + `PAGE_SIZE`) retornando `{page, page_size, total_pages, results}`, alinhada ao contrato fechado (a Aula 13 já descreve o formato).
+- Implementar **validação customizada** nos serializers (`validate_<campo>`, conforme Aula 14), mantendo regras equivalentes (nome 2–100, preço >0 e ≤2 casas).
+- Quando a evolução for trabalhada, alinhar filtros/ordenação já existentes ao contrato comum.
+
+## 19. Etapas que podem ser preservadas sem alteração
+
+Classificação (aplicável ao código e à documentação, sem modificá-los agora):
+
+| Etapa | Tecnologia | Por que preservar |
+|---|---|---|
+| `01` API-base (GET lista) | Express `aula2a/2b` · FastAPI `aula2a/2b` | Cumpre o 1.º conceito; só exige ajuste de rota/resposta, não reescrita |
+| GET por ID | Express `aula3a` · FastAPI `aula3a` | Lógica ok; Exige apenas corrigir status/erro do FastAPI e formato de rota |
+| Filtros (`min_preco/max_preco`) | Express `aula3b/5` · FastAPI `aula3b/5` | Parâmetros já coincidem com o plan |
+| Validação manual vs. Pydantic | Express `aula5` · FastAPI `aula5/6` | É exatamente a comparação pedagógica desejada |
+| Ordenação/paginação (conceito) | Express `aula5` · FastAPI `aula5/6` | Conceito presente; apenas o contrato/parâmetros mudam |
+| Persistência JSON | FastAPI `aula6` | Modelo a ser replicado no Express |
+| Contrato/evolução do Django | Django (models, filters, viewsets, routers, spectacular) | Não deve ser reduzido; é a evolução didática |
+| Docs automática (`/docs`, `/redoc`) | FastAPI | Preservar |
+| `Produto(id, nome, preco)` como base | Todas | Campo do contrato |
+
+---
+
+# Próxima etapa de implementação
+
+Esta seção **não implementa nada** — apenas indica a **ordem recomendada das próximas alterações de código**, respeitando a metodologia:
+
+```text
+Conceito
+   ↓
+Express
+   ↓
+FastAPI
+   ↓
+Comparação
+   ↓
+Próximo conceito
+```
+
+Cada etapa conceitual é feita primeiro no Express e imediatamente depois no FastAPI, comparando-se os resultados antes de avançar. A ordem abaixo aplica, em cada etapa, também os ajustes de contrato já fechados (rotas `/api/produtos/`, JSON direto, `detail`, códigos 201/204/404, validação completa, `ordering`, paginação `page`/`page_size`/`total_pages`/`results`).
+
+1. **Rota e resposta da API básica** — adequar `/api/produtos/`, JSON direto e códigos HTTP. → Express (`aula2a/2b`) · FastAPI (`aula2a/2b`). *(incorpora contrato de rota/resposta/status)*
+2. **GET por ID** — uniformizar 404 com `detail`, padronizar parâmetro de rota e barra final. → `Express aula3a` · `FastAPI aula3a`.
+3. **POST** — retorno 201 em JSON direto. → Express · FastAPI.
+4. **PUT** — atualização completa, resposta 200 em JSON direto. → Express · FastAPI.
+5. **DELETE** — retorno 204 sem corpo. → Express · FastAPI.
+6. **Validação** — `trim`, nome 2–100; preço >0 e ≤2 casas; erro `detail` por campo. → Express (manual) · FastAPI (Pydantic).
+7. **Filtros** — `preco_minimo`/`preco_maximo`(já ok, apenas rotas/retorno). → Express · FastAPI.
+8. **Busca (`search`)** — criar em ambas. → Express · FastAPI.
+9. **Ordenação** — adotar `ordering` com `-campo`. → Express · FastAPI.
+10. **Paginação** — adotar `page`/`page_size`/`total_pages`/`results` (padrão 10, máx. 100). → Express · FastAPI.
+11. **Persistência JSON** — criar no Express (contraparte de `aula6`). → Express · FastAPI (já pronto).
+12. **API completa** — criar `NN-api-completa` em cada tecnologia e refatorar a numeração para `NN-descricao`.
+13. **Renomeação dos arquivos progressivos** — aplicar `NN-descricao` nas duas (sem alterar conteúdo).
+14. **Django** — implementar paginação e validação customizada conforme contrato; usar a evolução (Categoria etc.) como etapa didática posterior.
+15. **README único** — reorganização editorial em capítulos numerados (após a numeração dos arquivos estar estável).
+16. **(Futuro) Consumo da API + Vue.js** — somente após a consolidação do backend.
+
+> Nota: itens 14–16 vêm depois porque dependem do backend consolidado; seguem o plano (README/DRF/Vue fora do escopo progressivo Express↔FastAPI desta ordem).
+
+---
+
+## Resumo das principais divergências (atualizado)
+
+- **Rotas**: nenhuma usa `/api/produtos/` (sem `/api`, sem barra final). Express `/produtos`, FastAPI `/produtos`.
+- **Respostas**: POST/PUT/DELETE com envelope `{message, dados}`; listagem ora array direto ora `{produtos:…}` — contrato pede JSON direto.
+- **Erros**: `{erro}`/`{error}` (Express/FastAPI) em vez de `{"detail": …}`; FastAPI `aula3a` retorna 200 com `{erro}` em vez de 404.
+- **Códigos HTTP**: POST não retorna 201; DELETE não retorna 204.
+- **Validação**: incompleta (falta trim/nome 2–100 e teto de 2 casas no preço).
+- **Ordenação**: `ordenar_por`/`ordem` em vez de `ordering`/`-campo`.
+- **Paginação**: `pagina`/`por_pagina` divergentes entre si; contrato fechado é `page`/`page_size`/`total_pages`/`results` (não implementado).
+- **Busca**: ausente em Express e FastAPI (presente no Django).
+- **Persistência JSON**: só no FastAPI (`aula6`); faltando no Express.
+- **Arquivos**: nomenclatura `aulaN_…` não segue `NN-descricao`; não existe `NN-api-completa`.
+- **Django**: paginação e validação ainda não implementadas (descritas na doc); modelo já está além da API-base (Categoria etc.), o que é evolução prevista.
+- **README**: por subprojeto e por "aulas"; plan pede README único.
+
+### Confirmação
+
+**Nenhum código foi alterado.** A única modificação realizada nesta tarefa foi a atualização do documento `desweb2/docs/analise-estado-atual.md`. Nenhum arquivo `.js`, `.py`, `.json`, README, `plan.md` ou configuração foi modificado.
