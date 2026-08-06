@@ -579,3 +579,54 @@ Cada etapa conceitual é feita primeiro no Express e imediatamente depois no Fas
 ### Confirmação
 
 **Nenhum código foi alterado.** A única modificação realizada nesta tarefa foi a atualização do documento `desweb2/docs/analise-estado-atual.md`. Nenhum arquivo `.js`, `.py`, `.json`, README, `plan.md` ou configuração foi modificado.
+
+---
+
+# 20. Atualização — refatoração do Express concluída
+
+Após a análise acima, a sequência pedagógica do **Express** foi reorganizada (ver commit do repositório `express-bsi4`). As tabelas das seções 2 a 5 e 12 a 14 descrevem o estado **anterior** à refatoração e devem ser lidas como diagnóstico histórico. Esta seção registra o estado atual.
+
+## 20.1 Nova sequência incremental do Express
+
+A sequência passou a ser **incremental por conceito**, com cada arquivo mantendo o comportamento do anterior:
+
+| Arquivo | Conceito |
+|---|---|
+| `aula2_api_basica_get_colecao.js` | GET da coleção |
+| `aula3_get_por_id.js` | GET por ID (404 com `detail`) |
+| `aula4_post.js` | POST (201) |
+| `aula5_put.js` | PUT (atualização completa, 200) |
+| `aula6_delete.js` | DELETE (204 sem corpo) |
+| `aula7_validacao.js` | validação de `nome` e `preco` |
+| `aula8_filtros.js` | filtros `preco_minimo`/`preco_maximo` |
+| `aula9_busca.js` | busca `search` (case-insensitive) |
+| `aula10_ordenacao.js` | ordenação `ordering` (`nome`/`preco`, `-` para decrescente) |
+| `aula11_paginacao.js` | paginação `page`/`page_size` (`total_pages`/`results`) |
+| `aula12_persistencia_json.js` | persistência em `produtos.json` |
+| `aula13_api_completa.js` | versão consolidada final (não introduz novo conceito) |
+
+Decisões consolidadas da sequência:
+
+- **`aula12`** é a última aula conceitual.
+- **`aula13`** é apenas o arquivo final de referência/consolidação.
+- A antiga **`aula5` monolítica** (`aula5_crud_completo_validacao_filtro_ordenacao_paginacao.js`) foi **dividida** em `aula7` (validação), `aula8` (filtros), `aula9` (busca), `aula10` (ordenação) e `aula11` (paginação).
+
+## 20.2 Arquivos removidos
+
+Foram **removidos** por ter se tornado obsoletos (substituídos pela nova sequência):
+
+- `aula2a.js` — renomeado para `aula2_api_basica_get_colecao.js`
+- `aula2b.js`
+- `aula3a.js`
+- `aula3b_filtros.js`
+- `aula4_crud_completo.js`
+- `aula5_crud_completo_validacao_filtro_ordenacao_paginacao.js`
+- `aula6_json_persistente.js`
+
+## 20.3 Arquivo de dados
+
+- `produtos.json` é mantido versionado no Git; contém apenas os **5 produtos-base** (ids 1 a 5) e é utilizado pelas aulas 12 e 13.
+
+## 20.4 Dependências
+
+- `package.json` manteve apenas a dependência `express` — nenhuma dependência órfã foi encontrada após a refatoração.
