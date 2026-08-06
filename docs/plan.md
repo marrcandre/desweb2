@@ -974,6 +974,104 @@ Os arquivos de código continuarão sendo **evolutivos**, mesmo que a documenta�
 
 ---
 
+## Testes HTTP didáticos e exercícios
+
+Cada etapa/conceito da sequência deve possuir, além do código-fonte, uma estratégia padronizada de **testes HTTP didáticos** e de **exercícios**, compartilhada entre os três backends (Express, FastAPI e Django REST Framework).
+
+### 16.1 Código-fonte da aula
+
+O código-fonte de cada etapa:
+
+* implementa o conceito daquela etapa;
+* preserva as funcionalidades das etapas anteriores;
+* pode conter, no final, comentários curtos com os exemplos essenciais de requisições HTTP para testar o conceito apresentado;
+* **não** deve ser transformado em um manual extenso de testes.
+
+### 16.2 Testes HTTP da aula — cliente oficial: Bruno
+
+- Os testes de cada aula devem ser **executáveis em um cliente HTTP**.
+- O cliente HTTP oficial escolhido para o projeto é o **Bruno**.
+- A coleção do Bruno deve ser **versionada junto ao projeto** (segue o mesmo princípio de versionamento dos arquivos de código).
+- Os testes devem evoluir **incrementalmente** junto com as aulas.
+- Os testes de uma aula devem incluir, quando útil, a **regressão das funcionalidades anteriores**, para comprovar que a evolução não quebrou o que já existia.
+
+### 16.3 Exercícios
+
+- Os testes fornecidos servem para **verificar se a API está funcionando**.
+- Os exercícios devem ser **separados dos testes de verificação**.
+- Exercícios podem pedir ao aluno que **modifique ou amplie a API**, evitando transformar simplesmente os testes fornecidos em exercícios.
+- Sempre que adequado, exercícios podem **antecipar conceitos** que serão formalizados em uma aula posterior.
+
+### 16.4 Mesmos testes para os três backends
+
+Express, FastAPI e Django REST Framework devem, **sempre que tecnicamente possível, ser submetidos ao mesmo conjunto de testes HTTP e ao mesmo contrato externo da API**. Isso permite ao aluno comparar, entre as três tecnologias:
+
+- o mesmo endpoint;
+- os mesmos parâmetros;
+- os mesmos dados;
+- os mesmos códigos HTTP;
+- os mesmos formatos JSON;
+- os mesmos casos de sucesso;
+- os mesmos casos de erro.
+
+As diferenças entre as tecnologias devem estar principalmente na **implementação interna** e na **quantidade de código/automação** necessária em cada framework.
+
+### 16.5 Organização sugerida da coleção
+
+A estrutura das coleções de teste deve preservar claramente a separação entre os três backends:
+
+```text
+http/
+├── express/
+├── fastapi/
+└── drf/
+```
+
+Cada tecnologia deve possuir sua coleção de requisições organizada por aula/conceito. Exemplo:
+
+```text
+Aula 02 - GET coleção
+Aula 03 - GET por ID
+Aula 04 - POST
+Aula 05 - PUT
+...
+Aula 12 - Persistência
+```
+
+Estruturas alternativas equivalentes são aceitáveis, desde que preservem a separação entre os backends.
+
+### 16.6 Contrato como especificação executável
+
+A coleção de testes deve funcionar como uma **especificação executável do contrato HTTP da disciplina**. Por exemplo, se o contrato estabelece:
+
+```text
+GET    /api/produtos/
+GET    /api/produtos/:id/
+POST   /api/produtos/
+PUT    /api/produtos/:id/
+DELETE /api/produtos/:id/
+```
+
+os três backends devem procurar respeitar esse mesmo contrato, salvo quando o `plan.md` registrar explicitamente uma diferença pedagógica. Da mesma forma, devem ser mantidos, quando já definidos no plano:
+
+- JSON direto para recursos;
+- `detail` para erros;
+- `200` para consultas/atualizações;
+- `201` para criação;
+- `204` sem corpo para DELETE;
+- filtros `preco_minimo` e `preco_maximo`;
+- `search`;
+- `ordering`;
+- `page` e `page_size`;
+- contrato de paginação;
+- persistência JSON quando essa for a etapa correspondente.
+
+### 16.7 Papel do Bruno
+
+O Bruno é adotado como **ferramenta didática de cliente HTTP** por permitir manter as coleções de requisições no próprio repositório e **versioná-las junto ao código**. A ferramenta **não deve ser tratada como requisito conceitual** da disciplina. O objetivo pedagógico é trabalhar com requisições HTTP reproduzíveis e versionadas; o Bruno é a ferramenta escolhida para isso.
+
+---
+
 # 17. Organização da documentação didática
 
 A documentação da disciplina será organizada em **um único README**, com capítulos numerados sequencialmente.
