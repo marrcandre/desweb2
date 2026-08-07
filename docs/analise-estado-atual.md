@@ -584,7 +584,7 @@ Cada etapa conceitual é feita primeiro no Express e imediatamente depois no Fas
 
 # 20. Atualização — refatoração do Express concluída
 
-Após a análise acima, a sequência pedagógica do **Express** foi reorganizada (ver commit do repositório `express-bsi4`). As tabelas das seções 2 a 5 e 12 a 14 descrevem o estado **anterior** à refatoração e devem ser lidas como diagnóstico histórico. Esta seção registra o estado atual.
+Após a análise acima, a sequência pedagógica do **Express** foi reorganizada (ver commit do repositório `express-bsi4`). As seções 2 a 19 e a seção "Próxima etapa de implementação" descrevem o estado e o diagnóstico **anteriores** à refatoração e devem ser lidas como histórico/cronologia do projeto (algumas numerações antigas — ex. `10-paginacao`, `11-persistencia-json`, `12-api-completa` — não refletem a sequência pedagógica atual). Esta seção 20 registra o estado atual.
 
 ## 20.1 Nova sequência incremental do Express
 
@@ -601,15 +601,18 @@ A sequência passou a ser **incremental por conceito**, com cada arquivo mantend
 | `aula8_filtros.js` | filtros `preco_minimo`/`preco_maximo` |
 | `aula9_busca.js` | busca `search` (case-insensitive) |
 | `aula10_ordenacao.js` | ordenação `ordering` (`nome`/`preco`, `-` para decrescente) |
-| `aula11_paginacao.js` | paginação `page`/`page_size` (`total_pages`/`results`) |
-| `aula12_persistencia_json.js` | persistência em `produtos.json` |
+| `aula11_persistencia_json.js` | persistência em `produtos.json` (60 produtos) |
+| `aula12_paginacao.js` | paginação `page`/`page_size` (`total_pages`/`results`) |
 | `aula13_api_completa.js` | versão consolidada final (não introduz novo conceito) |
 
 Decisões consolidadas da sequência:
 
 - **`aula12`** é a última aula conceitual.
 - **`aula13`** é apenas o arquivo final de referência/consolidação.
-- A antiga **`aula5` monolítica** (`aula5_crud_completo_validacao_filtro_ordenacao_paginacao.js`) foi **dividida** em `aula7` (validação), `aula8` (filtros), `aula9` (busca), `aula10` (ordenação) e `aula11` (paginação).
+- As aulas 2–10 usam os **5 produtos em memória** (definidos no código) e respondem com **array simples**.
+- **`aula11` introduz a persistência JSON** (passa-se ao dataset de **60 produtos** em `produtos.json`).
+- **`aula12` introduz a paginação**, operando sobre os 60 produtos persistidos.
+- A antiga **`aula5` monolítica** (`aula5_crud_completo_validacao_filtro_ordenacao_paginacao.js`) foi **dividida** em `aula7` (validação), `aula8` (filtros), `aula9` (busca), `aula10` (ordenação), `aula11` (persistência) e `aula12` (paginação).
 
 ## 20.2 Arquivos removidos
 
@@ -625,7 +628,7 @@ Foram **removidos** por ter se tornado obsoletos (substituídos pela nova sequê
 
 ## 20.3 Arquivo de dados
 
-- `produtos.json` é mantido versionado no Git; contém apenas os **5 produtos-base** (ids 1 a 5) e é utilizado pelas aulas 12 e 13.
+- `produtos.json` é mantido versionado no Git; contém o **dataset-base compartilhado de 60 produtos** (ids 1 a 60) e é utilizado pelas aulas 11 (persistência), 12 (paginação) e 13 (consolidação). As aulas 2–10 usam os 5 produtos definidos no próprio código.
 
 ## 20.4 Dependências
 

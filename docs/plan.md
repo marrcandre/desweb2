@@ -903,7 +903,8 @@ Por exemplo:
 08-filtros
 09-busca
 10-ordenacao
-11-paginacao
+11-persistencia-json
+12-paginacao
 ```
 
 As extensões dependerão da tecnologia:
@@ -943,13 +944,13 @@ NN-api-completa
 Exemplos:
 
 ```text
-12-api-completa.js
+13-api-completa.js
 ```
 
 e:
 
 ```text
-12-api-completa.py
+13-api-completa.py
 ```
 
 Essa nomenclatura substitui as convenções anteriores `-final` e `-completo`.
@@ -1035,7 +1036,8 @@ Aula 03 - GET por ID
 Aula 04 - POST
 Aula 05 - PUT
 ...
-Aula 12 - Persistência
+Aula 11 - Persistência JSON
+Aula 12 - Paginação
 ```
 
 Estruturas alternativas equivalentes são aceitáveis, desde que preservem a separação entre os backends.
@@ -2197,8 +2199,8 @@ NN-api-completa
 Exemplo:
 
 ```text
-12-api-completa.js
-12-api-completa.py
+13-api-completa.js
+13-api-completa.py
 ```
 
 A convenção `-final` não será utilizada.
