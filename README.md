@@ -77,7 +77,7 @@ Os exemplos são independentes entre si: **cada arquivo de aula é um servidor c
 > aulas **não fica aqui** — ele está nos repositórios específicos de cada tecnologia:
 >
 > - **Express (Node.js / JavaScript):** https://github.com/marrcandre/express-bsi4
-> - **FastAPI (Python):** https://github.com/marrcandre/fastapi-bsi4/tree/main
+> - **FastAPI (Python):** https://github.com/marrcandre/fastapi-bsi4
 
 Cada repositório possui **seu próprio README**, com as instruções específicas para:
 
@@ -140,16 +140,15 @@ sudo apt update && sudo apt install bruno
 </details>
 
 <details>
-<summary><strong>Manjaro Linux (Snap)</strong></summary>
+<summary><strong>Manjaro Linux (AUR/yay)</strong></summary>
 
-No Manjaro, o Bruno pode ser instalado via **Snap**:
+No Manjaro, o Bruno pode ser instalado via **yay**:
 
 ```bash
-sudo pacman -S snapd
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap        # suporte a snap "classic"
-sudo snap install bruno
+yay -S bruno-bin
 ```
+
+Também é possível instalar pelo Gerenciador de Pacotes Pamac (GUI).
 
 </details>
 
@@ -171,16 +170,13 @@ https://www.usebruno.com/downloads.
 
 </details>
 
-### Estratégia pedagógica do Bruno
+### Uso do Bruno nas aulas
 
-- **Aula 1:** **não** entregamos uma coleção pronta. O aluno cria **manualmente** suas primeiras
-  requisições (para APIs públicas), para entender que uma requisição HTTP pode ser construída à mão.
+- **Aula 1:** Você cria **manualmente** suas primeiras
+  requisições (para APIs públicas).
 - **Aulas 2–13:** usamos as **coleções oficiais já preparadas** nos repositórios
   (`http/express/` e `http/fastapi/`) para testar **sistematicamente** a API desenvolvida em cada
   aula.
-
-Essa diferença é intencional: primeiro você **compreende a requisição**, depois passa a usar
-**coleções organizadas**.
 
 > Nas Aulas 2–13, para executar, basta: **(1)** abrir a coleção `http/express/` ou `http/fastapi/`,
 > **(2)** selecionar o ambiente `Local` (que define `baseUrl` para a porta correta) e **(3)** executar
@@ -209,14 +205,11 @@ Essa diferença é intencional: primeiro você **compreende a requisição**, de
 
 ---
 
-# Parte 1 — Fundamentos e primeiros endpoints
+# 🧭 Parte1 — Fundamentos e primeiros endpoints
 
 ---
 
-## Aula 01 — Fundamentos de APIs
-
-> **Objetivo desta aula (~90 min):** ambientação e fundamentos. Os detalhes de cada conceito serão
-> aprofundados na aula em que aparecerem. Aqui você só precisa entender o **panorama** da disciplina.
+## 📘 Aula 01 — Fundamentos de APIs
 
 ### 1. O que é uma API
 
@@ -306,8 +299,6 @@ No curso, **JSON é o formato de dados das nossas APIs**: a API recebe e devolve
 - as **operações** sobre o recurso são feitas com **métodos HTTP** (GET, POST, PUT, DELETE);
 - o recurso é **representado** em um formato (em geral, **JSON**).
 
-Os detalhes serão ensinados nas próximas aulas, **não antecipe** nada disso.
-
 ### 6. Framework ≠ protocolo
 
 - **HTTP** é o **protocolo**: define como cliente e servidor conversam (métodos, status, URLs).
@@ -342,21 +333,17 @@ didático). Os links oficiais:
 - **Express:** https://github.com/marrcandre/express-bsi4
 - **FastAPI:** https://github.com/marrcandre/fastapi-bsi4
 
-Cada um tem seu README com clone, instalação e execução. No `express-bsi4/` estão `aula2_*.js` a
-`aula13_*.js` (porta 3000); no `fastapi-bsi4/`, `aula2_*.py` a `aula13_*.py` (porta 8000). Cada
+Cada um tem seu README com instruções de como clonar, instalar e executar. No `express-bsi4/` estão `aula2_*.js` a `aula13_*.js` (porta 3000); no `fastapi-bsi4/`, `aula2_*.py` a `aula13_*.py` (porta 8000). Cada
 arquivo é um servidor completo e progressivo.
 
 ### 8. Preparando o Bruno
 
-Instale e abra o **Bruno** (veja a seção 6 com as instruções por sistema). No Bruno, uma **coleção**
+Instale e abra o **Bruno** (veja a [seção 6](#6-bruno--cliente-http-do-curso) com as instruções por sistema). No Bruno, uma **coleção**
 é um conjunto de **requisições** organizadas. As requisições podem usar um **ambiente** com a
 **URL base** (como `{{baseUrl}}`), e cada uma define **método**, **URL**, **parâmetros**, **corpo** e
 mostra **status** e **resposta**.
 
 ### 9. Primeira prática no Bruno
-
-> **Importante:** aqui o aluno cria as requisições **manualmente**. Não usamos coleção pronta nesta
-> aula. O objetivo é entender que uma requisição HTTP pode ser construída à mão.
 
 Vamos consultar duas **APIs públicas** e observar o formato JSON:
 
@@ -392,21 +379,12 @@ O curso está organizado em **cinco partes**:
 | Parte 4 | Persistência e paginação             | 11–12 |
 | Parte 5 | Consolidação                         | 13    |
 
-```mermaid
-graph LR
-    P1[Parte 1 · Aulas 1–3] --> P2[Parte 2 · CRUD · Aulas 4–6]
-    P2 --> P3[Parte 3 · Refinando · Aulas 7–10]
-    P3 --> P4[Parte 4 · Persistência e paginação · Aulas 11–12]
-    P4 --> P5[Parte 5 · Consolidação · Aula 13]
-```
-
-Começamos devolvendo uma lista fixa e terminamos com uma **API completa com CRUD, validação,
-filtros, busca, ordenação, persistência e paginação**. Nas Aulas 2–13, usaremos as **coleções
-oficiais** do Bruno que já acompanham os repositórios.
+Começamos devolvendo uma **lista fixa em memória** e terminamos com uma **API completa com CRUD, validação,
+filtros, busca, ordenação, persistência em um arquivo JSON e paginação**. Nas Aulas 2–13, usaremos as **coleções oficiais** do Bruno que já acompanham os repositórios.
 
 ---
 
-## Aula 02 — GET de coleção
+## 📘 Aula 02 — GET de coleção
 
 ### O que vamos aprender
 
@@ -455,7 +433,7 @@ FastAPI converge para JSON automaticamente.
 ```bash
 uvicorn aula2_api_basica_get_colecao:app --reload
 ```
-Servidor na porta `8000`. Documentação automática em `http://localhost:8000/docs`.
+Servidor na porta `8000`. Documentação automática em [http://localhost:8000/docs](http://localhost:8000/docs).
 
 ### Express × FastAPI
 
@@ -494,7 +472,7 @@ Compare: a mesma requisição nas duas tecnologias devolve o **mesmo tipo** de r
 
 ---
 
-## Aula 03 — GET por ID
+## 📘 Aula 03 — GET por ID
 
 ### O que vamos aprender
 
@@ -576,11 +554,11 @@ framework converte.
 
 ---
 
-# Parte 2 — CRUD
+# 🧭 Parte 2 — CRUD
 
 ---
 
-## Aula 04 — POST (criar)
+## 📘 Aula 04 — POST (criar)
 
 ### O que vamos aprender
 
@@ -630,7 +608,7 @@ def criar_produto(produto: ProdutoInput):
 ```
 
 - `ProdutoInput(BaseModel)` é o **modelo Pydantic** que representa o corpo esperado.
-- O parâmetro tipado `produto: ProdutoInput` — o FastAPI lê e valida estruturas do corpo.
+- O parâmetro tipado `produto: ProdutoInput` — o FastAPI lê e **valida** estruturas do corpo.
 - `status_code=201` fixa o status de sucesso.
 
 ### Express × FastAPI
@@ -644,7 +622,7 @@ def criar_produto(produto: ProdutoInput):
 **Igual:** o cliente envia o mesmo JSON e recebe o produto criado com um `id`.
 
 **Diferente:** no Express o corpo é **lido manualmente**; no FastAPI ele é **declarado** como parser
-tipado e validado. A estrutura do corpo já gera **documentação** em `/docs`.
+**tipado** e **validado**. A estrutura do corpo já gera **documentação** em `/docs`.
 
 ### Contrato HTTP
 
@@ -665,7 +643,7 @@ tipado e validado. A estrutura do corpo já gera **documentação** em `/docs`.
 
 ---
 
-## Aula 05 — PUT (atualizar)
+## 📘 Aula 05 — PUT (atualizar)
 
 ### O que vamos aprender
 
@@ -744,7 +722,7 @@ status.
 
 ---
 
-## Aula 06 — DELETE (remover)
+## 📘 Aula 06 — DELETE (remover)
 
 ### O que vamos aprender
 
@@ -819,11 +797,11 @@ resposta **encerrada sem corpo**; no FastAPI o `status_code=204` é declarado na
 
 ---
 
-# Parte 3 — Refinando a API
+# 🧭 Parte3 — Refinando a API
 
 ---
 
-## Aula 07 — Validação
+## 📘 Aula 07 — Validação
 
 ### O que vamos aprender
 
@@ -916,7 +894,7 @@ tem recursos mais "declarativos", mas mantivemos a versão explícita para visua
 
 ---
 
-## Aula 08 — Filtros
+## 📘 Aula 08 — Filtros
 
 ### O que vamos aprender
 
@@ -994,7 +972,7 @@ filtrada) são os mesmos.
 
 ---
 
-## Aula 09 — Busca
+## 📘 Aula 09 — Busca
 
 ### O que vamos aprender
 
@@ -1056,7 +1034,7 @@ um query param).
 
 ---
 
-## Aula 10 — Ordenação
+## 📘 Aula 10 — Ordenação
 
 ### O que vamos aprender
 
@@ -1151,11 +1129,11 @@ A **ideia** é a mesma: extrair o campo, validar, ordenar e tratar o `-` como de
 
 ---
 
-# Parte 4 — Persistência e paginação
+# 🧭 Parte4 — Persistência e paginação
 
 ---
 
-## Aula 11 — Persistência em JSON
+## 📘 Aula 11 — Persistência em JSON
 
 ### O que vamos aprender
 
@@ -1227,7 +1205,7 @@ vêm de `produtos.json`.
 
 ---
 
-## Aula 12 — Paginação
+## 📘 Aula 12 — Paginação
 
 ### O que vamos aprender
 
@@ -1307,11 +1285,11 @@ ordenação → paginação.
 
 ---
 
-# Parte 5 — Consolidação
+# 🧭 Parte5 — Consolidação
 
 ---
 
-## Aula 13 — API completa
+## 📘 Aula 13 — API completa
 
 ### O que vamos aprender
 
