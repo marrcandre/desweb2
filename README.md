@@ -1,1880 +1,1408 @@
-**DESENVOLVIMENTO WEB II**
+# Desenvolvimento Web II — APIs com Express e FastAPI
 
-**OBJETIVO GERAL**
+## 1. Objetivo do tutorial
 
-Capacitar o aluno a projetar, desenvolver, documentar e publicar APIs REST, utilizando Django + Django REST Framework como framework de referência, mas compreendendo conceitos aplicáveis a qualquer stack de desenvolvimento.
+Este material ensina a **construir uma API REST**, do zero até uma versão completa, em **13 aulas**.
 
-**OBJETIVOS ESPECÍFICOS**
-1. Entender os fundamentos de APIs, HTTP e REST.
-2. Implementar CRUDs com Django REST Framework utilizando `ModelViewSet` e `ModelSerializer`.
-3. Trabalhar com autenticação, permissões, filtros, paginação e upload de arquivos.
-4. Documentar APIs utilizando ferramentas compatíveis com o padrão OpenAPI (Swagger).
-5. Publicar projetos em serviços de deploy modernos (Render, Supabase, AWS, etc.).
-6. Trabalhar com versionamento de código e boas práticas de commits no GitHub.
-7. Desenvolver projeto final com requisitos mínimos, mas liberdade para escolha de tecnologias.
+Para isso, usamos **duas implementações diferentes da mesma API**:
 
----
+* **Express** (Node.js / JavaScript);
+* **FastAPI** (Python).
 
-**LINKS ÚTEIS**
-
-- Django:
-  - [Tutorial de Django](https://github.com/marrcandre/django-drf-tutorial)
-  - [Documentação do Django](https://docs.djangoproject.com/)
-  - [Documentação oficial do Django REST Framework](https://www.django-rest-framework.org/)
-- [Roadmap de backend](https://roadmap.sh/backend)
-- Vídeos:
-  - [A Forma Ideal de Projetos Web | Os 12 Fatores - Fábio Akita](https://www.youtube.com/watch?v=gpJgtED36U4)
-  - [Série "Começando aos 40 - Fábio Akita"](https://www.youtube.com/watch?v=O76ZfAIEukE&list=PLjuQ-0yGqLjcFmMkiYvHPraSptrhPlOuK)
-- Cursos:
-  - [FastAPI do ZERO](https://fastapidozero.dunossauro.com/estavel/)
-  - Aplicação Front-end de Músicas: https://github.com/marrcandre/song-vue
+O objetivo **não** é dominar dois frameworks, e sim compreender o que é uma **API HTTP/REST** e
+perceber que frameworks diferentes são apenas **formas diferentes de implementar o mesmo contrato**.
 
 ---
 
-# Aula 1 – Introdução à Disciplina e Fundamentos de APIs
+## 2. Ideia central: Express × FastAPI
 
-**Objetivo da Aula**
+> Express e FastAPI implementam a mesma API. A forma de programar muda, mas o contrato HTTP
+> permanece.
 
-Compreender o que é uma API, como funciona o protocolo HTTP e como interagir com APIs públicas que trazem informações úteis para o dia a dia.
+Ao longo do curso construímos, lado a lado, a mesma API de produtos. O que o cliente (navegador,
+Bruno, um aplicativo) envia e recebe será **praticamente idêntico** nas duas tecnologias; o que muda
+é **como** cada framework gera esse comportamento. Isso deixa claro o que pertence ao **HTTP/REST**
+(contrato) e o que pertence a cada **framework** (implementação).
 
----
-
-**Conteúdo**
-
-**1. Apresentação da disciplina**
-
-- Ementa, objetivos e formas de avaliação.
-- Projeto final e avaliação teórica no meio do semestre.
-- Expectativas e forma de trabalho (teoria + prática).
+> Durante o curso construiremos gradualmente uma única API de produtos. Express e FastAPI deverão
+> atender ao mesmo contrato HTTP. Os detalhes desse contrato serão apresentados em cada aula, à
+> medida que os conceitos forem introduzidos.
 
 ---
 
-**2. O que é uma API**
+## 3. Como usar este tutorial
 
-**[API](https://aws.amazon.com/what-is/api/)** (*Application Programming Interface*) é um conjunto de regras e definições que permite que sistemas diferentes se comuniquem.
-Ela define **como** um sistema pode ser usado por outro.
+Cada aula 2–13 segue o mesmo ciclo:
 
-- Exemplos do dia a dia:
-  - Aplicativo de clima pegando dados de um serviço meteorológico.
-  - Aplicativo de transporte usando mapas do Google.
-  - Sites de e-commerce consultando meios de pagamento.
-- **API Web**: acessada via internet, geralmente usando o protocolo HTTP.
-- **Cliente** (quem faz a requisição) ↔ **Servidor** (quem responde com os dados).
+1. **O que vamos aprender** — o conceito.
+2. **Antes de programar** — o problema e o conceito HTTP envolvido.
+3. **Express** — como o problema é resolvido (e como executar).
+4. **FastAPI** — como o mesmo problema é resolvido (e como executar).
+5. **Express × FastAPI** — o que é igual, o que difere e por quê.
+6. **Contrato HTTP** — o que o cliente vê.
+7. **Pratique no Bruno** — teste a API.
+8. **O que observar** — pontos importantes (apenas quando necessário).
 
----
+O tutorial **explica o código** — ele **não duplica** os arquivos inteiros. Você deve:
 
-**3. REST – Princípios básicos**
+1. ler o tutorial;
+2. abrir o arquivo da aula no repositório;
+3. executar o servidor;
+4. abrir o Bruno;
+5. executar/testar;
+6. comparar as duas implementações.
 
-**[REST](https://aws.amazon.com/what-is/api/#seo-faq-pairs#what-are-rest-apis)** (*Representational State Transfer*) é um conjunto de boas práticas para criar APIs web.
-Principais características:
-1. **Stateless** – cada requisição contém todas as informações necessárias; o servidor não guarda o “estado” do cliente.
-2. **Recursos identificados por URL** – cada tipo de dado tem um endereço único (ex: `/usuarios/1` para o usuário com id 1).
-3. **Operações com métodos HTTP** – ações claras para cada tipo de operação.
-4. **Formato de dados padronizado** – normalmente **JSON** (mas pode incluir outros formatos, como XML).
-
-**Principais métodos HTTP e uso comum**:
-- **GET** → Ler dados.
-  Ex: `GET /usuarios`
-- **POST** → Criar novos dados.
-  Ex: `POST /usuarios`
-- **PUT** → Atualizar completamente um recurso existente.
-  Ex: `PUT /usuarios/1`
-- **PATCH** → Atualizar parcialmente um recurso existente.
-  Ex: `PATCH /usuarios/1`
-- **DELETE** → Remover dados.
-  Ex: `DELETE /usuarios/1`
+Em cada aula, o mesmo conceito é trabalhado primeiro no Express e depois no FastAPI, seguido da
+comparação e da prática no Bruno.
 
 ---
 
-**4. Status codes HTTP**
+## 4. Pré-requisitos
 
-O servidor sempre responde com um **código numérico** indicando o resultado da requisição.
+Você precisa ter instalado:
 
-**Principais categorias**:
-- **1xx – Informativo** (raramente usado diretamente pelo dev)
-- **2xx – Sucesso**
-  - `200 OK` → Requisição bem-sucedida
-  - `201 Created` → Recurso criado com sucesso
-  - `204 No Content` → Sucesso sem conteúdo no corpo da resposta
-- **3xx – Redirecionamento**
-  - `301 Moved Permanently`
-  - `302 Found`
-- **4xx – Erros do cliente**
-  - `400 Bad Request` → Requisição inválida
-  - `401 Unauthorized` → Autenticação necessária
-  - `403 Forbidden` → Acesso negado
-  - `404 Not Found` → Recurso não encontrado
-  - `409 Conflict` → Conflito de requisição
-- **5xx – Erros do servidor**
-  - `500 Internal Server Error`
-  - `503 Service Unavailable`
+- **Node.js** (versão 18 ou superior) — para o Express;
+- **npm** — vem junto com o Node;
+- **Python** (versão 3.10 ou superior) — para o FastAPI;
+- **pip** — vem junto com o Python;
+- **Bruno** (aplicação de desktop) — cliente HTTP para testar a API.
+
+Os exemplos são independentes entre si: **cada arquivo de aula é um servidor completo**.
 
 ---
 
-**5. Demonstração – APIs Públicas Úteis**
+## 5. Onde está o código (repos externos)
 
-Vamos explorar APIs reais que trazem dados práticos para Araquari/SC.
+> **Este repositório (`desweb2`) contém principalmente o material didático.** O **código-fonte** das
+> aulas **não fica aqui** — ele está nos repositórios específicos de cada tecnologia:
+>
+> - **Express (Node.js / JavaScript):** https://github.com/marrcandre/express-bsi4
+> - **FastAPI (Python):** https://github.com/marrcandre/fastapi-bsi4/tree/main
 
-1. **Consultar um CEP (ViaCEP):** https://viacep.com.br/ws/89211120/json/
+Cada repositório possui **seu próprio README**, com as instruções específicas para:
 
-2. **Cotação do dólar (AwesomeAPI):**
-https://economia.awesomeapi.com.br/json/last/USD-BRL
+- clonar o projeto;
+- instalar as dependências;
+- configurar o ambiente;
+- executar o servidor;
+- navegar entre as aulas.
 
-3. **Previsão do tempo (Open-Meteo):**
-- Latitude/Longitude de Araquari: **-26.3747**, **-48.7181**
-https://api.open-meteo.com/v1/forecast?latitude=-26.3747&longitude=-48.7181&current_weather=true
+Siga essas instruções dentro de cada repositório. Este tutorial **não replica** os passos de
+instalação: ele explica os **conceitos** e aponta para os arquivos de aula de cada repositório.
 
+| Repositório   | Tecnologia       | Arquivos de aula         | Porta | Coleção Bruno      |
+| ------------- | ---------------- | ------------------------ | ----- | ------------------ |
+| `express-bsi4` | Node.js+ Express | `aula2_*.js` … `aula13_*.js` | 3000  | `http/express/`    |
+| `fastapi-bsi4` | Python + FastAPI | `aula2_*.py` … `aula13_*.py` | 8000  | `http/fastapi/`    |
 
-Cada requisição será feita usando **navegador**, **Postman** e **Thunder Client**, para comparar resultados.
-
----
-
-**Atividade Prática**
-
-**Objetivo:** Usar   ou Thunder Client para explorar APIs públicas úteis.
-
-1. Escolher **uma** API da lista acima.
-2. Fazer uma requisição **GET**.
-3. Registrar:
-- URL utilizada
-- Método HTTP
-- Status code
-- Conteúdo JSON retornado
-
----
-
-**Atividades de Fixação**
-
-Escolha **uma API pública diferente das apresentadas** e:
-- Faça **3 requisições** (GET, POST e DELETE, se suportado).
-- Salve prints das requisições e respostas.
-- Anote status code e conteúdo retornado.
+Os arquivos são **progressivos**: cada aula mantém tudo da anterior e acrescenta um conceito.
+A aula de cada conceito corresponde a um arquivo com o mesmo nome nas duas tecnologias (`.js` no
+Express, `.py` no FastAPI). Veja a lista completa nos READMEs de cada repositório. O dataset
+`produtos.json` é usado **a partir da Aula 11**.
 
 ---
 
-**Sugestões:**
-- [BrasilAPI](https://brasilapi.com.br/) (CNPJs, feriados, dados de bancos)
-- [IBGE – Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
-- [Cat Facts](https://catfact.ninja/) (fatos aleatórios sobre gatos)
-- [JSONPlaceholder](https://jsonplaceholder.typicode.com/) (API falsa para testes)
+## 6. Bruno — cliente HTTP do curso
 
----
+### Por que usamos o Bruno
 
-**Recursos e Links**
-- [Roadmap.sh - Backend](https://roadmap.sh/backend)
-- [O que é uma API](https://aws.amazon.com/what-is/api/)?
-- [Postman](https://www.postman.com/)
+O **Bruno** é o cliente HTTP oficial da disciplina. Ele permite **guardar as requisições junto com o
+código** e **versioná-las no repositório**. Assim, cada aula tem uma coleção de requisições que
+exercita exatamente o que foi construído.
 
----
+**Executar o servidor ≠ testar a API.** O servidor (a aula que você inicia com `node`/`uvicorn`)
+**processa** as requisições e devolve respostas. O **Bruno** é a ferramenta que **envia** essas
+requisições para você observar o que a API responde. Um depende do outro: sem o servidor rodando, o
+Bruno não tem para quem enviar a requisição (retornaria erro de conexão).
 
-# Aula 2 – Estrutura e Teste de Requisições HTTP
+### Instalação
 
-**Objetivo**
+> Instale o Bruno no seu sistema e abra o aplicativo. O **uso** em si será construído aos poucos na
+> Aula 1 e nas coleções das Aulas 2–13.
 
-Compreender como estruturar e testar uma API simples em duas tecnologias diferentes (Python + FastAPI e Node.js + Express), reforçando que os conceitos de HTTP e REST são independentes da stack utilizada.
+<details>
+<summary><strong>Ubuntu / Debian (APT)</strong></summary>
 
----
-
-**Conteúdo**
-
-**1. Revisão rápida**
-
-- Métodos HTTP (GET, POST, PUT/PATCH, DELETE).
-- Status codes.
-- Estrutura de uma resposta JSON.
-
----
-
-**2. Criando uma API com FastAPI (Python)**
-
-**Objetivo:** Montar um servidor que responda a requisições de teste.
-
-**Instalação**
+Adicione o repositório oficial do Bruno e instale:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install fastapi uvicorn
+sudo mkdir -p /etc/apt/keyrings
+sudo apt update && sudo apt install gpg curl
+curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x9FA6017ECABE0266" \
+  | gpg --dearmor \
+  | sudo tee /etc/apt/keyrings/bruno.gpg > /dev/null
+sudo chmod 644 /etc/apt/keyrings/bruno.gpg
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/bruno.gpg] http://debian.usebruno.com/ bruno stable" \
+  | sudo tee /etc/apt/sources.list.d/bruno.list
+sudo apt update && sudo apt install bruno
 ```
 
-**Código - `main.py`**
+</details>
 
-```python
-from fastapi import FastAPI
-from pydantic import BaseModel
+<details>
+<summary><strong>Manjaro Linux (Snap)</strong></summary>
 
-app = FastAPI()
-
-# Modelo para POST
-class Item(BaseModel):
-    nome: str
-    preco: float
-
-# Rota GET
-@app.get("/produtos")
-def listar_produtos():
-    return [
-    {"id": 1, "nome": "Notebook", "preco": 3500},
-    {"id": 2, "nome": "Mouse", "preco": 80},
-    {"id": 3, "nome": "Teclado", "preco": 150},
-    {"id": 4, "nome": "Monitor", "preco": 1200},
-    {"id": 5, "nome": "Impressora", "preco": 300},
-    ]
-
-# Rota POST
-@app.post("/produtos")
-def criar_produto(item: Item):
-    return {"mensagem": "Produto criado com sucesso", "dados": item}
-
-# Rodar servidor:
-# uvicorn main:app --reload
-```
-
-**Rodar servidor:**
+No Manjaro, o Bruno pode ser instalado via **Snap**:
 
 ```bash
-uvicorn main:app --reload
+sudo pacman -S snapd
+sudo systemctl enable --now snapd.socket
+sudo ln -s /var/lib/snapd/snap /snap        # suporte a snap "classic"
+sudo snap install bruno
 ```
 
-**Explicação do código**
+</details>
 
-- **FastAPI:** Framework para construção de APIs em Python.
-- **Pydantic:** Biblioteca para validação de dados e criação de modelos.
-- **Item:** Modelo que representa um produto, com campos para nome e preço.
-- **Rotas:**
-  - `GET /produtos`: Retorna uma lista de produtos.
-  - `POST /produtos`: Cria um novo produto a partir dos dados enviados no corpo da requisição.
-- **Execução:** Para rodar o servidor, utilize o comando `uvicorn main:app --reload`.
-- **Testes:** Utilize ferramentas como **Postman** ou **Thunder Client** para testar as rotas da API.
-- **Documentação:** Acesse a documentação automática gerada pelo FastAPI em `http://localhost:8000/docs`.
-- **Exemplos de Requisições:**
-  - `GET /produtos`: Retorna todos os produtos.
-  - `POST /produtos`: Cria um novo produto.
+<details>
+<summary><strong>Windows (winget / Chocolatey / Scoop)</strong></summary>
 
-**Um exemplo mais completo**
+Use um dos gerenciadores de pacote:
 
-```python
-from fastapi import FastAPI
-from pydantic import BaseModel
-
-app = FastAPI()
-
-# Modelo para itens
-class Item(BaseModel):
-    id: int
-    nome: str
-    preco: float
-
-# Modelo para POST
-class ItemInput(BaseModel):
-    nome: str
-    preco: float
-
-# Modelo para resposta de POST
-class ItemInputResponse(BaseModel):
-    message: str
-    dados: Item
-
-# Lista de itens em memória
-items = [
-    Item(id=1, nome="Notebook", preco=3500.00),
-    Item(id=2, nome="Mouse", preco=80.00),
-    Item(id=3, nome="Teclado", preco=150.00),
-    Item(id=4, nome="Monitor", preco=1200.00),
-    Item(id=5, nome="Impressora", preco=300.00),
-]
-
-# Rota GET
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos():
-    return [
-       {"id": item.id, "nome": item.nome, "preco": item.preco} for item in items
-    ]
-
-# Rota POST
-@app.post("/produtos", response_model=ItemInputResponse)
-def criar_produto(item: ItemInput):
-    novo_id = max(item.id for item in items) + 1
-    novo_item = Item(id=novo_id, **item.model_dump())
-    items.append(novo_item)
-    response = ItemInputResponse(message="Produto criado com sucesso", dados=novo_item)
-    return response.model_dump()
-
-# Rodar servidor:
-# uvicorn main:app --reload
+```bash
+winget install Bruno.Bruno        # mais simples no Windows 10/11
+# ou
+choco install bruno               # via Chocolatey
+# ou
+scoop bucket add extras && scoop install bruno   # via Scoop
 ```
 
-**Diferenças neste código**
+Também é possível baixar o instalador (`.exe`/`.msi`) na página oficial
+https://www.usebruno.com/downloads.
 
-- **Modelos:** Foram adicionados modelos mais específicos para entrada e saída de dados, utilizando o Pydantic.
-- **Rota GET:** A rota GET agora utiliza o modelo de resposta para garantir que a estrutura dos dados retornados esteja correta.
-- **Rota POST:** A rota POST agora utiliza um modelo de entrada e um modelo de resposta, melhorando a validação e a documentação automática da API.
-- **Lista em memória:** A lista de itens é mantida em memória, permitindo a adição de novos produtos via POST.
-- **Validação:** O Pydantic garante que os dados enviados nas requisições estejam no formato correto, retornando erros de validação automaticamente quando necessário.
-- **Documentação:** A documentação automática gerada pelo FastAPI é atualizada com base nos modelos utilizados, facilitando a compreensão da API.
+</details>
+
+### Estratégia pedagógica do Bruno
+
+- **Aula 1:** **não** entregamos uma coleção pronta. O aluno cria **manualmente** suas primeiras
+  requisições (para APIs públicas), para entender que uma requisição HTTP pode ser construída à mão.
+- **Aulas 2–13:** usamos as **coleções oficiais já preparadas** nos repositórios
+  (`http/express/` e `http/fastapi/`) para testar **sistematicamente** a API desenvolvida em cada
+  aula.
+
+Essa diferença é intencional: primeiro você **compreende a requisição**, depois passa a usar
+**coleções organizadas**.
+
+> Nas Aulas 2–13, para executar, basta: **(1)** abrir a coleção `http/express/` ou `http/fastapi/`,
+> **(2)** selecionar o ambiente `Local` (que define `baseUrl` para a porta correta) e **(3)** executar
+> as requisições da pasta da aula. As requisições levam pequenas asserções (`assert`) que validam o
+> status e o formato da resposta.
 
 ---
 
-**3. Criando uma API com Node.js + Express**
+## 7. Visão geral das 13 aulas
 
-**Objetivo:** Implementar o mesmo comportamento usando JavaScript.
-
-**Instalação**
-
-```bash
-npm init -y
-npm install express
-```
-
-**Código - `index.js`**
-
-```javascript
-const express = require('express');
-const app = express();
-
-app.use(express.json());
-
-// Rota GET
-app.get('/produtos', (req, res) => {
-  res.json([
-    { id: 1, nome: 'Mouse', preco: 89.90 },
-    { id: 2, nome: 'Teclado', preco: 199.90 }
-  ]);
-});
-
-// Rota POST
-app.post('/produtos', (req, res) => {
-  res.json({
-    mensagem: 'Produto criado com sucesso',
-    dados: req.body
-  });
-});
-
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
-
-// Rodar servidor:
-// node index.js
-```
-
-**Rodar servidor:**
-
-```bash
-node index.js
-```
-
-**Um exemplo mais completo**
-
-```javascript
-const express = require('express');
-const app = express();
-
-app.use(express.json());
-
-// "Banco de dados" em memória
-let produtos = [
-  { id: 1, nome: 'Teclado', preco: 199.90 },
-  { id: 2, nome: 'Mouse', preco: 89.90 }
-];
-
-// Rota GET
-app.get('/produtos', (req, res) => {
-  res.json([...produtos]); // cópia para evitar alteração acidental
-});
-
-// Rota POST
-app.post('/produtos', (req, res) => {
-  const novoId = produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
-  const novoProduto = { id: novoId, ...req.body };
-
-  produtos.push(novoProduto);
-
-  res.status(201).json({
-    message: 'Produto criado com sucesso',
-    dados: novoProduto
-  });
-});
-
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
-```
-
-**Explicação do código**
-
-Temos agora o código Express com a mesma lógica do seu exemplo em FastAPI, inclusive mantendo:
-
-* Lista de produtos em memória.
-* POST que adiciona e retorna o novo item junto com mensagem.
-* Geração automática de id.
-
-**Diferenças em relação ao FastAPI:**
-
-* No Express, não temos tipagem automática nem validação de entrada por padrão (equivalente ao que o Pydantic faz no FastAPI).
-* A rota POST usa req.body diretamente, por isso seria interessante depois incluir uma validação para manter a mesma segurança de tipos.
-* A estrutura da resposta (message + dados) foi mantida idêntica à versão Python para facilitar comparação lado a lado.
+| Aula | Conceito             | Parte                             |
+| ---- | -------------------- | -------------------------------- |
+| 01   | Fundamentos de APIs  | Parte 1 — Fundamentos e primeiros endpoints |
+| 02   | GET de coleção       | Parte 1                          |
+| 03   | GET por ID           | Parte 1                          |
+| 04   | POST                 | Parte 2 — CRUD                   |
+| 05   | PUT                  | Parte 2                          |
+| 06   | DELETE               | Parte 2                          |
+| 07   | Validação            | Parte 3 — Refinando a API        |
+| 08   | Filtros              | Parte 3                          |
+| 09   | Busca                | Parte 3                          |
+| 10   | Ordenação            | Parte 3                          |
+| 11   | Persistência em JSON | Parte 4 — Persistência e paginação |
+| 12   | Paginação            | Parte 4                          |
+| 13   | API completa         | Parte 5 — Consolidação           |
 
 ---
 
-**4. Testando com Postman / Thunder Client**
+# Parte 1 — Fundamentos e primeiros endpoints
 
-* Fazer requisição GET para /produtos.
-* Fazer requisição POST para /produtos com corpo JSON:
+---
+
+## Aula 01 — Fundamentos de APIs
+
+> **Objetivo desta aula (~90 min):** ambientação e fundamentos. Os detalhes de cada conceito serão
+> aprofundados na aula em que aparecerem. Aqui você só precisa entender o **panorama** da disciplina.
+
+### 1. O que é uma API
+
+**API** (*Application Programming Interface*) é um conjunto de regras que definem **como um sistema
+pode conversar com outro**. Uma **API web** é acessível pela internet, normalmente usando o protocolo
+**HTTP**.
+
+Quando você abre um aplicativo de clima, ele consulta uma API de um serviço meteorológico. Quando um
+site calcula o frete, ele consulta a API de uma transportadora. Em Desenvolvimento Web II, nosso
+objetivo é **criar** esse tipo de serviço — uma API que devolve dados de produtos.
+
+### 2. Cliente, servidor, requisição e resposta
+
+- **Cliente** — quem faz a requisição (navegador, aplicativo, ou o próprio Bruno).
+- **Servidor** — quem recebe, processa e devolve a resposta (no nosso caso, uma API).
+- **Requisição (request)** — o que o cliente envia: método, URL e, às vezes, um corpo.
+- **Resposta (response)** — o que o servidor devolve: um status e, em geral, um corpo JSON.
+
+```text
+Cliente
+   │
+   │ HTTP Request (método + URL + corpo)
+   ▼
+Servidor / API
+   │
+   │ HTTP Response (status + corpo)
+   ▼
+Cliente
+```
+
+Esse ciclo "pedido → resposta" é a base de tudo que faremos no curso.
+
+### 3. HTTP
+
+O **HTTP** é o protocolo usado para essa comunicação. Uma requisição HTTP é composta, basicamente,
+por:
+
+- **método** — a intenção da operação;
+- **URL** — para onde a requisição vai;
+- **parâmetros** — dados extras na URL (ex.: `/api/produtos/1`, `?search=mouse`);
+- **headers** — informações de controle (breve agora; usaremos pouco no curso);
+- **corpo (body)** — os dados enviados (em POST/PUT).
+
+O servidor responde com um **status code** (código do resultado) e, em geral, um corpo. Os principais
+deste curso:
+
+| Código | Significado                  | Quando aparece |
+| ------ | ---------------------------- | -------------- |
+| `200`  | Sucesso (leitura/atualização)| Aulas 2–5      |
+| `201`  | Recurso criado                | Aula 4         |
+| `204`  | Sucesso sem corpo (exclusão) | Aula 6         |
+| `400`  | Requisição inválida           | Aula 7         |
+| `404`  | Recurso não encontrado        | Aula 3         |
+| `500`  | Erro interno do servidor      | —              |
+
+Os métodos principais do curso são:
+
+- **GET** — ler dados (Aulas 2 e 3);
+- **POST** — criar (Aula 4);
+- **PUT** — atualizar por completo (Aula 5);
+- **DELETE** — excluir (Aula 6).
+
+> **PATCH** representa atualização **parcial** e faz parte do REST. Nesta sequência usamos o **PUT**
+> para atualização completa; o PATCH fica para depois.
+
+### 4. JSON
+
+**JSON** é o formato de dados mais usado em APIs web. Permite representar objetos e listas:
 
 ```json
-{
-  "nome": "Monitor",
-  "preco": 1299.90
+{ "id": 1, "nome": "Notebook", "preco": 3500 }
+```
+
+```json
+[ { "id": 1, "nome": "Notebook", "preco": 3500 },
+  { "id": 2, "nome": "Mouse", "preco": 80 } ]
+```
+
+No curso, **JSON é o formato de dados das nossas APIs**: a API recebe e devolve JSON.
+
+### 5. REST — ideia principal
+
+**REST** é um conjunto de boas práticas para organizar APIs web. As principais ideias:
+
+- os dados são organizados em **recursos**;
+- cada recurso é identificado por uma **URL** (ex.: `/api/produtos/1`);
+- as **operações** sobre o recurso são feitas com **métodos HTTP** (GET, POST, PUT, DELETE);
+- o recurso é **representado** em um formato (em geral, **JSON**).
+
+Os detalhes serão ensinados nas próximas aulas, **não antecipe** nada disso.
+
+### 6. Framework ≠ protocolo
+
+- **HTTP** é o **protocolo**: define como cliente e servidor conversam (métodos, status, URLs).
+- **REST** é uma **forma de organizar** APIs sobre HTTP.
+- **Express** é um **framework/ecossistema** para Node.js (JavaScript).
+- **FastAPI** é um **framework** para Python.
+
+Os dois frameworks podem implementar o **mesmo contrato HTTP** — mesmo endpoint, mesmos métodos,
+mesmas respostas:
+
+```text
+                CONTRATO HTTP
+       /api/produtos/ + métodos + respostas
+                        │
+             ┌──────────┴──────────┐
+             ▼                     ▼
+          Express               FastAPI
+          Node.js                Python
+             │                     │
+             └──────────┬──────────┘
+                        ▼
+                  mesmo cliente
+```
+
+> **O framework muda a forma de implementar. O contrato HTTP permanece.**
+
+### 7. Conhecendo os repositórios
+
+O **código-fonte** das aulas fica nos repositórios de cada tecnologia (o `desweb2` guarda o material
+didático). Os links oficiais:
+
+- **Express:** https://github.com/marrcandre/express-bsi4
+- **FastAPI:** https://github.com/marrcandre/fastapi-bsi4
+
+Cada um tem seu README com clone, instalação e execução. No `express-bsi4/` estão `aula2_*.js` a
+`aula13_*.js` (porta 3000); no `fastapi-bsi4/`, `aula2_*.py` a `aula13_*.py` (porta 8000). Cada
+arquivo é um servidor completo e progressivo.
+
+### 8. Preparando o Bruno
+
+Instale e abra o **Bruno** (veja a seção 6 com as instruções por sistema). No Bruno, uma **coleção**
+é um conjunto de **requisições** organizadas. As requisições podem usar um **ambiente** com a
+**URL base** (como `{{baseUrl}}`), e cada uma define **método**, **URL**, **parâmetros**, **corpo** e
+mostra **status** e **resposta**.
+
+### 9. Primeira prática no Bruno
+
+> **Importante:** aqui o aluno cria as requisições **manualmente**. Não usamos coleção pronta nesta
+> aula. O objetivo é entender que uma requisição HTTP pode ser construída à mão.
+
+Vamos consultar duas **APIs públicas** e observar o formato JSON:
+
+**ViaCEP**
+
+```
+GET https://viacep.com.br/ws/89201000/json/
+```
+
+**Cotação do dólar**
+
+```
+GET https://economia.awesomeapi.com.br/json/last/USD-BRL
+```
+
+No Bruno, crie uma requisição `GET` para cada URL acima, execute e observe:
+
+- o **método** usado;
+- a **URL** (para onde foi enviado);
+- o **status** retornado;
+- o **corpo** (o que o servidor respondeu);
+- o **JSON** e os **campos** retornados.
+
+### 10. O que vem nas próximas aulas
+
+O curso está organizado em **cinco partes**:
+
+| Parte | Tema                                  | Aulas |
+| ----- | ------------------------------------- | ----- |
+| Parte 1 | Fundamentos e primeiros endpoints   | 1–3   |
+| Parte 2 | CRUD                                 | 4–6   |
+| Parte 3 | Refinando a API (validação, filtros, busca, ordenação) | 7–10 |
+| Parte 4 | Persistência e paginação             | 11–12 |
+| Parte 5 | Consolidação                         | 13    |
+
+```mermaid
+graph LR
+    P1[Parte 1 · Aulas 1–3] --> P2[Parte 2 · CRUD · Aulas 4–6]
+    P2 --> P3[Parte 3 · Refinando · Aulas 7–10]
+    P3 --> P4[Parte 4 · Persistência e paginação · Aulas 11–12]
+    P4 --> P5[Parte 5 · Consolidação · Aula 13]
+```
+
+Começamos devolvendo uma lista fixa e terminamos com uma **API completa com CRUD, validação,
+filtros, busca, ordenação, persistência e paginação**. Nas Aulas 2–13, usaremos as **coleções
+oficiais** do Bruno que já acompanham os repositórios.
+
+---
+
+## Aula 02 — GET de coleção
+
+### O que vamos aprender
+
+Como fazer a API responder a uma requisição **`GET`** com uma **lista (coleção)** de produtos. É o
+primeiro endpoint da nossa API.
+
+### Antes de programar
+
+Precisamos escutar o `GET` em um URL e devolver um **JSON com um array de produtos**. As Aulas 2–10
+usam **5 produtos em memória** definidos no próprio código — sem banco, sem arquivo, sem
+`produtos.json`.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula2_api_basica_get_colecao.js`
+
+```js
+app.get('/api/produtos/', (req, res) => {
+  res.json([ ... ]);   // array de 5 produtos
+});
+```
+
+`app.get('/rota', manipulador)` registra o que fazer em uma requisição `GET`. O manipulador recebe
+`req` (requisição) e `res` (resposta); `res.json(...)` devolve o corpo em JSON.
+
+**Executar:**
+```bash
+node aula2_api_basica_get_colecao.js
+```
+Servidor na porta `3000`. Acesse `http://localhost:3000/api/produtos/`.
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula2_api_basica_get_colecao.py`
+
+```python
+@app.get("/api/produtos/")
+def listar_produtos():
+    return produtos   # lista de 5 produtos
+```
+
+O decorador `@app.get(...)` registra a rota. A função **retorna** o valor (lista de dicts), e o
+FastAPI converge para JSON automaticamente.
+
+**Executar:**
+```bash
+uvicorn aula2_api_basica_get_colecao:app --reload
+```
+Servidor na porta `8000`. Documentação automática em `http://localhost:8000/docs`.
+
+### Express × FastAPI
+
+| Conceito            | Express                | FastAPI                 |
+| ------------------- | ---------------------- | ----------------------- |
+| Definir a rota GET  | `app.get('/api/produtos/')` | `@app.get('/api/produtos/')` |
+| Responder JSON      | `res.json(produtos)`   | `return produtos`        |
+| Objeto da requisição| `req`, `res` (explícitos) | parâmetros da função (declarativos) |
+| Documentação        | não automática          | `/docs` automática       |
+
+**O que pertence ao HTTP:** a URL `/api/produtos/`, o método `GET`, o status `200` e o corpo JSON.
+
+**O que pertence ao framework:** a sintaxe de registrar rota e enviar resposta.
+
+**Por que diferente?** O Express é mais explícito (você manipula `req`/`res`). O FastAPI é mais
+declarativo: você chama a função e devolve um valor.
+
+### Contrato HTTP
+
+| Método | URL                  | Status | Resposta                |
+| ------ | -------------------- | ------ | ----------------------- |
+| GET    | `/api/produtos/`      | 200    | array JSON de 5 produtos |
+
+### Pratique no Bruno
+
+> **Agora é sua vez.** Abra a coleção `http/express/` (e depois `http/fastapi/`), selecione o
+> ambiente `Local`, inicie a Aula 2 e execute a requisição **Aula 02 → 01 - listar todos**. Observe
+> método, URL, status `200` e o array de produtos.
+
+Compare: a mesma requisição nas duas tecnologias devolve o **mesmo tipo** de resposta.
+
+### O que observar
+
+- A rota de coleção usa o **plural** e termina com **barra final** (`/api/produtos/`).
+- O corpo da resposta é um **array**, pois é uma **coleção**.
+
+---
+
+## Aula 03 — GET por ID
+
+### O que vamos aprender
+
+Buscar um **único produto** pelo `id`, usando **parâmetro de rota**, e tratar o caso de não existência
+com **`404`**.
+
+### Antes de programar
+
+Além de listar tudo, queremos pedir **um** produto: `GET /api/produtos/1/`. O `1` é um **parâmetro
+de rota** (parte dinâmica da URL). Se o produto não existir, o HTTP tem um status para isso:
+**`404 Not Found`**.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula3_get_por_id.js`
+
+```js
+app.get('/api/produtos/:id/', (req, res) => {
+  const produto = produtos.find(p => p.id === parseInt(req.params.id));
+  if (!produto) return res.status(404).json({ detail: "Produto não encontrado." });
+  res.json(produto);
+});
+```
+
+- `:id` na rota vira um parâmetro acessível em `req.params.id`.
+- `parseInt(...)` converte o valor da URL (string) em número.
+- Se não achar, `res.status(404).json({ detail: ... })`.
+- Aqui também os dados são os **5 produtos em memória**.
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula3_get_por_id.py`
+
+```python
+@app.get("/api/produtos/{id}/")
+def buscar_produto_por_id(id: int):
+    for produto in produtos:
+        if produto["id"] == id:
+            return produto
+    raise HTTPException(status_code=404, detail="Produto não encontrado.")
+```
+
+- `{id}` na URL vira o parâmetro tipado `id: int` da função.
+- O FastAPI converte o valor para `int` automaticamente (você declara o tipo).
+- Para inexistente, `HTTPException(status_code=404, ...)`.
+
+### Express × FastAPI
+
+| Conceito         | Express                    | FastAPI                         |
+| ---------------- | -------------------------- | ------------------------------- |
+| Parâmetro na rota| `:id` e `req.params.id`    | `{id}` e parâmetro `id`         |
+| Conversão de tipo| manual (`parseInt`)        | automática via `id: int`        |
+| Erro 404         | `res.status(404).json(detail)` | `raise HTTPException(404, detail=...)` |
+
+**Igual:** o contrato `GET /api/produtos/{id}/` → `404` quando não existe, com `detail`.
+
+**Diferente:** no Express o tipo é convertido **manualmente**; no FastAPI o tipo é **declarado** e o
+framework converte.
+
+> A operação é a mesma (leitura de um recurso por ID). A declaração é que muda.
+
+### Contrato HTTP
+
+| Requisição | URL                    | Sucesso | Não encontrado     |
+| ---------- | -----------------------| ------- | ------------------ |
+| GET        | `/api/produtos/{id}/`   | 200 + produto | 404 + `detail` |
+
+### Pratique no Bruno
+
+> Abra a coleção (Express e FastAPI), ambiente `Local`. Na pasta **Aula 03**, execute:
+> **01 – listar todos**, **02 – buscar por id existente** (200) e **03 – buscar por id inexistente**
+> (404). Observe o id na URL e a resposta em cada caso.
+
+### O que observar
+
+- **Parâmetro de rota** (`/produtos/1`) é diferente de **query param** (`/produtos?search=...`):
+  a rota identifica um **recurso**; o query faz **filtros/busca** (veremos na Aula 8).
+- O status muda de `200` para `404` quando o recurso não existe.
+
+---
+
+# Parte 2 — CRUD
+
+---
+
+## Aula 04 — POST (criar)
+
+### O que vamos aprender
+
+Enviar o **corpo** da requisição para **criar** um novo produto (`POST`), com status **`201 Create`**.
+
+### Antes de programar
+
+Agora o cliente envia dados ao servidor (**corpo da requisição**): `nome` e `preco`. O servidor cria o
+produto, gera um novo `id` e devolve o produto com status **`201 Create`**.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula4_post.js`
+
+```js
+app.post('/api/produtos/', (req, res) => {
+  const { nome, preco } = req.body;
+  const novoId = produtos.length ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
+  const novoProduto = { id: novoId, nome, preco };
+  produtos.push(novoProduto);
+  res.status(201).json(novoProduto);
+});
+```
+
+- `app.use(express.json())` é necessário para o Express ler o corpo JSON em `req.body`.
+- `req.body` traz os dados enviados.
+- Gera um `id` novo com base no maior id existente.
+- `res.status(201).json(...)` devolve o produto com status **201**.
+
+**Executar:** `node aula4_post.js` — porta `3000`.
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula4_post.py`
+
+```python
+class ProdutoInput(BaseModel):
+    nome: str
+    preco: float
+
+@app.post("/api/produtos/", status_code=201)
+def criar_produto(produto: ProdutoInput):
+    novo_id = max(item["id"] for item in produtos) + 1
+    novo_produto = {"id": novo_id, "nome": produto.nome, "preco": produto.preco}
+    produtos.append(novo_produto)
+    return novo_produto
+```
+
+- `ProdutoInput(BaseModel)` é o **modelo Pydantic** que representa o corpo esperado.
+- O parâmetro tipado `produto: ProdutoInput` — o FastAPI lê e valida estruturas do corpo.
+- `status_code=201` fixa o status de sucesso.
+
+### Express × FastAPI
+
+| Conceito       | Express                         | FastAPI                      |
+| -------------- | ------------------------------- | ---------------------------- |
+| Corpo          | `req.body` (com `express.json()`) | parâmetro tipado (`ProdutoInput`) |
+| Modelo do corpo| não há (objeto bruto)           | Pydantic `BaseModel`         |
+| Status         | `res.status(201).json(...)`     | `status_code=201`          |
+
+**Igual:** o cliente envia o mesmo JSON e recebe o produto criado com um `id`.
+
+**Diferente:** no Express o corpo é **lido manualmente**; no FastAPI ele é **declarado** como parser
+tipado e validado. A estrutura do corpo já gera **documentação** em `/docs`.
+
+### Contrato HTTP
+
+| Requisição | URL                  | Corpo                    | Sucesso | Formato |
+| ---------- | -------------------- | ----------------------- | ------- | ------- |
+| POST       | `/api/produtos/`      | `{"nome": "...", "preco": ...}` | 201 + produto criado | produto criado em JSON |
+
+### Pratique no Bruno
+
+> Na pasta **Aula 04**, execute **01 – listar todos** (antes), **02 – criar produto** (com o corpo
+> JSON no POST, `201`) e **03 – buscar criado** (200). Observe que o corpo é **enviado** no POST.
+
+### O que observar
+
+- GET **não** leva corpo; POST **leva**. Isso distingue "ler" e "criar".
+- O `201` é para **criação**; o `200` para leitura/atualização.
+- O id é gerado pelo servidor — o cliente não precisa escolher.
+
+---
+
+## Aula 05 — PUT (atualizar)
+
+### O que vamos aprender
+
+**Atualizar por completo** um produto existente com `PUT /api/produtos/{id}/`.
+
+### Antes de programar
+
+Depois de criar, é preciso **alterar**. O `PUT` envia os dados no corpo e substitui o recurso naquele
+id. Como o `PUT` é **atualização completa**, o corpo deve trazer **todos** os campos (`nome` e
+`preco`). Se o id não existir, `404`.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula5_put.js`
+
+```js
+app.put('/api/produtos/:id/', (req, res) => {
+  const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ detail: "Produto não encontrado." });
+  const { nome, preco } = req.body;
+  produtos[index] = { id: parseInt(req.params.id), nome, preco };
+  res.json(produtos[index]);
+});
+```
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula5_put.py`
+
+```python
+@app.put("/api/produtos/{id}/")
+def atualizar_produto(id: int, produto: ProdutoInput):
+    for index, item in enumerate(produtos):
+        if item["id"] == id:
+            produtos[index] = {"id": id, "nome": produto.nome, "preco": produto.preco}
+            return produtos[index]
+    raise HTTPException(status_code=404, detail="Produto não encontrado.")
+```
+
+### Express × FastAPI
+
+| Conceito         | Express                    | FastAPI                         |
+| ---------------- | -------------------------- | ------------------------------- |
+| Parâmetro na rota| `:id` + `req.params.id`    | `{id}` + `id: int`              |
+| Corpo            | `req.body`                 | parâmetro tipado `ProdutoInput` |
+| Localizar        | `findIndex(...)`           | `enumerate(produtos)`           |
+| Não encontrado   | `res.status(404).json(detail)` | `raise HTTPException(404, detail=...)` |
+
+**Igual:** o contrato é `PUT /api/produtos/{id}/` com o corpo completo no JSON e `404` quando o id
+não existe.
+
+**Diferente:** o Express localiza e substitui **manualmente** (índice no array); o FastAPI percorre
+com `enumerate` e substitui de forma semelhante, mas com **tipos declarados** na assinatura.
+
+**Por que diferente?** São as abstrações de cada framework: um expõe `req`/`res`; o outro usa
+assinatura de função tipada. Em ambos, a **responsabilidade do HTTP** é a mesma: rota, método, corpo,
+status.
+
+> O `PUT` é **atualização completa**: o corpo deve trazer `nome` e `preco`.
+
+### Contrato HTTP
+
+| Requisição | Método | URL                   | Corpo | Sucesso | Inexistente |
+| ---------- | ------ | --------------------- | ----- | ------- | ----------- |
+| PUT        | PUT    | `/api/produtos/{id}/` | `nome`, `preco` | 200 + atualizado | 404 + `detail` |
+
+### Pratique no Bruno
+
+> Pasta **Aula 05**: execute **01 – listar**, **02 – atualizar produto** (corpo novo, `200`),
+> **03 – conferir atualização** e **04 – atualizar id inexistente** (`404`).
+
+### O que observar
+
+- O `PUT` é **idempotente**: repetir o mesmo `PUT` produz o mesmo resultado.
+- Criar (`POST`) e atualizar (`PUT`): o segundo **exige um id** na rota.
+
+---
+
+## Aula 06 — DELETE (remover)
+
+### O que vamos aprender
+
+Remover um produto com `DELETE /api/produtos/{id}/`, retornando **`204 No Content`** (sucesso sem
+corpo).
+
+### Antes de programar
+
+O `DELETE` não precisa de corpo. Após excluir, o comum é devolver **`204 No Content`** (sem corpo) ou
+**`404`** se o recurso não existir.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula6_delete.js`
+
+```js
+app.delete('/api/produtos/:id/', (req, res) => {
+  const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ detail: "Produto não encontrado." });
+  produtos.splice(index, 1);
+  res.status(204).end();
+});
+```
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula6_delete.py`
+
+```python
+@app.delete("/api/produtos/{id}/", status_code=204)
+def remover_produto(id: int):
+    for index, item in enumerate(produtos):
+        if item["id"] == id:
+            produtos.pop(index)
+            return
+    raise HTTPException(status_code=404, detail="Produto não encontrado.")
+```
+
+### Express × FastAPI
+
+| Conceito        | Express                    | FastAPI                         |
+| --------------- | -------------------------- | ------------------------------- |
+| Remover         | `splice(index, 1)`         | `pop(index)`                    |
+| Resposta 204    | `res.status(204).end()`    | `status_code=204` na rota + `return` |
+| Não encontrado  | `res.status(404).json(detail)` | `raise HTTPException(404, detail=...)` |
+
+**Igual:** o contrato é `DELETE /api/produtos/{id}/` → `204` (sem corpo) quando remove e `404`
+quando o id não existe.
+
+**Diferente:** o `204` exige um cuidado de cada framework — no Express o status é enviado e a
+resposta **encerrada sem corpo**; no FastAPI o `status_code=204` é declarado na rota e a função
+**não devolve corpo**.
+
+**Por que diferente?** O Express controla a resposta via `res`; o FastAPI declara o status na rota. A
+**responsabilidade do HTTP** é a mesma: `204 No Content` significa "deu certo, sem corpo".
+
+### Contrato HTTP
+
+| Requisição | Método | URL                   | Sucesso              | Inexistente |
+| ---------- | ------ | --------------------- | -------------------- | ----------- |
+| DELETE     | DELETE | `/api/produtos/{id}/` | 204 (sem corpo)      | 404 + `detail` |
+
+### Pratique no Bruno
+
+> Pasta **Aula 06**: **01 – listar**, **02 – remover produto** (`204`), **03 – buscar removido**
+> (`404`), **04 – remover de novo** (também `404`).
+
+### O que observar
+
+- `204` **não tem corpo** (não é `200` com corpo).
+- Excluir é **idempotente**: após remover, uma nova chamada ao mesmo id devolve `404`.
+
+---
+
+# Parte 3 — Refinando a API
+
+---
+
+## Aula 07 — Validação
+
+### O que vamos aprender
+
+**Validar** os dados recebidos para que a API não aceite valores inválidos, devolvendo **`400`** com
+`detail`.
+
+### Antes de programar
+
+Até aqui, um `POST` com dados inconsistentes criava um produto. Vamos aplicar regras:
+
+- `nome`: obrigatório, string, com `trim`, entre **2 e 100** caracteres.
+- `preco`: obrigatório, numérico, **> 0**, no máximo **2 casas decimais**.
+
+Erros devolvidos com **`400 Bad Request`** e `detail` por campo.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula7_validacao.js`
+
+`validarProduto({ nome, preco })` devolve um objeto de erros; vazio = válido.
+
+```js
+function validarProduto({ nome, preco }) {
+  const erros = {};
+  if (nome === undefined) erros.nome = "O campo é obrigatório.";
+  else if (typeof nome !== "string") erros.nome = "O campo deve ser uma string.";
+  else {
+    const n = nome.trim();
+    if (n === "") erros.nome = "O campo não pode ser vazio.";
+    else if (n.length < 2 || n.length > 100) erros.nome = "O nome deve possuir entre 2 e 100 caracteres.";
+  }
+  // ... validações de preco ...
+  return erros;
 }
 ```
 
-* Comparar:
-  * Estrutura da resposta.
-  * Status code retornado.
-  * Diferenças na implementação entre FastAPI e Express.
+No POST e no PUT, se houver erros: `res.status(400).json({ detail: erros })`.
 
----
+### FastAPI
 
-**Discussão**
+- **Arquivo:** `fastapi-bsi4/aula7_validacao.py`
 
-* O conceito de rota, método e resposta é **igual** em ambas as stacks.
-* Diferenças estão apenas na sintaxe e ferramentas.
-* Importância de entender HTTP antes de aprender frameworks.
-
----
-
-**Atividade de Fixação**
-
-* Adicionar uma rota **DELETE** em ambas as implementações, removendo um produto pelo id.
-* Testar no **Postman** ou **Thunder Client** e registrar o status code.
-
----
-
-# Aula 3 – Rotas com parâmetros e retorno estruturado
-
-**Objetivo**
-
-Ampliar o conhecimento sobre APIs explorando rotas dinâmicas com parâmetros e retornos mais elaborados em JSON, preparando o terreno para integração com banco de dados.
-
----
-
-
-**Revisão da aula anterior**
-
-Relembrar rapidamente:
-- Diferença entre GET e POST.
-- Corpo de requisição (body) e retorno (response).
-- Conceito de status code e mensagens de resposta.
-
----
-**Conteúdo**
-
-**1. Introdução aos parâmetros de rota e query**
-
-**Conceitos:**
-
-- **Parâmetros de rota (path params):** parte da URL que representa um dado variável.
-  - Ex.: `/produtos/123` → `123` é o ID do produto.
-
-- **Parâmetros de query (query params):** enviados na URL após `?` para filtros, ordenação e paginação.
-  - Ex.: `/produtos?categoria=eletronicos&ordem=preco`.
-
-**Boas práticas:**
-
-- Usar parâmetros de rota para identificar recursos.
-- Usar parâmetros de query para filtragem, paginação e ordenação.
-
----
-
-**2. Demonstração prática – FastAPI**
-
-**Exemplo de aplicação:**
+Aqui a validação também é **explícita** (igual ao Express), para facilitar a comparação.
 
 ```python
-from fastapi import FastAPI
-from typing import Optional
-
-app = FastAPI()
-
-produtos = [
-    {"id": 1, "nome": "Notebook", "preco": 3500},
-    {"id": 2, "nome": "Mouse", "preco": 80},
-    {"id": 3, "nome": "Teclado", "preco": 150},
-    {"id": 4, "nome": "Monitor", "preco": 1200},
-    {"id": 5, "nome": "Impressora", "preco": 300},
-]
-
-@app.get("/produtos/{id_produto}")
-def get_produto(id_produto: int):
-    for produto in produtos:
-        if produto["id"] == id_produto:
-            return produto
-    return {"erro": "Produto não encontrado"}
-
-@app.get("/produtos")
-def listar_produtos(categoria: Optional[str] = None):
-    # Como ainda não temos banco, o filtro é apenas ilustrativo
-    return produtos
+def validar_produto(nome, preco):
+    erros = {}
+    if nome is None:
+        erros["nome"] = "O campo é obrigatório."
+    elif not isinstance(nome, str):
+        erros["nome"] = "O campo deve ser uma string."
+    else:
+        n = nome.strip()
+        if n == "":
+            erros["nome"] = "O campo não pode ser vazio."
+        elif len(n) < 2 or len(n) > 100:
+            erros["nome"] = "O nome deve possuir entre 2 e 100 caracteres."
+    # ... preco ...
+    return erros
 ```
 
-**Testar no navegador e no Postman:**
+No POST/PUT, se `erros` não estiver vazio: `raise HTTPException(400, detail=erros)`.
 
-- GET http://localhost:8000/produtos/1
-- GET http://localhost:8000/produtos?categoria=eletronico
+### Express × FastAPI
+
+| Conceito     | Express        | FastAPI             |
+| ------------ | -------------- | ------------------- |
+| Validação    | função manual `validarProduto` | função manual `validar_produto` |
+| Erro 400     | `res.status(400).json({ detail })` | `raise HTTPException(400, detail=...)` |
+
+**Atenção didática:** nesta aula os dois fazem a validação **manualmente**, com lógica semelhante. A
+diferença de implementação está mais em **como retornam o `400`**. (O Pydantic, usado pelo FastAPI,
+tem recursos mais "declarativos", mas mantivemos a versão explícita para visualizar a comparação.)
+
+> Mesmo com implementações parecidas, o **contrato** é o mesmo: `400` + `detail` por campo.
+
+### Contrato HTTP
+
+| Caso | Status | Resposta |
+| ---- | ------ | -------- |
+| Dados válidos        | `201` / `200` | produto |
+| `nome` inválido      | `400` | `detail: { "nome": "..." }` |
+| `preco` inválido     | `400` | `detail: { "preco": "..." }` |
+
+### Pratique no Bruno
+
+> Pasta **Aula 07** — teste casos de erro: **02 nome vazio**, **03 nome curto**, **04 preco zero**,
+> **05 preco com 3 casas**, e casos de sucesso (**06 put inválido**, **07 post válido**). Observe o
+> formato `detail` e o status `400`.
 
 ---
 
-**3. Demonstração prática – Node.js com Express**
+## Aula 08 — Filtros
 
-```javascript
-const produtos = [
-  { id: 1, nome: 'Notebook', preco: 3500 },
-  { id: 2, nome: 'Mouse', preco: 120 },
-  { id: 3, nome: 'Teclado', preco: 250 }
-];
+### O que vamos aprender
 
-app.get('/produtos/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const produto = produtos.find(p => p.id === id);
-  if (produto) {
-    res.json(produto);
-  } else {
-    res.status(404).json({ erro: 'Produto não encontrado' });
-  }
-});
+Filtrar a coleção por faixa de preço com **query params** (`preco_minimo`, `preco_maximo`).
 
-app.get('/produtos', (req, res) => {
-  // Filtro fictício
-  res.json(produtos);
-});
+### Antes de programar
 
-app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
-});
+Queremos `GET /api/produtos/?preco_minimo=100&preco_maximo=1000` devolvendo só os produtos entre
+`100` e `1000`. Os valores chegam através da **query string**.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula8_filtros.js`
+
+```js
+const { preco_minimo, preco_maximo } = req.query;
+let resultado = [...produtos];              // cópia
+if (preco_minimo !== undefined && preco_minimo !== "")
+  resultado = resultado.filter(p => p.preco >= Number(preco_minimo));
+if (preco_maximo !== undefined && preco_maximo !== "")
+  resultado = resultado.filter(p => p.preco <= Number(preco_maximo));
+res.json(resultado);
 ```
 
-**Testar no navegador e no Postman:**
+- `req.query` traz os query params.
+- `filter()` devolve uma nova lista com os que atendem, sobre uma **cópia**.
 
-- GET http://localhost:3000/produtos/1
-- GET http://localhost:3000/produtos?categoria=eletronicos
+### FastAPI
 
----
-
-**Exercício prático**
-
-- Criar uma rota que busque produtos com base em **query params** `min_preco` e `max_preco`.
-- Implementar no **FastAPI** ou **Express**.
-- Testar com **Postman**.
-
-# Aula 4 – CRUD Completo em APIs REST
-
-**Objetivo da Aula:**
-
-Implementar operações completas de CRUD em APIs REST, utilizando FastAPI e Node.js + Express, reforçando conceitos de HTTP, rotas, status codes e resposta estruturada.
-
----
-
-**Revisão rápida**
-
-- Conceitos revisados:
-  - Métodos HTTP: GET, POST, PUT, DELETE
-  - Status codes: 200, 201, 204, 404
-  - Estrutura de resposta JSON
-
-- Pergunta:
-  - _"Como podemos manipular dados de uma lista de produtos usando apenas requisições HTTP?"_
-
----
-
-**Conteúdo**
-
-**1. CRUD completo com FastAPI**
-
-**Código exemplo:**
+- **Arquivo:** `fastapi-bsi4/aula8_filtros.py`
 
 ```python
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
-app = FastAPI()
-
-# Modelo para itens
-class Item(BaseModel):
-    id: int
-    nome: str
-    preco: float
-
-# Modelo para entrada de dados (POST/PUT)
-class ItemInput(BaseModel):
-    nome: str
-    preco: float
-
-# Modelo para resposta de POST
-class ItemInputResponse(BaseModel):
-    message: str
-    dados: Item
-
-# Lista de itens em memória
-items = [
-    Item(id=1, nome="Notebook", preco=3500.00),
-    Item(id=2, nome="Mouse", preco=80.00),
-    Item(id=3, nome="Teclado", preco=150.00),
-    Item(id=4, nome="Monitor", preco=1200.00),
-    Item(id=5, nome="Impressora", preco=300.00),
-]
-
-# Listar todos os produtos (GET)
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos():
-    return items
-
-# Listar produto por ID (GET)
-@app.get("/produtos/{item_id}", response_model=Item)
-def listar_produto_por_id(item_id: int):
-    for item in items:
-        if item.id == item_id:
-            return item
-    raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-# Criar novo produto (POST)
-@app.post("/produtos", response_model=ItemInputResponse)
-def criar_produto(item: ItemInput):
-    novo_id = max(item_existente.id for item_existente in items) + 1
-    novo_item = Item(id=novo_id, **item.model_dump())
-    items.append(novo_item)
-    return ItemInputResponse(message="Produto criado com sucesso", dados=novo_item)
-
-# Atualizar produto (PUT)
-@app.put("/produtos/{item_id}", response_model=ItemInputResponse)
-def atualizar_produto(item_id: int, item_atualizado: ItemInput):
-    for i, item in enumerate(items):
-        if item.id == item_id:
-            items[i] = Item(id=item_id, **item_atualizado.model_dump())
-            return ItemInputResponse(message="Produto atualizado com sucesso", dados=items[i])
-    raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-# Remover produto (DELETE)
-@app.delete("/produtos/{item_id}")
-def remover_produto(item_id: int):
-    for i, item in enumerate(items):
-        if item.id == item_id:
-            items.pop(i)
-            return {"message": "Produto removido com sucesso"}
-    raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-# Rodar servidor:
-# uvicorn aula4_crud_completo:app --reload
-
-# Acesse a documentação da API em http://localhost:8000/docs
-```
-
-**Demonstração prática:**
-
-- Rodar o servidor com: `uvicorn main:app --reload`
-- Testar todas as rotas usando **Postman** ou **Thunder Client**:
-  - `GET /produtos` → listar todos
-  - `GET /produtos/1` → listar por id
-  - `POST /produtos` → criar novo produto
-  - `PUT /produtos/1` → atualizar produto
-  - `DELETE /produtos/1` → remover produto
-
----
-
-**2. CRUD completo com Express**
-
-**Código exemplo:**
-
-```javascript
-const express = require('express');
-const app = express();
-app.use(express.json());
-
-let produtos = [
-    { id: 1, nome: "Notebook", preco: 3500.00 },
-    { id: 2, nome: "Mouse", preco: 80.00 },
-    { id: 3, nome: "Teclado", preco: 150.00 },
-    { id: 4, nome: "Monitor", preco: 1200.00 },
-    { id: 5, nome: "Impressora", preco: 300.00 }
-];
-
-app.get('/produtos', (req, res) => res.json(produtos));
-
-app.get('/produtos/:id', (req, res) => {
-    const produto = produtos.find(p => p.id === parseInt(req.params.id));
-    if (!produto) return res.status(404).json({ error: "Produto não encontrado" });
-    res.json(produto);
-});
-
-app.post('/produtos', (req, res) => {
-    const { nome, preco } = req.body;
-    const novoId = produtos.length ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
-    const novoProduto = { id: novoId, nome, preco };
-    produtos.push(novoProduto);
-    res.json({ message: "Produto criado com sucesso", dados: novoProduto });
-});
-
-app.put('/produtos/:id', (req, res) => {
-    const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
-    if (index === -1) return res.status(404).json({ error: "Produto não encontrado" });
-    produtos[index] = { id: parseInt(req.params.id), ...req.body };
-    res.json({ message: "Produto atualizado com sucesso", dados: produtos[index] });
-});
-
-app.delete('/produtos/:id', (req, res) => {
-    const index = produtos.findIndex(p => p.id === parseInt(req.params.id));
-    if (index === -1) return res.status(404).json({ error: "Produto não encontrado" });
-    produtos.splice(index, 1);
-    res.json({ message: "Produto removido com sucesso" });
-});
-
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
-```
-
----
-
-**Demonstração prática:**
-
-- Rodar o servidor: `node index.js`
-- Testar todas as rotas no Postman ou **Thunder Client**, da mesma forma que no FastAPI.
-
----
-
-**Discussão**
-
-- Comparar FastAPI e Express:
-  - Sintaxe diferente, mesma lógica de CRUD.
-  - Status codes, rotas e payloads JSON são iguais.
-  - FastAPI gera documentação automática; Express depende de ferramentas externas (Swagger, Postman Collection).
-- Reforçar conceitos de **HTTP**, **REST** e **boas práticas**.
-
----
-
-**Atividade prática**
-
-- Adicionar no projeto:
-  - Filtrar produtos por min_preco e max_preco (query params).
-  - Implementar validação básica de dados (preço > 0, nome não vazio).
-- Testar todas as rotas e anotar status codes e respostas.
-
----
-
-# Aula 5 – CRUD com validação, filtros, ordenação e paginação (FastAPI)
-
-**Objetivo da Aula:**
-
-Implementar um CRUD completo com validação de dados, filtros, ordenação  e paginação em FastAPI, reforçando conceitos de boas práticas em APIs REST.
-
----
-
-**Revisão rápida:**
-
-- CRUD básico da Aula anterior.
-- Relembrar: métodos HTTP, status codes e resposta JSON.
-- Pergunta:
-  - _"Se nossa lista tiver 10 mil produtos, como facilitar a busca e listagem?"_
-
----
-**Conteúdo**
-
-**1. CRUD com validação**
-
-- Validação no **Pydantic**: `nome` não pode ser vazio, `preco` deve ser maior que zero.
-- Exemplo:
-
-```python
-from pydantic import BaseModel, Field
-
-class ItemInput(BaseModel):
-    nome: str = Field(..., min_length=1, description="Nome não pode ser vazio")
-    preco: float = Field(..., gt=0, description="Preço deve ser maior que zero")
-```
-
----
-
-**2. Listagem com filtros**
-
-- `min_preco` e `max_preco` como parâmetros de query.
-- Exemplo de rota:
-
-```python
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos(min_preco: float | None = None, max_preco: float | None = None):
-    resultado = items
-    if min_preco is not None:
-        resultado = [item for item in resultado if item.preco >= min_preco]
-    if max_preco is not None:
-        resultado = [item for item in resultado if item.preco <= max_preco]
+@app.get("/api/produtos/")
+def listar_produtos(preco_minimo: str | None = None, preco_maximo: str | None = None):
+    resultado = produtos
+    if preco_minimo is not None:
+        resultado = [p for p in resultado if p["preco"] >= preco_minimo]
+    if preco_maximo is not None:
+        resultado = [p for p in resultado if p["preco"] <= preco_maximo]
     return resultado
 ```
 
----
+- Os parâmetros da função **viram query params** automaticamente.
+- `preco_minimo: str | None` é `None` quando ausente.
 
-**3. Ordenação**
+### Express × FastAPI
 
-- Parâmetro `ordenar_por` (nome | preco) e `ordem` (asc | desc).
-- Exemplo:
+| Conceito    | Express                  | FastAPI                  |
+| ----------- | ------------------------ | ------------------------ |
+| Leitura     | `req.query.preco_minimo` | parâmetro `preco_minimo` |
+| Filtro      | `.filter(p => ...)`      | list comprehension        |
+| Ausência    | `undefined` / `""`       | `None`                    |
 
-```python
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos(
-    ordenar_por: str = "id",
-    ordem: str = "asc",
-):
-    resultado = items
-    resultado.sort(key=lambda x: getattr(x, ordenar_por), reverse=(ordem == "desc"))
-```
+**Contrato:** o que o cliente envia (`?preco_minimo=...`, `?preco_maximo=...`) e a resposta (array
+filtrada) são os mesmos.
 
----
+### Contrato HTTP
 
-**4. Paginação**
+| Query params          | Comportamento        |
+| --------------------- | -------------------- |
+| `preco_minimo=100`    | apenas `preco >= 100`|
+| `preco_maximo=1000`   | apenas `preco <= 1000`|
+| valor não numérico    | `400` + `detail`     |
 
-- Adicionar parâmetros `pagina` e `por_pagina`.
-- Exemplo:
+### Pratique no Bruno
 
-```python
-@app.get("/produtos", response_model=list[Item])
-def listar_produtos(pagina: int = 0, por_pagina: int = 10):
-    return items[pagina * por_pagina : (pagina + 1) * por_pagina]
-```
+> Pasta **Aula 08**: **01 sem filtro**, **02 preco_minimo**, **03 preco_maximo**, **04 intervalo**,
+> **05 valor inválido** (400). Varie os valores e veja como a resposta muda.
 
----
+### O que observar
 
-**5. Combinação dos recursos**
-
-- Filtros, paginação e ordenação juntos na mesma rota.
-- Discussão:
-  - _"O código está ficando repetitivo e verboso. Como frameworks mais completos (como DRF) ajudam a reduzir isso?"_
+- **Query param** (filtro) vs **parâmetro de rota** (identidade): o filtro não identifica um
+  recurso; apenas afina a lista.
+- O filtro não altera os dados; **seleciona** um subconjunto.
 
 ---
 
-**Atividade prática**
+## Aula 09 — Busca
 
-- Exercício:
-- Implementar validação, filtros, ordenação e paginação juntos.
-- Testar diferentes combinações no Swagger UI (http://localhost:8000/docs).
+### O que vamos aprender
 
----
+Fazer **busca textual** por nome com `search`, de forma **parcial** e **case-insensitive**.
 
-**Conclusão**
+### Antes de programar
 
-À medida em que vamos o sistema vai crescendo e vamos implementando mais recursos, é importante manter a organização e a clareza do código. O uso de frameworks e boas práticas de desenvolvimento pode ajudar a gerenciar a complexidade e a escalabilidade da aplicação.
+`GET /api/produtos/?search=mouse` deve devolver produtos cujo nome **contenha** "mouse" (ex. "Mouse
+USB"). Busca **parcial** (qualquer parte do nome) e sem diferenciar maiúsculas.
 
----
+### Express
 
-# Aula 6 – CRUD com validação, filtros, ordenação e paginação (Express)
+- **Arquivo:** `express-bsi4/aula9_busca.js`
 
-**Objetivo da Aula:**
-
-Implementar um CRUD completo com validação de dados, filtros, ordenação e paginação em Express, reforçando a comparação entre Python (FastAPI) e JavaScript (Node.js/Express).
-
----
-**Revisão rápida:**
-
-- CRUD básico com Express (**Aula 4**).
-- Na **Aula 5** fizemos isso no FastAPI com validações, filtros, ordenação e paginação.
-- Pergunta para reflexão:
-  - *"Qual código ficou mais verboso: FastAPI ou Express?"*
-
----
-
-**Conteúdo**
-
-**1. CRUD com validação**
-
-- No Express fazemos validações manualmente.
-- Exemplo de validação no `POST`:
-
-```javascript
-if (!nome || nome.trim() === "") {
-    return res.status(400).json({ error: "O nome não pode ser vazio" });
-}
-if (typeof preco !== "number" || preco <= 0) {
-    return res.status(400).json({ error: "O preço deve ser maior que zero" });
+```js
+if (search !== undefined && search !== "") {
+  const termo = search.toLowerCase();
+  resultado = resultado.filter(p => p.nome.toLowerCase().includes(termo));
 }
 ```
 
----
+### FastAPI
 
-**2. Listagem com filtros**
+- **Arquivo:** `fastapi-bsi4/aula9_busca.py`
 
-- Podemos passar parâmetros de query:
-  - `min_preco` → filtra produtos com preço mínimo.
-  - `max_preco` → filtra produtos com preço máximo.
-
-Exemplo:
-
-```javascript
-if (min_preco) resultado = resultado.filter(p => p.preco >= parseFloat(min_preco));
-if (max_preco) resultado = resultado.filter(p => p.preco <= parseFloat(max_preco));
+```python
+if search is not None:
+    termo = search.lower()
+    resultado = [p for p in resultado if termo in p["nome"].lower()]
 ```
 
+### Express × FastAPI
+
+| Conceito            | Express                  | FastAPI                |
+| ------------------- | ------------------------ | ---------------------- |
+| Verificar termo     | `includes()`             | `in`                   |
+| Ignorar maiúsculas  | `toLowerCase()`          | `.lower()`             |
+
+**Igual:** a lógica é a mesma — baixar a caixa dos dois lados e verificar se o termo está contido no
+nome. **Diferente:** a sintaxe (método JS vs operador Python). **Por que diferente?** a linguagem;
+**responsabilidade do HTTP:** nenhuma, a busca é inteiramente do framework (o parâmetro `search` é só
+um query param).
+
+### Contrato HTTP
+
+| Parâmetro | Comportamento |
+| --------- | ------------------------- |
+| `search=mouse` | produtos com "mouse" no nome |
+
+### Pratique no Bruno
+
+> Pasta **Aula 09**: **01 busca mouse**, **02 busca case-insensitive**, **03 busca tecla** (termo
+> parcial), **04 sem resultado** (lista vazia).
+
+### O que observar
+
+- Busca **parcial**: "tec" retorna "Teclado USB".
+- **Case-insensitive**: `MOUSE` e `mouse` dão o mesmo resultado.
+
 ---
 
-**3. Ordenação**
+## Aula 10 — Ordenação
 
-- `ordenar_por` → nome ou preço.
-- `ordem` → asc ou desc.
+### O que vamos aprender
 
-Exemplo:
+Ordenar os resultados com `ordering`, que aceita `nome` ou `preco`, com o prefixo `-` para
+decrescente.
 
-```javascript
-if (ordenar_por) {
-    resultado.sort((a, b) => {
-        if (a[ordenar_por] < b[ordenar_por]) return ordem === "desc" ? 1 : -1;
-        if (a[ordenar_por] > b[ordenar_por]) return ordem === "desc" ? -1 : 1;
-        return 0;
-    });
+### Antes de programar
+
+`GET /api/produtos/?ordering=nome` (crescente) e `?ordering=-preco` (decrescente). Precisamos aceitar
+o prefixo `-` e validar o campo informado.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula10_ordenacao.js`
+
+```js
+const camposOrdenacao = ["nome", "preco"];
+let campoOrdenacao = null;
+let ordemDesc = false;
+if (ordering !== undefined && ordering !== "") {
+  const valor = ordering.startsWith("-") ? ordering.slice(1) : ordering;
+  const desc = ordering.startsWith("-");
+  if (!camposOrdenacao.includes(valor)) {
+    erros.ordering = "Campo de ordenação inválido.";
+  } else {
+    campoOrdenacao = valor;
+    ordemDesc = desc;
+  }
+}
+if (campoOrdenacao) {
+  resultado.sort((a, b) => {
+    const comparacao =
+      campoOrdenacao === "preco"
+        ? a.preco - b.preco
+        : a.nome.toLowerCase().localeCompare(b.nome.toLowerCase());
+    return ordemDesc ? -comparacao : comparacao;
+  });
 }
 ```
+(No código real, o Express separa o `-`, valida o campo e ordena a **cópia**.)
 
----
+### FastAPI
 
-**4. Paginação**
-
-- Usamos `pagina` e `por_pagina`.
-- Exemplo:
-
-```javascript
-pagina = parseInt(pagina) || 0;
-por_pagina = parseInt(por_pagina) || resultado.length;
-resultado = resultado.slice(pagina, pagina + por_pagina);
-```
-
----
-
-**Atividade prática**
-
-- Testar a API com os seguintes endpoints:
-
-  - **Listar todos os produtos:** `http://localhost:8000/produtos`
-  - **Ordenar por preço (crescente):** `http://localhost:8000/produtos?ordenar_por=preco&ordem=asc`
-  - **Ordenar por nome (decrescente):** `http://localhost:8000/produtos?ordenar_por=nome&ordem=desc`
-  - **Filtrar por preço mínimo:** `http://localhost:8000/produtos?min_preco=100`
-  - **Filtrar por preço máximo:** `http://localhost:8000/produtos?max_preco=1000`
-  - **Filtrar por preço mínimo e máximo:** `http://localhost:8000/produtos?min_preco=100&max_preco=1000`
-  - **Paginação:** `http://localhost:8000/produtos?pagina=1&por_pagina=2`
-
----
-
-**Conclusão**
-
-- No **FastAPI (Python)**, usamos **Pydantic** para validação automática.
-- No **Express (Node.js)**, precisamos implementar manualmente as validações.
-- O código em **Express** tende a ser **mais verboso e repetitivo**, mas também é **mais flexível**.
-
----
-
-# Aula 7 - Introdução ao Django
-
-**Objetivo:**
-
-Apresentar o **Django** como framework web completo, comparando-o com **FastAPI** e **Express**. Criar a primeira aplicação e compreender sua estrutura de projeto.
-
----
-
-**Conteúdo da Aula:**
-
-**1. Contextualização: o que é Django?**
-
-- Django é um **framework web full-stack** para Python, criado em 2005.
-- Filosofia: *“O framework web para perfeccionistas com prazos”*.
-- Diferença de abordagem:
-  - **FastAPI/Express** → minimalistas, você escolhe os pacotes.
-  - **Django** → traz tudo pronto (ORM, templates, autenticação, administração, rotas, segurança).
-
----
-
-**2. Preparando o ambiente**
-
-**Criar pasta do projeto:**
-
-```bash
-mkdir django_intro && cd django_intro
-python -m venv .venv
-source .venv/bin/activate   # Linux/Mac
-.venv\Scripts\activate      # Windows
-pip install --upgrade pip
-```
-
-**Instalar Django:**
-
-```bash
-pip install django
-```
-
-**Salvar dependências:**
-
-```bash
-pip freeze > requirements.txt
-```
-
-**Conferir versão:**
-
-```bash
-python -m django --version
-```
-
----
-
-**3. Criando o primeiro projeto Django**
-
-**Criar projeto:**
-
-```bash
-django-admin startproject config .
-```
-
-**Entrar no vscode**
-
-```bash
-code .
-```
-
-**Estrutura criada:**
-
-```
-config/
-  manage.py
-  config/
-    __init__.py
-    settings.py
-    urls.py
-    asgi.py
-    wsgi.py
-```
-
-**Comparação:**
-
-- **Express/FastAPI**: 1 arquivo principal (`app.js` / `main.py`).
-- **Django**: projeto organizado em múltiplos arquivos, com **configurações centrais** (`settings.py`) e entrada administrativa (`manage.py`).
-
-**Rodar servidor:**
-
-```bash
-python manage.py runserver
-```
-
-Acessar `http://127.0.0.1:8000`.
-
----
-
-**4. Criando a primeira aplicação Django**
-
-**Criar app:**
-
-```bash
-python manage.py startapp produtos
-```
-
-**Estrutura criada:**
-
-```
-produtos/
-  admin.py
-  apps.py
-  models.py
-  tests.py
-  views.py
-```
-
-**Registrar app em settings.py:**
+- **Arquivo:** `fastapi-bsi4/aula10_ordenacao.py`
 
 ```python
-INSTALLED_APPS = [
-    ...
-    'produtos',
-]
+campos_ordenacao = ["nome", "preco"]
+campo_ordenacao = None
+ordem_desc = False
+if ordering is not None:
+    valor = ordering[1:] if ordering.startswith("-") else ordering
+    if valor in campos_ordenacao:
+        campo_ordenacao = valor
+        ordem_desc = ordering.startswith("-")
+    else:
+        erros["ordering"] = "Campo de ordenação inválido."
+
+if campo_ordenacao == "preco":
+    resultado.sort(key=lambda p: p["preco"], reverse=ordem_desc)
+elif campo_ordenacao == "nome":
+    resultado.sort(key=lambda p: p["nome"].lower(), reverse=ordem_desc)
 ```
 
-**Criar primeira view (produtos/views.py):**
+### Express × FastAPI
+
+| Conceito     | Express          | FastAPI                  |
+| ------------ | ---------------- | ------------------------ |
+| Separar `-`  | `startsWith("-")`| `startswith("-")`        |
+| Ordenar num. | `sort((a,b)=>...)` | `sort(key=lambda)`   |
+| Decrescente  | inverso          | `reverse=True` (na chave)  |
+
+A **ideia** é a mesma: extrair o campo, validar, ordenar e tratar o `-` como decrescente.
+
+### Contrato HTTP
+
+| `ordering`   | sentido |
+| ------------ | ------- |
+| `preco`      | crescente |
+| `-preco`     | decrescente |
+| `nome`       | alfabético (A→Z) |
+| campo inválido | `400` + `detail` |
+
+### Pratique no Bruno
+
+> **Aula 10**: **01 sem ordenação**, **02 `ordering=nome`**, **03 `ordering=-nome`**, **04
+> `ordering=preco`**, **05 campo inválido** (`400`).
+
+### O que observar
+
+- A ordenação muda a **ordem** dos resultados, mas **ainda não há paginação**.
+- O prefixo `-` segue o padrão usado também no Django REST Framework.
+
+---
+
+# Parte 4 — Persistência e paginação
+
+---
+
+## Aula 11 — Persistência em JSON
+
+### O que vamos aprender
+
+**Persistir** a API em um arquivo JSON (`produtos.json`), de modo que os dados **sobrevivam** ao
+reinício. Nesta aula passamos dos **5 produtos em memória** para o **dataset persistido de 60
+produtos** (ids 1–60). **Ainda não há paginação.**
+
+### Antes de programar
+
+Até a Aula 10, ao reiniciar o servidor voltavam os 5 produtos fixos. Agora, queremos **guardar em
+arquivo** as alterações. A lógica é: **primeiro aprendemos a manipular recursos; depois aprendemos a
+persistir**.
+
+> Nesta aula, `GET` devolve um **array simples** (sem paginação). A paginação virá na Aula 12.
+
+### Express
+
+- **Arquivo:** `express-bsi4/aula11_persistencia_json.js` (usa `fs` e `path`)
+
+```js
+const ARQUIVO = path.join(__dirname, 'produtos.json');
+function carregarProdutos() { /* lê e faz parse, ou [] */ }
+function salvarProdutos(lista) { fs.writeFileSync(ARQUIVO, JSON.stringify(lista, null, 2), 'utf-8'); }
+```
+
+- `POST`, `PUT` e `DELETE` **salvam** o arquivo após a alteração; `GET` não escreve.
+
+### FastAPI
+
+- **Arquivo:** `fastapi-bsi4/aula11_persistencia_json.py`
 
 ```python
-from django.http import HttpResponse
+import json
 
-def home(request):
-    return HttpResponse("Bem-vindo à BSI4 Store!")
+def carregar_produtos():   # lê produtos.json
+def salvar_produtos(lista):  # json.dump(...)
 ```
 
-**Mapear rota (config/urls.py):**
+Mesma ideia: ler no início e salvar após cada alteração.
 
-```python
-from django.contrib import admin
-from django.urls import path
-from produtos.views import home
+### Express × FastAPI
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', home),
-]
-```
+| Conceito | Express                     | FastAPI               |
+| -------- | --------------------------- | --------------------- |
+| Leitura  | `fs.readFileSync`           | `open` + `json.load`  |
+| Escrita  | `fs.writeFileSync`          | `open` + `json.dump`  |
+| Módulo   | integrado do Node (`fs`)    | integrado do Python (`json`) |
 
-Agora a raiz (`/`) exibe: *“Bem-vindo à BSI4 Store!”*.
+**Contrato:** igual ao anterior; a diferença é que os dados agora **persistem**. Os **60 produtos**
+vêm de `produtos.json`.
 
----
+### Contrato HTTP
 
-**Atividade prática**
+| Dados | Aulas 2–10 | Aula 11+ |
+| ------ | ---------- | -------- |
+| Fonte  | 5 em memória | `produtos.json` (60, ids 1–60) |
+| Persiste| não        | sim (POST/PUT/DELETE gravam) |
 
-- Criar uma nova view `sobre` em `produtos/views.py` retornando _“Loja feita em Django”_.
-- Mapear rota `/sobre`.
-- Testar no navegador.
+### Pratique no Bruno
 
----
+> Pasta **Aula 11** (as duas). Observe que agora há **60 produtos** (**01 – listar do arquivo**), e
+> que criar/atualizar/remover **grava** no arquivo (02–07). Reinicie o servidor para confirmar que os
+> dados continuam.
 
-**Fechamento e comparação**
+### O que observar
 
-- **FastAPI/Express**: frameworks leves, onde tudo precisa ser adicionado.
-- **Django**: já traz camadas completas: ORM, admin, autenticação, segurança, templates.
-- **Demonstração rápida:** mostrar a página do admin (criar superusuário):
-
-```bash
-python manage.py createsuperuser
-```
-
-- Antes, é necessário criar as tabelas do banco (SQLite por padrão):
-
-```bash
-python manage.py migrate
-```
-
-Entrar em `/admin/`.
+- Diferença entre **array em memória** (perde-se ao reiniciar) e **arquivo persistente** (permanece).
+- `produtos.json` é versionado junto do código.
 
 ---
 
-**Resumo da Aula**
+## Aula 12 — Paginação
 
-- O Django é **mais opinativo e estruturado** do que FastAPI/Express.
-- Criamos nosso primeiro **projeto** e **app**.
-- Configuramos **rotas** e **views** simples.
-- Exploramos o **admin** como diferencial.
+### O que vamos aprender
 
-# Aula 8 - Criando o primeiro modelo no Django
+**Paginção** da lista com `page` e `page_size`, resposta `{ page, page_size, total_pages, results }`,
+funcionando **junto com filtros, busca e ordenação**.
 
-**Objetivo:**
+### Antes de programar
 
-Entender como o Django lida com persistência de dados através de models e migrações, e aprender a cadastrar e visualizar dados no admin.
-
----
-
-**1. Introdução**
-
-Para armazenar dados de forma eficiente e organizada, o Django utiliza um sistema de ORM (Object Relational Mapper). Um ORM (Object Relational Mapper) é uma ferramenta que permite interagir com bancos de dados utilizando a linguagem de programação, sem a necessidade de escrever SQL diretamente.
-
-No **FastAPI/Express**, a modelagem de dados é feita via ORMs externos (SQLAlchemy, Prisma, Mongoose).
-
-No **Django**, o ORM já está integrado ao framework.
-
-Cada app tem seus próprios `models.py`, que descrevem as tabelas do banco.
-
----
-
-**2. Criando a primeira Model**
-
-No arquivo `produtos/models.py`:
-
-```python
-from django.db import models
-
-class Produto(models.Model):
-    nome = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True)
-    preco = models.DecimalField(max_digits=8, decimal_places=2)
-    estoque = models.IntegerField(default=0)
-    criado_em = models.DateTimeField(auto_now_add=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.nome
-```
-
-**Explicação dos campos**
-
-- `CharField`: texto curto, exige `max_length`.
-- `TextField`: textos longos (ex: descrição).
-- `DecimalField`: valores numéricos precisos (bom para dinheiro).
-- `IntegerField`: números inteiros.
-- `DateTimeField`: datas automáticas (`auto_now_add` = quando criado, `auto_now` = quando alterado).
-- `__str__`: como o objeto aparece no admin.
-
----
-
-**3. Criando e aplicando migrações**
-
-Comandos no terminal:
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-- `makemigrations`: cria os arquivos de migração baseados nas models.
-- `migrate`: aplica ao banco de dados.
-
-Verifique no diretório `produtos/migrations/` que foi criado um arquivo.
-
----
-
-**4. Registrando a Model no Admin**
-
-No arquivo `produtos/admin.py`:
-
-```python
-from django.contrib import admin
-from .models import Produto
-
-@admin.register(Produto)
-class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "preco", "estoque", "criado_em", "atualizado_em")
-    search_fields = ("nome",)
-    list_filter = ("criado_em", "atualizado_em")
-```
-
-- `list_display`: colunas exibidas na listagem.
-- `search_fields`: campos pesquisáveis.
-- `list_filter`: filtros laterais.
-
----
-
-**5. Testando no Admin**
-
-Criar um superusuário:
-
-```bash
-python manage.py createsuperuser
-```
-
-Rodar o servidor:
-
-```bash
-python manage.py runserver
-```
-
-Acessar: http://127.0.0.1:8000/admin/
-
-Fazer login e cadastrar alguns produtos.
-
----
-
-**6. Exercícios práticos**
-
-- Criar 3 produtos de teste no admin.
-- Adicionar um campo `categoria` (`CharField` com até 50 caracteres).
-- Refazer as migrações.
-- Verificar se o campo aparece no admin.
-
----
-
-**Encerramento:**
-
-Nesta aula, aprendemos a criar uma `Model`, aplicar migrações e gerenciar dados no admin.
-Na próxima aula (Aula 9), vamos expor este modelo como uma API REST usando o Django REST Framework, comparando com FastAPI/Express.
-
----
-
-# Aula 9 – Criando a primeira API REST com Django REST Framework
-
-**Objetivo:**
-
-- Apresentar o Django REST Framework (DRF).
-- Criar a primeira API REST para o modelo `Produto`
-- Explorar endpoints básicos (listar, detalhar, criar, atualizar e deletar).
-- Testar a API no navegador, Postman e terminal.
-
----
-
-**1. O que é o Django REST Framework**
-
-O **Django REST Framework (DRF)** é uma biblioteca poderosa e flexível para criar APIs em Django. Ele fornece serializadores, views genéricas, roteadores, autenticação, permissões e paginação integradas. É o padrão de fato para APIs com Django.
-
-**Instalação:**
-
-```bash
-pip install djangorestframework
-pip freeze > requirements.txt
-```
-
-**Configuração em `settings.py`:**
-
-```python
-INSTALLED_APPS = [
-  ...,
-  'rest_framework',
-  'produtos',
-]
-```
-
----
-
-**2. Criando o Serializer**
-
-Arquivo: `produtos/serializers.py`
-
-```python
-from rest_framework import serializers
-from .models import Produto
-
-class ProdutoSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Produto
-    fields = '__all__'
-```
-
----
-
-**3. Criando as Views**
-
-Arquivo: `produtos/views.py`
-
-```python
-from rest_framework import viewsets
-from .models import Produto
-from .serializers import ProdutoSerializer
-
-class ProdutoViewSet(viewsets.ModelViewSet):
-  queryset = Produto.objects.all()
-  serializer_class = ProdutoSerializer
-```
-
----
-
-**4. Criando as rotas**
-
-Arquivo: `config/urls.py`
-
-```python
-from django.contrib import admin
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from produtos.views import ProdutoViewSet
-
-# Criando o router
-router = DefaultRouter()
-router.register(r'produtos', ProdutoViewSet)
-
-# Definindo as rotas
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-]
-```
-
-
-Rodar o servidor:
-
-```bash
-python manage.py runserver
-```
-
-Acessar no navegador:
-
-- http://127.0.0.1:8000/api/produtos/ → Listagem e criação
-- http://127.0.0.1:8000/api/produtos/1/ → Detalhe, edição e exclusão
-
----
-
-**Exercícios práticos**
-
-- Criar 3 produtos usando a API.
-- Listar todos os produtos e verificar no Admin se foram salvos.
-- Atualizar o preço de um produto via API.
-- Deletar um produto e confirmar no Admin.
-
----
-
-**Encerramento:**
-
-Nesta aula, aprendemos a expor um modelo Django como API REST usando o DRF, com endpoints automáticos para CRUD. Na próxima aula, veremos como customizar a API com campos extras, filtros, buscas e paginação.
-
----
-
-# Aula 10 – Documentando a API com Swagger e Redoc no Django REST Framework
-
-**Objetivo da Aula:**
-
-Ensinar como habilitar a documentação automática da API no Django usando **drf-spectacular**, permitindo acesso via **Swagger UI** e **Redoc**.
-
----
-
-**Revisão rápida:**
-
-- No **FastAPI**, a documentação já vem pronta em `/docs`.
-- No **Express**, usamos pacotes externos como `swagger-ui-express`.
-- No **Django REST Framework**, a documentação precisa ser configurada, mas oferece opções avançadas.
-
----
-
-**Conteúdo**
-
-**1. Introdução ao drf-spectacular**
-
-- O **drf-spectacular** é uma biblioteca moderna recomendada para gerar documentação OpenAPI no Django REST Framework.
-- Permite criar documentação interativa (Swagger UI, Redoc) e exportar o schema OpenAPI em JSON.
-
----
-
-**2. Instalação e configuração**
-
-**Instalar o pacote:**
-
-```bash
-pip install drf-spectacular
-```
-
-**Adicionar ao `INSTALLED_APPS` no `settings.py`:**
-
-```python
-INSTALLED_APPS = [
-  ...,
-  "rest_framework",
-  "drf_spectacular",
-]
-```
-
-**Configurar o DRF para usar o schema do drf-spectacular:**
-
-```python
-REST_FRAMEWORK = {
-  "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-}
-```
-
----
-
-**3. Configuração das rotas**
-
-No arquivo `urls.py` principal do projeto:
-
-```python
-from django.contrib import admin
-from django.urls import path, include
-from drf_spectacular.views import (
-  SpectacularAPIView,
-  SpectacularSwaggerView,
-  SpectacularRedocView,
-)
-
-urlpatterns = [
-  path("admin/", admin.site.urls),
-  path("api/", include("produtos.urls")),
-
-  # Rota para gerar o schema (JSON do OpenAPI)
-  path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-
-  # Swagger UI
-  path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-
-  # Redoc
-  path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-]
-```
-
----
-
-**4. Testando a documentação**
-
-**Rodar o servidor:**
-
-```bash
-python manage.py runserver
-```
-
-**Acessar no navegador:**
-
-- `/api/schema/` → retorna o JSON da especificação OpenAPI.
-- `/api/docs/` → abre o Swagger UI.
-- `/api/redoc/` → abre o Redoc.
-
-Os endpoints da API aparecem automaticamente na documentação.
-
----
-
-**5. Personalizando a documentação**
-
-Adicionar no `settings.py`:
-
-```python
-SPECTACULAR_SETTINGS = {
-  "TITLE": "API de Produtos",
-  "DESCRIPTION": "Documentação da API de Produtos feita em Django REST Framework",
-  "VERSION": "1.0.0",
-  "SERVE_INCLUDE_SCHEMA": False,
-}
-```
-
-- O título, descrição e versão aparecem no Swagger e Redoc.
-- É possível documentar endpoints e serializers com docstrings.
-
----
-
-**6. Exercício prático**
-
-- Acessar `/api/docs/` e `/api/redoc/`.
-- Alterar o título e descrição da API no `settings.py` e verificar a mudança.
-- Adicionar uma nova view (ex: categorias `/api/categorias/`) e conferir se aparece na documentação.
-
----
-
-**Conclusão**
-
-- No Django REST Framework, a documentação precisa ser configurada, mas é poderosa e detalhada.
-- Comparar com FastAPI (documentação automática) e Express (pacotes externos).
-- O drf-spectacular facilita a geração de documentação interativa e padronizada.
-
----
-
-# Aula 11 – Customizando a API: Filtros, Buscas e Ordenação
-
-**Objetivo:**
-
-- Introduzir recursos de customização do Django REST Framework (DRF).
-- Implementar filtros por campo, busca textual e ordenação em uma API.
-- Testar as customizações no navegador e no Postman.
-
----
-
-**1. Revisão rápida**
-
-Na Aula 9, criamos a primeira API CRUD com DRF para o modelo `Produto`, utilizando endpoints automáticos para listagem, detalhe, criação, atualização e exclusão. Serializers e ViewSets simplificam a implementação.
-
-*Pergunta de reflexão:*
-Como tornar a API mais útil quando temos muitos produtos?
-
----
-
-**2. Configurando filtros, busca e ordenação**
-
-O DRF possui recursos nativos para filtros simples, mas para filtros avançados podemos usar o pacote `django-filter`.
-
-**Instalação:**
-
-```bash
-pip install django-filter
-```
-
-**Configuração em `settings.py`:**
-
-```python
-REST_FRAMEWORK = {
-  'DEFAULT_FILTER_BACKENDS': [
-    'django_filters.rest_framework.DjangoFilterBackend',
-    'rest_framework.filters.SearchFilter',
-    'rest_framework.filters.OrderingFilter',
-  ],
-}
-```
-
----
-
-**3. Adicionando filtros e busca no ViewSet**
-
-Arquivo: `produtos/views.py`
-
-```python
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.viewsets import ModelViewSet
-from .models import Produto
-from .serializers import ProdutoSerializer
-
-class ProdutoViewSet(ModelViewSet):
-  queryset = Produto.objects.all()
-  serializer_class = ProdutoSerializer
-
-  # Filtros
-  filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-  filterset_fields = ['preco', 'estoque']  # Filtragem exata por preço e estoque
-  search_fields = ['nome']  # Busca textual
-  ordering_fields = ['nome', 'preco']  # Ordenação
-  ordering = ['id']  # Ordenação padrão
-```
-
----
-
-**4. Testando a API**
-
-Rodar o servidor:
-
-```bash
-python manage.py runserver
-```
-
-Testar no navegador e Postman usando parâmetros de consulta:
-
-- Filtro por preço:
-  `http://127.0.0.1:8000/api/produtos/?preco=150`
-- Busca por nome:
-  `http://127.0.0.1:8000/api/produtos/?search=Mouse`
-- Ordenação por preço decrescente:
-  `http://127.0.0.1:8000/api/produtos/?ordering=-preco`
-
-Testar diferentes combinações de filtros, busca e ordenação.
-
----
-
-**Exercícios práticos**
-
-- Filtrar produtos por preço e estoque.
-- Fazer busca textual pelo nome do produto.
-- Ordenar produtos por preço crescente e decrescente.
-- Testar diferentes combinações no navegador e no Postman.
-
----
-
-**Encerramento:**
-
-Nesta aula, aprendemos a customizar a API com filtros, busca e ordenação usando DRF e django-filter, tornando a API mais flexível e útil para o consumidor. Na próxima aula, veremos como adicionar paginação e campos extras.
-
----
-
-# Aula 12 – Filtros Avançados com django-filter no Django REST Framework
-
-**Objetivo**
-
-Demonstrar como criar filtros avançados personalizados para a API com django-filter, incluindo filtros para faixa de preço (`preco_minimo`, `preco_maximo`) e filtros múltiplos para estoque sem a necessidade de filtros customizados.
-
----
-
-**Conteúdo**
-
-**1. Filtros personalizados para faixa de preço**
-
-Crie (ou edite) o arquivo `filters.py` na app `produtos`:
-
-```python
-from django_filters import FilterSet, NumberFilter
-from .models import Produto
-
-class ProdutoFilter(FilterSet):
-    preco_minimo = NumberFilter(field_name='preco', lookup_expr='gte')
-    preco_maximo = NumberFilter(field_name='preco', lookup_expr='lte')
-    preco = NumberFilter(field_name='preco', lookup_expr='exact')
-
-    class Meta:
-        model = Produto
-        fields = ['preco_minimo', 'preco_maximo', 'estoque']
-```
-
-- Explicação:
-  - `preco_minimo` filtra produtos com preço maior ou igual a um valor.
-  - `preco_maximo` filtra produtos com preço menor ou igual a um valor.
-  - `preco` filtra produtos com preço exatamente igual a um valor.
-  - `estoque` pode ser filtrado diretamente.
-
-**2. Filtros múltiplos para estoque sem filtros personalizados**
-
-No `views.py`, na sua ViewSet do Produto, você pode especificar no atributo `filterset_fields` que deseja permitir múltiplas operações para estoque, assim:
-
-```python
-filterset_fields = {
-    'estoque': ['exact', 'gte', 'lte'],  # permite filtro exato, maior ou igual e menor ou igual
-}
-```
-
-Dessa forma, sem precisar criar filtros customizados para estoque, a API suportará URLs do tipo:
-
-- `?estoque=10` (estoque exatamente 10)
-- `?estoque__gte=5` (estoque maior ou igual a 5)
-- `?estoque__lte=20` (estoque menor ou igual a 20)
-
-**3. Ajuste na ViewSet para integrar os filtros**
-
-Exemplo completo da ViewSet com filtros customizados e filtros múltiplos (sabendo que você pode usar `filterset_class` ou `filterset_fields`, mas não ambos ao mesmo tempo):
-
-```python
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.filters import SearchFilter, OrderingFilter
-from .models import Produto
-from .serializers import ProdutoSerializer
-from .filters import ProdutoFilter
-
-class ProdutoViewSet(ModelViewSet):
-    queryset = Produto.objects.all()
-    serializer_class = ProdutoSerializer
-
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_class = ProdutoFilter  # Ou usa filterset_fields
-    filterset_fields = {
-        'estoque': ['exact', 'gte', 'lte']
-    }  # ou usa filterset_class
-    search_fields = ['nome']
-    ordering_fields = ['nome', 'preco']
-    ordering = ['id']
-```
-
-**4. Testando os filtros**
-
-Exemplos de URLs para testar no navegador ou Postman:
-
-- `/api/produtos/?preco_minimo=100&preco_maximo=500`
-- `/api/produtos/?estoque__gte=10&estoque__lte=50`
-- `/api/produtos/?search=Mouse` (busca textual pelo nome)
-- `/api/produtos/?ordering=-preco` (ordenação por preço decrescente)
-- `/api/produtos/?preco_minimo=100&estoque__gte=10&search=Notebook&ordering=nome`
-
-**5. Exercícios sugeridos**
-
-- Filtrar produtos por faixa de preço usando `preco_minimo` e `preco_maximo`.
-- Filtrar produtos com estoque entre valores mínimo e máximo usando os operadores `gte` e `lte`.
-- Combinar filtros de preço, estoque, busca textual e ordenação.
-- Testar as respostas da API nestes diferentes cenários para entender o comportamento.
-
----
-
-# Aula 13 – Paginação Personalizada com Django REST Framework
-
-**Objetivo**
-
-Implementar paginação personalizada para APIs com Django REST Framework, adaptando o formato da resposta para incluir página atual, tamanho da página, total de páginas e resultados.
-
----
-
-**Conteúdo**
-
-**1. Configuração global no `settings.py`**
-
-No arquivo `settings.py`, configure a paginação global para usar sua classe personalizada:
-
-```python
-REST_FRAMEWORK = {
-    # Outras configurações do DRF...
-    'DEFAULT_PAGINATION_CLASS': 'config.pagination.CustomPagination',  # ajuste o caminho conforme seu app
-    'PAGE_SIZE': 10,  # quantidade padrão de itens por página
-}
-```
-
-**2. Criando a páginação personalizada (arquivo `pagination.py` no seu projeto)**
-
-Crie o arquivo `pagination.py` no seu projeto e defina a classe `CustomPagination`:
-
-```python
-from rest_framework import pagination
-from rest_framework.response import Response
-
-class CustomPagination(pagination.PageNumberPagination):
-    def get_paginated_response(self, data):
-        return Response({
-            'page': self.page.number,
-            'page_size': self.page.paginator.per_page,
-            'total_pages': self.page.paginator.num_pages,
-            'results': data,
-        })
-```
-
-- Esta classe herda `PageNumberPagination`.
-- Sobrescreve o método `get_paginated_response` para modificar o formato padrão da resposta.
-- Os campos na resposta JSON serão:
-  - `page`: página atual.
-  - `page_size`: tamanho da página.
-  - `total_pages`: total de páginas disponíveis.
-  - `results`: lista dos itens da página atual.
-
-**3. Testando a paginação**
-
-- A paginação será aplicada automaticamente em todas as views que retornem listas pois foi configurada globalmente.
-- Exemplos de URLs para obter as páginas:
-
-```
-GET /api/produtos/?page=1
-GET /api/produtos/?page=2
-```
-
-- A resposta será algo assim:
+Com **60 produtos**, devolver todos de uma vez não é legal. A paginação limita a quantidade por
+resposta e informa quantas páginas existem. Padrão: `page_size = 10`, máximo `100`.
 
 ```json
-{
-  "page": 1,
-  "page_size": 10,
-  "total_pages": 5,
-  "results": [
-    // lista de produtos da página 1
-  ]
-}
+{ "page": 1, "page_size": 10, "total_pages": 6, "results": [...] }
 ```
 
-**4. Exercícios práticos**
+### Express
 
-- Faça requisições para diferentes páginas e observe como os resultados mudam.
-- Altere o valor padrão `PAGE_SIZE` e teste o comportamento da API.
-- Analise como a paginação interage com filtros e ordenação já implementados.
+- **Arquivo:** `express-bsi4/aula12_paginacao.js`
 
----
+```js
+const totalPages = Math.ceil(totalParaPaginacao / tamanhoPagina);
+const inicio = (pagina - 1) * tamanhoPagina;
+const itens = resultado.slice(inicio, inicio + tamanhoPagina);
+res.json({ page: pagina, page_size: tamanhoPagina, total_pages: totalPages, results: itens });
+```
 
-# Aula 14 – Validação Avançada em Serializers com Django REST Framework
+- Valida `page` e `page_size` (inteiro positivo, ≤100).
 
-**Objetivos**
+### FastAPI
 
-- Entender os diferentes níveis de validação que podem ser feitos em serializers.
-- Implementar validações específicas em campos individuais (`validate_<field_name>`).
-- Criar validações que envolvem múltiplos campos ao mesmo tempo (validação a nível do objeto).
-- Personalizar mensagens de erro e garantir que a API retorne respostas claras a clientes.
-
----
-
-**Conteúdo**
-
-**1. Revisão rápida dos serializers**
-
-- Serializers transformam dados entre formatos JSON e objetos Python.
-- Além dessa conversão, serializers fazem validação automática baseada no modelo.
-- Para regras específicas, é possível criar métodos de validação customizados.
-
-**2. Validação em campos individuais**
-
-Exemplo com validação para o campo `preco`, que precisa ser sempre maior que zero:
+- **Arquivo:** `fastapi-bsi4/aula12_paginacao.py` (usa o modelo `RespostaPaginada`)
 
 ```python
-from rest_framework.serializers import ModelSerializer, ValidationError
-from .models import Produto
-
-class ProdutoSerializer(ModelSerializer):
-    class Meta:
-        model = Produto
-        fields = '__all__'
-
-    def validate_preco(self, preco):
-        if preco <= 0:
-            raise ValidationError('O preço deve ser maior que zero.')
-        return preco
+total_pages = (total + tamanho_pagina - 1) // tamanho_pagina
+inicio = (pagina - 1) * tamanho_pagina
+itens = resultado[inicio : inicio + tamanho_pagina]
+return RespostaPaginada(page=pagina, page_size=tamanho_pagina, total_pages=total_pages, results=itens)
 ```
 
-- O método deve ser nomeado como `validate_<nome_do_campo>`.
-- Recebe o valor do campo e deve retornar o valor validado ou lançar um erro.
+### Express × FastAPI
 
-**3. Validação cruzada entre campos (validação ao nível do objeto)**
+| Conceito         | Express                  | FastAPI                        |
+| ---------------- | ------------------------ | ------------------------------ |
+| `total_pages`    | `Math.ceil(total / tamanho)` | `(total + tamanho - 1) // tamanho` |
+| Resposta paginada| objeto direto            | modelo tipado `RespostaPaginada` |
 
-Para validar múltiplos campos em conjunto, use o método `validate`:
+**Igual:** o cálculo de `total_pages` é **equivalente** (a expressão `(total + tamanho - 1) //
+tamanho` é a versão "inteira" de `Math.ceil`), e o contrato é o mesmo: `page`, `page_size`,
+`total_pages`, `results`.
 
-```python
-    def validate(self, produto):
-        preco = produto.get('preco')
-        estoque = produto.get('estoque')
+**Diferente:** o FastAPI usa um **modelo Pydantic** (`RespostaPaginada`) para dar forma tipada; o
+Express monta um **objeto direto**. **Por que diferente?** tipagem declarativa vs JS sem tipagem.
 
-        if estoque > 0 and (preco is None or preco <= 0):
-            raise ValidationError('Produto com estoque deve ter preço maior que zero.')
-        return produto
-```
+> A paginação acontece **depois** do filtro → busca → ordenação (a ordem importa: paginar antes
+> traria itens errados).
 
-- Recebe um dicionário com todos os campos validados até o momento.
-- Deve retornar o dicionário de dados ou lançar `serializers.ValidationError`.
+### Contrato HTTP
 
-**4. Mensagens de erro personalizadas**
+| Parâmetro | Padrão | Descrição |
+| --------- | ------ | ---------- |
+| `page`    | 1      | número da página (base 1) |
+| `page_size` | 10   | itens por página (máx 100) |
+| `resultado`|        | `page`, `page_size`, `total_pages`, `results` |
 
-- As mensagens lançadas por `ValidationError` aparecem no corpo da resposta com status HTTP 400.
-- Exemplo de retorno JSON em caso de erro:
+Combinação possível: `?search=mouse&ordering=-preco&page=2&page_size=10`. A ordem é: filtro → busca →
+ordenação → paginação.
 
-```json
-{
-  "preco": [
-    "O preço deve ser maior que zero."
-  ]
-}
-```
+### Pratique no Bruno
 
-- Isso ajuda o cliente a entender o que corrigir.
+> Pasta **Aula 12**: teste **01 padrão**, **02 página 2**, **03 última página**, **04 além do
+> limite** (results vazia), **05 `page=0`**, **06 `page_size=0`**, **07 `page_size` grande** (400) e
+> combinações com filtro/busca/ordenação (08, 09, 10).
 
-**5. Exercícios práticos**
+### O que observar
 
-- Adicione validação para o campo `nome` para garantir que não seja vazio.
-- Valide que o campo `estoque` não possa ser negativo.
-- Teste inserções inválidas via Postman ou browser e interprete as mensagens de erro da API.
+- É preciso aplicar a **ordenação antes** da paginação; senão as páginas ficam erradas.
 
 ---
 
+# Parte 5 — Consolidação
+
+---
+
+## Aula 13 — API completa
+
+### O que vamos aprender
+
+Consolidar **todas** as funcionalidades em uma única versão, **sem introduzir conceito novo**.
+
+### O que é a API completa
+
+- **Arquivos:** `express-bsi4/aula13_api_completa.js` e `fastapi-bsi4/aula13_api_completa.py`.
+- Reúne: CRUD + validação + filtros + busca + ordenação + persistência + paginação.
+- É o resultado das Aulas 2–12.
+
+### Express × FastAPI — quadro final
+
+| Aspecto       | Express                       | FastAPI                      |
+| ------------- | ----------------------------- | ---------------------------- |
+| Linguagem     | JavaScript (Node.js)          | Python                       |
+| Framework     | Express                       | FastAPI                      |
+| Rotas         | `app.get/post/put/delete(...)`| `@app.get/post/put/delete(...)` |
+| Entrada       | `req.body`/`req.params`/`req.query` | parâmetros tipados da função |
+| Validação     | função manual `validarProduto`  | função manual `validar_produto` |
+| Persistência  | `fs`/`path` + `produtos.json`  | `json` + `produtos.json`      |
+| Filtros       | `.filter(...)`                | list comprehension           |
+| Busca         | `toLowerCase().includes()`     | `termo in nome.lower()`       |
+| Ordenação     | `sort((a,b)=>...)`             | `sort(key=..., reverse=...)`  |
+| Paginação     | `slice` + `Math.ceil`           | slicing + `RespostaPaginada` |
+| Documentação  | nenhuma automática (manual/Bruno) | `/docs` automática (Swagger/OpenAPI) |
+
+> A documentação automática (`/docs`) é um benefício do FastAPI, mas **não altera o contrato**: a
+> API consumida é a mesma nos dois frameworks.
+
+### Contrato HTTP
+
+Documentação do contrato que Express e FastAPI atendem:
+
+| Operação      | Método | Endpoint                | Status principal | Resposta                       |
+| ------------- | ------ | ----------------------- | ---------------- | ------------------------------ |
+| Listar        | GET    | `/api/produtos/`          | 200              | coleção de produtos            |
+| Buscar por ID | GET    | `/api/produtos/{id}/`     | 200 / 404        | produto individual / `detail`  |
+| Criar         | POST   | `/api/produtos/`          | 201              | produto criado                 |
+| Atualizar     | PUT    | `/api/produtos/{id}/`     | 200 / 404        | produto atualizado / `detail`  |
+| Excluir       | DELETE | `/api/produtos/{id}/`     | 204 / 404        | sem corpo (204) / `detail`     |
+
+- **Validação:** `nome` entre 2 e 100 caracteres (com `trim`); `preco` numérico maior que zero, com
+  no máximo 2 casas decimais.
+- **Filtros:** `preco_minimo`, `preco_maximo` (ex.: `/api/produtos/?preco_minimo=100`).
+- **Busca:** `search` (ex.: `/api/produtos/?search=mouse`).
+- **Ordenação:** `ordering=nome` / `-nome` / `preco` / `-preco`.
+- **Paginação:** `page` (padrão 1) e `page_size` (padrão 10, máximo 100); resposta com
+  `page`, `page_size`, `total_pages` e `results`.
+- **Formato de erro:** `{ "detail": ... }`.
+
+> Esse é o contrato que qualquer cliente consumidor recebe — identificado em cada framework conforme
+> evoluímos nas Aulas 2–12.
+
+### Pratique no Bruno
+
+A pasta **Aula 13 – Integração** exercita o fluxo completo: listar, criar, ler, atualizar, remover,
+confirmar remoção e um caso inválido. Execute **tudo** nas duas tecnologias e observe o ciclo de vida
+de um recurso.
+
+### Conclusão
+
+O objetivo não era aprender duas sintaxes para fazer a mesma coisa. Era **compreender o contrato de
+uma API HTTP** e perceber como **diferentes frameworks implementam esse contrato**. Ao final, você
+vê a **mesma API** construída de duas formas.
+
+```text
+endpoint simples → recurso por ID → CRUD → validação → filtros → busca → ordenação
+→ persistência → paginação → API completa
+```
+
+> **O framework muda a forma de implementar. O contrato HTTP permanece.**
+
+---
+
+## 8. Convenções e observações finais
+
+- **Dataset:**
+  - Aulas 2–10: **5 produtos em memória**, definidos no código; último dataset `{id, nome, preco}`.
+  - Aulas 11–13: **60 produtos** em `produtos.json` (ids 1–60).
+
+- **Progressão:**
+  - Aulas 2–10: sem `produtos.json`, sem persistência, sem paginação.
+  - Aula 11: persistência em JSON (ainda sem paginação).
+  - Aula 12: paginação (sobre dados persistidos).
+  - Aula 13: consolidação, **sem conceito novo**.
+
+- **Bruno:** coleções em `express-bsi4/http/express/` e `fastapi-bsi4/http/fastapi/`, sempre com o
+  ambiente `Local` selecionado. As duas coleções têm os **mesmos cenários**; a diferença é o nome e a
+  porta base (3000 vs 8000).
+
+- **Contrato:** Express e FastAPI respeitam **o mesmo contrato HTTP** (consolidado na Aula 13).
+
+- **PATCH:** não faz parte desta sequência (o `PUT` é atualização completa). Será retomado depois.
