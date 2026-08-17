@@ -121,51 +121,28 @@ Bruno não tem para quem enviar a requisição (retornaria erro de conexão).
 > Aula 1 e nas coleções das Aulas 2–13.
 
 <details>
-<summary><strong>Ubuntu / Debian (APT)</strong></summary>
+<summary><strong>Ubuntu / Mint (APT)</strong></summary>
 
 Adicione o repositório oficial do Bruno e instale:
 
 ```bash
-sudo mkdir -p /etc/apt/keyrings
-sudo apt update && sudo apt install gpg curl
-curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x9FA6017ECABE0266" \
-  | gpg --dearmor \
-  | sudo tee /etc/apt/keyrings/bruno.gpg > /dev/null
-sudo chmod 644 /etc/apt/keyrings/bruno.gpg
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/bruno.gpg] http://debian.usebruno.com/ bruno stable" \
-  | sudo tee /etc/apt/sources.list.d/bruno.list
-sudo apt update && sudo apt install bruno
+Instale diretamente pela ferramenta de Adicionar Programas.
 ```
 
 </details>
 
 <details>
-<summary><strong>Manjaro Linux (AUR/yay)</strong></summary>
+<summary><strong>Manjaro Linux</strong></summary>
 
-No Manjaro, o Bruno pode ser instalado via **yay**:
-
-```bash
-yay -S bruno-bin
-```
-
-Também é possível instalar pelo Gerenciador de Pacotes Pamac (GUI).
+Instale pelo Gerenciador de Pacotes Pamac (GUI).
 
 </details>
 
 <details>
-<summary><strong>Windows (winget / Chocolatey / Scoop)</strong></summary>
+<summary><strong>Windows</strong></summary>
 
-Use um dos gerenciadores de pacote:
 
-```bash
-winget install Bruno.Bruno        # mais simples no Windows 10/11
-# ou
-choco install bruno               # via Chocolatey
-# ou
-scoop bucket add extras && scoop install bruno   # via Scoop
-```
-
-Também é possível baixar o instalador (`.exe`/`.msi`) na página oficial
+Baixe o instalador (`.exe`/`.msi`) na página oficial
 https://www.usebruno.com/downloads.
 
 </details>
