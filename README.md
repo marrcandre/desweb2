@@ -1,6 +1,6 @@
 # Desenvolvimento Web II — APIs com Express e FastAPI
 
-## 1. Objetivo do tutorial
+**1. Objetivo do tutorial**
 
 Este material ensina a **construir uma API REST**, do zero até uma versão completa, em **13 aulas**.
 
@@ -14,7 +14,7 @@ perceber que frameworks diferentes são apenas **formas diferentes de implementa
 
 ---
 
-## 2. Ideia central: Express × FastAPI
+**2. Ideia central: Express × FastAPI**
 
 > Express e FastAPI implementam a mesma API. A forma de programar muda, mas o contrato HTTP
 > permanece.
@@ -30,7 +30,7 @@ Bruno, um aplicativo) envia e recebe será **praticamente idêntico** nas duas t
 
 ---
 
-## 3. Como usar este tutorial
+**3. Como usar este tutorial**
 
 Cada aula 2–13 segue o mesmo ciclo:
 
@@ -57,7 +57,7 @@ comparação e da prática no Bruno.
 
 ---
 
-## 4. Pré-requisitos
+**4. Pré-requisitos**
 
 Você precisa ter instalado:
 
@@ -71,7 +71,7 @@ Os exemplos são independentes entre si: **cada arquivo de aula é um servidor c
 
 ---
 
-## 5. Onde está o código (repos externos)
+**5. Onde está o código (repos externos)**
 
 > **Este repositório (`desweb2`) contém principalmente o material didático.** O **código-fonte** das
 > aulas **não fica aqui** — ele está nos repositórios específicos de cada tecnologia:
@@ -102,9 +102,9 @@ Express, `.py` no FastAPI). Veja a lista completa nos READMEs de cada repositór
 
 ---
 
-## 6. Bruno — cliente HTTP do curso
+**6. Bruno — cliente HTTP do curso**
 
-### Por que usamos o Bruno
+**Por que usamos o Bruno**
 
 O **Bruno** é o cliente HTTP oficial da disciplina. Ele permite **guardar as requisições junto com o
 código** e **versioná-las no repositório**. Assim, cada aula tem uma coleção de requisições que
@@ -115,7 +115,7 @@ exercita exatamente o que foi construído.
 requisições para você observar o que a API responde. Um depende do outro: sem o servidor rodando, o
 Bruno não tem para quem enviar a requisição (retornaria erro de conexão).
 
-### Instalação
+**Instalação**
 
 > Instale o Bruno no seu sistema e abra o aplicativo. O **uso** em si será construído aos poucos na
 > Aula 1 e nas coleções das Aulas 2–13.
@@ -147,7 +147,7 @@ https://www.usebruno.com/downloads.
 
 </details>
 
-### Uso do Bruno nas aulas
+**Uso do Bruno nas aulas**
 
 - **Aula 1:** Você cria **manualmente** suas primeiras
   requisições (para APIs públicas).
@@ -162,7 +162,7 @@ https://www.usebruno.com/downloads.
 
 ---
 
-## 7. Visão geral das aulas
+**7. Visão geral das aulas**
 
 | Aula | Conceito             | Parte                             |
 | ---- | -------------------- | -------------------------------- |
@@ -191,7 +191,7 @@ https://www.usebruno.com/downloads.
 
 ## 📘 Aula 01 — Fundamentos de APIs
 
-### 1. O que é uma API
+**1. O que é uma API**
 
 **API** (*Application Programming Interface*) é um conjunto de regras que definem **como um sistema
 pode conversar com outro**. Uma **API web** é acessível pela internet, normalmente usando o protocolo
@@ -201,7 +201,7 @@ Quando você abre um aplicativo de clima, ele consulta uma API de um serviço me
 site calcula o frete, ele consulta a API de uma transportadora. Em Desenvolvimento Web II, nosso
 objetivo é **criar** esse tipo de serviço — uma API que devolve dados de produtos.
 
-### 2. Cliente, servidor, requisição e resposta
+**2. Cliente, servidor, requisição e resposta**
 
 - **Cliente** — quem faz a requisição (navegador, aplicativo, ou o próprio Bruno).
 - **Servidor** — quem recebe, processa e devolve a resposta (no nosso caso, uma API).
@@ -222,7 +222,7 @@ Cliente
 
 Esse ciclo "pedido → resposta" é a base de tudo que faremos no curso.
 
-### 3. HTTP
+**3. HTTP**
 
 O **HTTP** é o protocolo usado para essa comunicação. Uma requisição HTTP é composta, basicamente,
 por:
@@ -255,7 +255,7 @@ Os métodos principais do curso são:
 > **PATCH** representa atualização **parcial** e faz parte do REST. Nesta sequência usamos o **PUT**
 > para atualização completa; o PATCH fica para depois.
 
-### 4. JSON
+**4. JSON**
 
 **JSON** é o formato de dados mais usado em APIs web. Permite representar objetos e listas:
 
@@ -270,7 +270,7 @@ Os métodos principais do curso são:
 
 No curso, **JSON é o formato de dados das nossas APIs**: a API recebe e devolve JSON.
 
-### 5. REST — ideia principal
+**5. REST — ideia principal**
 
 **REST** é um conjunto de boas práticas para organizar APIs web. As principais ideias:
 
@@ -279,7 +279,7 @@ No curso, **JSON é o formato de dados das nossas APIs**: a API recebe e devolve
 - as **operações** sobre o recurso são feitas com **métodos HTTP** (GET, POST, PUT, DELETE);
 - o recurso é **representado** em um formato (em geral, **JSON**).
 
-### 6. Framework ≠ protocolo
+**6. Framework ≠ protocolo**
 
 - **HTTP** é o **protocolo**: define como cliente e servidor conversam (métodos, status, URLs).
 - **REST** é uma **forma de organizar** APIs sobre HTTP.
@@ -305,7 +305,7 @@ mesmas respostas:
 
 > **O framework muda a forma de implementar. O contrato HTTP permanece.**
 
-### 7. Conhecendo os repositórios
+**7. Conhecendo os repositórios**
 
 O **código-fonte** das aulas fica nos repositórios de cada tecnologia (o `desweb2` guarda o material
 didático). Os links oficiais:
@@ -316,14 +316,14 @@ didático). Os links oficiais:
 Cada um tem seu README com instruções de como clonar, instalar e executar. No `express-bsi4/` estão `aula2_*.js` a `aula13_*.js` (porta 3000); no `fastapi-bsi4/`, `aula2_*.py` a `aula13_*.py` (porta 8000). Cada
 arquivo é um servidor completo e progressivo.
 
-### 8. Preparando o Bruno
+**8. Preparando o Bruno**
 
 Instale e abra o **Bruno** (veja a [seção 6](#6-bruno--cliente-http-do-curso) com as instruções por sistema). No Bruno, uma **coleção**
 é um conjunto de **requisições** organizadas. As requisições podem usar um **ambiente** com a
 **URL base** (como `{{baseUrl}}`), e cada uma define **método**, **URL**, **parâmetros**, **corpo** e
 mostra **status** e **resposta**.
 
-### 9. Primeira prática no Bruno
+**9. Primeira prática no Bruno**
 
 Vamos consultar duas **APIs públicas** e observar o formato JSON:
 
@@ -347,7 +347,7 @@ No Bruno, crie uma requisição `GET` para cada URL acima, execute e observe:
 - o **corpo** (o que o servidor respondeu);
 - o **JSON** e os **campos** retornados.
 
-### 10. O que vem nas próximas aulas
+**10. O que vem nas próximas aulas**
 
 O curso está organizado em **cinco partes**:
 
@@ -366,18 +366,18 @@ filtros, busca, ordenação, persistência em um arquivo JSON e paginação**. N
 
 ## 📘 Aula 02 — GET de coleção
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Como fazer a API responder a uma requisição **`GET`** com uma **lista (coleção)** de produtos. É o
 primeiro endpoint da nossa API.
 
-### Antes de programar
+**Antes de programar**
 
 Precisamos escutar o `GET` em um URL e devolver um **JSON com um array de produtos**. As Aulas 2–10
 usam **5 produtos em memória** definidos no próprio código — sem banco, sem arquivo, sem
 `produtos.json`.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula2_api_basica_get_colecao.js`
 
@@ -396,7 +396,7 @@ node aula2_api_basica_get_colecao.js
 ```
 Servidor na porta `3000`. Acesse `http://localhost:3000/api/produtos/`.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula2_api_basica_get_colecao.py`
 
@@ -415,7 +415,7 @@ uvicorn aula2_api_basica_get_colecao:app --reload
 ```
 Servidor na porta `8000`. Documentação automática em [http://localhost:8000/docs](http://localhost:8000/docs).
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito            | Express                | FastAPI                 |
 | ------------------- | ---------------------- | ----------------------- |
@@ -431,13 +431,13 @@ Servidor na porta `8000`. Documentação automática em [http://localhost:8000/d
 **Por que diferente?** O Express é mais explícito (você manipula `req`/`res`). O FastAPI é mais
 declarativo: você chama a função e devolve um valor.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Método | URL                  | Status | Resposta                |
 | ------ | -------------------- | ------ | ----------------------- |
 | GET    | `/api/produtos/`      | 200    | array JSON de 5 produtos |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > **Agora é sua vez.** Abra a coleção `http/express/` (e depois `http/fastapi/`), selecione o
 > ambiente `Local`, inicie a Aula 2 e execute a requisição **Aula 02 → 01 - listar todos**. Observe
@@ -445,7 +445,7 @@ declarativo: você chama a função e devolve um valor.
 
 Compare: a mesma requisição nas duas tecnologias devolve o **mesmo tipo** de resposta.
 
-### O que observar
+**O que observar**
 
 - A rota de coleção usa o **plural** e termina com **barra final** (`/api/produtos/`).
 - O corpo da resposta é um **array**, pois é uma **coleção**.
@@ -454,18 +454,18 @@ Compare: a mesma requisição nas duas tecnologias devolve o **mesmo tipo** de r
 
 ## 📘 Aula 03 — GET por ID
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Buscar um **único produto** pelo `id`, usando **parâmetro de rota**, e tratar o caso de não existência
 com **`404`**.
 
-### Antes de programar
+**Antes de programar**
 
 Além de listar tudo, queremos pedir **um** produto: `GET /api/produtos/1/`. O `1` é um **parâmetro
 de rota** (parte dinâmica da URL). Se o produto não existir, o HTTP tem um status para isso:
 **`404 Not Found`**.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula3_get_por_id.js`
 
@@ -482,7 +482,7 @@ app.get('/api/produtos/:id/', (req, res) => {
 - Se não achar, `res.status(404).json({ detail: ... })`.
 - Aqui também os dados são os **5 produtos em memória**.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula3_get_por_id.py`
 
@@ -499,7 +499,7 @@ def buscar_produto_por_id(id: int):
 - O FastAPI converte o valor para `int` automaticamente (você declara o tipo).
 - Para inexistente, `HTTPException(status_code=404, ...)`.
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito         | Express                    | FastAPI                         |
 | ---------------- | -------------------------- | ------------------------------- |
@@ -514,19 +514,19 @@ framework converte.
 
 > A operação é a mesma (leitura de um recurso por ID). A declaração é que muda.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Requisição | URL                    | Sucesso | Não encontrado     |
 | ---------- | -----------------------| ------- | ------------------ |
 | GET        | `/api/produtos/{id}/`   | 200 + produto | 404 + `detail` |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Abra a coleção (Express e FastAPI), ambiente `Local`. Na pasta **Aula 03**, execute:
 > **01 – listar todos**, **02 – buscar por id existente** (200) e **03 – buscar por id inexistente**
 > (404). Observe o id na URL e a resposta em cada caso.
 
-### O que observar
+**O que observar**
 
 - **Parâmetro de rota** (`/produtos/1`) é diferente de **query param** (`/produtos?search=...`):
   a rota identifica um **recurso**; o query faz **filtros/busca** (veremos na Aula 8).
@@ -540,16 +540,16 @@ framework converte.
 
 ## 📘 Aula 04 — POST (criar)
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Enviar o **corpo** da requisição para **criar** um novo produto (`POST`), com status **`201 Create`**.
 
-### Antes de programar
+**Antes de programar**
 
 Agora o cliente envia dados ao servidor (**corpo da requisição**): `nome` e `preco`. O servidor cria o
 produto, gera um novo `id` e devolve o produto com status **`201 Create`**.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula4_post.js`
 
@@ -570,7 +570,7 @@ app.post('/api/produtos/', (req, res) => {
 
 **Executar:** `node aula4_post.js` — porta `3000`.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula4_post.py`
 
@@ -591,7 +591,7 @@ def criar_produto(produto: ProdutoInput):
 - O parâmetro tipado `produto: ProdutoInput` — o FastAPI lê e **valida** estruturas do corpo.
 - `status_code=201` fixa o status de sucesso.
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito       | Express                         | FastAPI                      |
 | -------------- | ------------------------------- | ---------------------------- |
@@ -604,18 +604,18 @@ def criar_produto(produto: ProdutoInput):
 **Diferente:** no Express o corpo é **lido manualmente**; no FastAPI ele é **declarado** como parser
 **tipado** e **validado**. A estrutura do corpo já gera **documentação** em `/docs`.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Requisição | URL                  | Corpo                    | Sucesso | Formato |
 | ---------- | -------------------- | ----------------------- | ------- | ------- |
 | POST       | `/api/produtos/`      | `{"nome": "...", "preco": ...}` | 201 + produto criado | produto criado em JSON |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Na pasta **Aula 04**, execute **01 – listar todos** (antes), **02 – criar produto** (com o corpo
 > JSON no POST, `201`) e **03 – buscar criado** (200). Observe que o corpo é **enviado** no POST.
 
-### O que observar
+**O que observar**
 
 - GET **não** leva corpo; POST **leva**. Isso distingue "ler" e "criar".
 - O `201` é para **criação**; o `200` para leitura/atualização.
@@ -625,17 +625,17 @@ def criar_produto(produto: ProdutoInput):
 
 ## 📘 Aula 05 — PUT (atualizar)
 
-### O que vamos aprender
+**O que vamos aprender**
 
 **Atualizar por completo** um produto existente com `PUT /api/produtos/{id}/`.
 
-### Antes de programar
+**Antes de programar**
 
 Depois de criar, é preciso **alterar**. O `PUT` envia os dados no corpo e substitui o recurso naquele
 id. Como o `PUT` é **atualização completa**, o corpo deve trazer **todos** os campos (`nome` e
 `preco`). Se o id não existir, `404`.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula5_put.js`
 
@@ -649,7 +649,7 @@ app.put('/api/produtos/:id/', (req, res) => {
 });
 ```
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula5_put.py`
 
@@ -663,7 +663,7 @@ def atualizar_produto(id: int, produto: ProdutoInput):
     raise HTTPException(status_code=404, detail="Produto não encontrado.")
 ```
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito         | Express                    | FastAPI                         |
 | ---------------- | -------------------------- | ------------------------------- |
@@ -684,18 +684,18 @@ status.
 
 > O `PUT` é **atualização completa**: o corpo deve trazer `nome` e `preco`.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Requisição | Método | URL                   | Corpo | Sucesso | Inexistente |
 | ---------- | ------ | --------------------- | ----- | ------- | ----------- |
 | PUT        | PUT    | `/api/produtos/{id}/` | `nome`, `preco` | 200 + atualizado | 404 + `detail` |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 05**: execute **01 – listar**, **02 – atualizar produto** (corpo novo, `200`),
 > **03 – conferir atualização** e **04 – atualizar id inexistente** (`404`).
 
-### O que observar
+**O que observar**
 
 - O `PUT` é **idempotente**: repetir o mesmo `PUT` produz o mesmo resultado.
 - Criar (`POST`) e atualizar (`PUT`): o segundo **exige um id** na rota.
@@ -704,17 +704,17 @@ status.
 
 ## 📘 Aula 06 — DELETE (remover)
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Remover um produto com `DELETE /api/produtos/{id}/`, retornando **`204 No Content`** (sucesso sem
 corpo).
 
-### Antes de programar
+**Antes de programar**
 
 O `DELETE` não precisa de corpo. Após excluir, o comum é devolver **`204 No Content`** (sem corpo) ou
 **`404`** se o recurso não existir.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula6_delete.js`
 
@@ -727,7 +727,7 @@ app.delete('/api/produtos/:id/', (req, res) => {
 });
 ```
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula6_delete.py`
 
@@ -741,7 +741,7 @@ def remover_produto(id: int):
     raise HTTPException(status_code=404, detail="Produto não encontrado.")
 ```
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito        | Express                    | FastAPI                         |
 | --------------- | -------------------------- | ------------------------------- |
@@ -759,18 +759,18 @@ resposta **encerrada sem corpo**; no FastAPI o `status_code=204` é declarado na
 **Por que diferente?** O Express controla a resposta via `res`; o FastAPI declara o status na rota. A
 **responsabilidade do HTTP** é a mesma: `204 No Content` significa "deu certo, sem corpo".
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Requisição | Método | URL                   | Sucesso              | Inexistente |
 | ---------- | ------ | --------------------- | -------------------- | ----------- |
 | DELETE     | DELETE | `/api/produtos/{id}/` | 204 (sem corpo)      | 404 + `detail` |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 06**: **01 – listar**, **02 – remover produto** (`204`), **03 – buscar removido**
 > (`404`), **04 – remover de novo** (também `404`).
 
-### O que observar
+**O que observar**
 
 - `204` **não tem corpo** (não é `200` com corpo).
 - Excluir é **idempotente**: após remover, uma nova chamada ao mesmo id devolve `404`.
@@ -783,12 +783,12 @@ resposta **encerrada sem corpo**; no FastAPI o `status_code=204` é declarado na
 
 ## 📘 Aula 07 — Validação
 
-### O que vamos aprender
+**O que vamos aprender**
 
 **Validar** os dados recebidos para que a API não aceite valores inválidos, devolvendo **`400`** com
 `detail`.
 
-### Antes de programar
+**Antes de programar**
 
 Até aqui, um `POST` com dados inconsistentes criava um produto. Vamos aplicar regras:
 
@@ -797,7 +797,7 @@ Até aqui, um `POST` com dados inconsistentes criava um produto. Vamos aplicar r
 
 Erros devolvidos com **`400 Bad Request`** e `detail` por campo.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula7_validacao.js`
 
@@ -820,7 +820,7 @@ function validarProduto({ nome, preco }) {
 
 No POST e no PUT, se houver erros: `res.status(400).json({ detail: erros })`.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula7_validacao.py`
 
@@ -845,7 +845,7 @@ def validar_produto(nome, preco):
 
 No POST/PUT, se `erros` não estiver vazio: `raise HTTPException(400, detail=erros)`.
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito     | Express        | FastAPI             |
 | ------------ | -------------- | ------------------- |
@@ -858,7 +858,7 @@ tem recursos mais "declarativos", mas mantivemos a versão explícita para visua
 
 > Mesmo com implementações parecidas, o **contrato** é o mesmo: `400` + `detail` por campo.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Caso | Status | Resposta |
 | ---- | ------ | -------- |
@@ -866,7 +866,7 @@ tem recursos mais "declarativos", mas mantivemos a versão explícita para visua
 | `nome` inválido      | `400` | `detail: { "nome": "..." }` |
 | `preco` inválido     | `400` | `detail: { "preco": "..." }` |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 07** — teste casos de erro: **02 nome vazio**, **03 nome curto**, **04 preco zero**,
 > **05 preco com 3 casas**, e casos de sucesso (**06 put inválido**, **07 post válido**). Observe o
@@ -876,16 +876,16 @@ tem recursos mais "declarativos", mas mantivemos a versão explícita para visua
 
 ## 📘 Aula 08 — Filtros
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Filtrar a coleção por faixa de preço com **query params** (`preco_minimo`, `preco_maximo`).
 
-### Antes de programar
+**Antes de programar**
 
 Queremos `GET /api/produtos/?preco_minimo=100&preco_maximo=1000` devolvendo só os produtos entre
 `100` e `1000`. Os valores chegam através da **query string**.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula8_filtros.js`
 
@@ -902,7 +902,7 @@ res.json(resultado);
 - `req.query` traz os query params.
 - `filter()` devolve uma nova lista com os que atendem, sobre uma **cópia**.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula8_filtros.py`
 
@@ -920,7 +920,7 @@ def listar_produtos(preco_minimo: str | None = None, preco_maximo: str | None = 
 - Os parâmetros da função **viram query params** automaticamente.
 - `preco_minimo: str | None` é `None` quando ausente.
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito    | Express                  | FastAPI                  |
 | ----------- | ------------------------ | ------------------------ |
@@ -931,7 +931,7 @@ def listar_produtos(preco_minimo: str | None = None, preco_maximo: str | None = 
 **Contrato:** o que o cliente envia (`?preco_minimo=...`, `?preco_maximo=...`) e a resposta (array
 filtrada) são os mesmos.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Query params          | Comportamento        |
 | --------------------- | -------------------- |
@@ -939,12 +939,12 @@ filtrada) são os mesmos.
 | `preco_maximo=1000`   | apenas `preco <= 1000`|
 | valor não numérico    | `400` + `detail`     |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 08**: **01 sem filtro**, **02 preco_minimo**, **03 preco_maximo**, **04 intervalo**,
 > **05 valor inválido** (400). Varie os valores e veja como a resposta muda.
 
-### O que observar
+**O que observar**
 
 - **Query param** (filtro) vs **parâmetro de rota** (identidade): o filtro não identifica um
   recurso; apenas afina a lista.
@@ -954,16 +954,16 @@ filtrada) são os mesmos.
 
 ## 📘 Aula 09 — Busca
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Fazer **busca textual** por nome com `search`, de forma **parcial** e **case-insensitive**.
 
-### Antes de programar
+**Antes de programar**
 
 `GET /api/produtos/?search=mouse` deve devolver produtos cujo nome **contenha** "mouse" (ex. "Mouse
 USB"). Busca **parcial** (qualquer parte do nome) e sem diferenciar maiúsculas.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula9_busca.js`
 
@@ -974,7 +974,7 @@ if (search !== undefined && search !== "") {
 }
 ```
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula9_busca.py`
 
@@ -984,7 +984,7 @@ if search is not None:
     resultado = [p for p in resultado if termo in p["nome"].lower()]
 ```
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito            | Express                  | FastAPI                |
 | ------------------- | ------------------------ | ---------------------- |
@@ -996,18 +996,18 @@ nome. **Diferente:** a sintaxe (método JS vs operador Python). **Por que difere
 **responsabilidade do HTTP:** nenhuma, a busca é inteiramente do framework (o parâmetro `search` é só
 um query param).
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Parâmetro | Comportamento |
 | --------- | ------------------------- |
 | `search=mouse` | produtos com "mouse" no nome |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 09**: **01 busca mouse**, **02 busca case-insensitive**, **03 busca tecla** (termo
 > parcial), **04 sem resultado** (lista vazia).
 
-### O que observar
+**O que observar**
 
 - Busca **parcial**: "tec" retorna "Teclado USB".
 - **Case-insensitive**: `MOUSE` e `mouse` dão o mesmo resultado.
@@ -1016,17 +1016,17 @@ um query param).
 
 ## 📘 Aula 10 — Ordenação
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Ordenar os resultados com `ordering`, que aceita `nome` ou `preco`, com o prefixo `-` para
 decrescente.
 
-### Antes de programar
+**Antes de programar**
 
 `GET /api/produtos/?ordering=nome` (crescente) e `?ordering=-preco` (decrescente). Precisamos aceitar
 o prefixo `-` e validar o campo informado.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula10_ordenacao.js`
 
@@ -1056,7 +1056,7 @@ if (campoOrdenacao) {
 ```
 (No código real, o Express separa o `-`, valida o campo e ordena a **cópia**.)
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula10_ordenacao.py`
 
@@ -1078,7 +1078,7 @@ elif campo_ordenacao == "nome":
     resultado.sort(key=lambda p: p["nome"].lower(), reverse=ordem_desc)
 ```
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito     | Express          | FastAPI                  |
 | ------------ | ---------------- | ------------------------ |
@@ -1088,7 +1088,7 @@ elif campo_ordenacao == "nome":
 
 A **ideia** é a mesma: extrair o campo, validar, ordenar e tratar o `-` como decrescente.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | `ordering`   | sentido |
 | ------------ | ------- |
@@ -1097,12 +1097,12 @@ A **ideia** é a mesma: extrair o campo, validar, ordenar e tratar o `-` como de
 | `nome`       | alfabético (A→Z) |
 | campo inválido | `400` + `detail` |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > **Aula 10**: **01 sem ordenação**, **02 `ordering=nome`**, **03 `ordering=-nome`**, **04
 > `ordering=preco`**, **05 campo inválido** (`400`).
 
-### O que observar
+**O que observar**
 
 - A ordenação muda a **ordem** dos resultados, mas **ainda não há paginação**.
 - O prefixo `-` segue o padrão usado também no Django REST Framework.
@@ -1115,13 +1115,13 @@ A **ideia** é a mesma: extrair o campo, validar, ordenar e tratar o `-` como de
 
 ## 📘 Aula 11 — Persistência em JSON
 
-### O que vamos aprender
+**O que vamos aprender**
 
 **Persistir** a API em um arquivo JSON (`produtos.json`), de modo que os dados **sobrevivam** ao
 reinício. Nesta aula passamos dos **5 produtos em memória** para o **dataset persistido de 60
 produtos** (ids 1–60). **Ainda não há paginação.**
 
-### Antes de programar
+**Antes de programar**
 
 Até a Aula 10, ao reiniciar o servidor voltavam os 5 produtos fixos. Agora, queremos **guardar em
 arquivo** as alterações. A lógica é: **primeiro aprendemos a manipular recursos; depois aprendemos a
@@ -1129,7 +1129,7 @@ persistir**.
 
 > Nesta aula, `GET` devolve um **array simples** (sem paginação). A paginação virá na Aula 12.
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula11_persistencia_json.js` (usa `fs` e `path`)
 
@@ -1141,7 +1141,7 @@ function salvarProdutos(lista) { fs.writeFileSync(ARQUIVO, JSON.stringify(lista,
 
 - `POST`, `PUT` e `DELETE` **salvam** o arquivo após a alteração; `GET` não escreve.
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula11_persistencia_json.py`
 
@@ -1154,7 +1154,7 @@ def salvar_produtos(lista):  # json.dump(...)
 
 Mesma ideia: ler no início e salvar após cada alteração.
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito | Express                     | FastAPI               |
 | -------- | --------------------------- | --------------------- |
@@ -1165,20 +1165,20 @@ Mesma ideia: ler no início e salvar após cada alteração.
 **Contrato:** igual ao anterior; a diferença é que os dados agora **persistem**. Os **60 produtos**
 vêm de `produtos.json`.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Dados | Aulas 2–10 | Aula 11+ |
 | ------ | ---------- | -------- |
 | Fonte  | 5 em memória | `produtos.json` (60, ids 1–60) |
 | Persiste| não        | sim (POST/PUT/DELETE gravam) |
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 11** (as duas). Observe que agora há **60 produtos** (**01 – listar do arquivo**), e
 > que criar/atualizar/remover **grava** no arquivo (02–07). Reinicie o servidor para confirmar que os
 > dados continuam.
 
-### O que observar
+**O que observar**
 
 - Diferença entre **array em memória** (perde-se ao reiniciar) e **arquivo persistente** (permanece).
 - `produtos.json` é versionado junto do código.
@@ -1187,12 +1187,12 @@ vêm de `produtos.json`.
 
 ## 📘 Aula 12 — Paginação
 
-### O que vamos aprender
+**O que vamos aprender**
 
 **Paginção** da lista com `page` e `page_size`, resposta `{ page, page_size, total_pages, results }`,
 funcionando **junto com filtros, busca e ordenação**.
 
-### Antes de programar
+**Antes de programar**
 
 Com **60 produtos**, devolver todos de uma vez não é legal. A paginação limita a quantidade por
 resposta e informa quantas páginas existem. Padrão: `page_size = 10`, máximo `100`.
@@ -1201,7 +1201,7 @@ resposta e informa quantas páginas existem. Padrão: `page_size = 10`, máximo 
 { "page": 1, "page_size": 10, "total_pages": 6, "results": [...] }
 ```
 
-### Express
+**Express**
 
 - **Arquivo:** `express-bsi4/aula12_paginacao.js`
 
@@ -1214,7 +1214,7 @@ res.json({ page: pagina, page_size: tamanhoPagina, total_pages: totalPages, resu
 
 - Valida `page` e `page_size` (inteiro positivo, ≤100).
 
-### FastAPI
+**FastAPI**
 
 - **Arquivo:** `fastapi-bsi4/aula12_paginacao.py` (usa o modelo `RespostaPaginada`)
 
@@ -1225,7 +1225,7 @@ itens = resultado[inicio : inicio + tamanho_pagina]
 return RespostaPaginada(page=pagina, page_size=tamanho_pagina, total_pages=total_pages, results=itens)
 ```
 
-### Express × FastAPI
+**Express × FastAPI**
 
 | Conceito         | Express                  | FastAPI                        |
 | ---------------- | ------------------------ | ------------------------------ |
@@ -1242,7 +1242,7 @@ Express monta um **objeto direto**. **Por que diferente?** tipagem declarativa v
 > A paginação acontece **depois** do filtro → busca → ordenação (a ordem importa: paginar antes
 > traria itens errados).
 
-### Contrato HTTP
+**Contrato HTTP**
 
 | Parâmetro | Padrão | Descrição |
 | --------- | ------ | ---------- |
@@ -1253,13 +1253,13 @@ Express monta um **objeto direto**. **Por que diferente?** tipagem declarativa v
 Combinação possível: `?search=mouse&ordering=-preco&page=2&page_size=10`. A ordem é: filtro → busca →
 ordenação → paginação.
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 > Pasta **Aula 12**: teste **01 padrão**, **02 página 2**, **03 última página**, **04 além do
 > limite** (results vazia), **05 `page=0`**, **06 `page_size=0`**, **07 `page_size` grande** (400) e
 > combinações com filtro/busca/ordenação (08, 09, 10).
 
-### O que observar
+**O que observar**
 
 - É preciso aplicar a **ordenação antes** da paginação; senão as páginas ficam erradas.
 
@@ -1271,17 +1271,17 @@ ordenação → paginação.
 
 ## 📘 Aula 13 — API completa
 
-### O que vamos aprender
+**O que vamos aprender**
 
 Consolidar **todas** as funcionalidades em uma única versão, **sem introduzir conceito novo**.
 
-### O que é a API completa
+**O que é a API completa**
 
 - **Arquivos:** `express-bsi4/aula13_api_completa.js` e `fastapi-bsi4/aula13_api_completa.py`.
 - Reúne: CRUD + validação + filtros + busca + ordenação + persistência + paginação.
 - É o resultado das Aulas 2–12.
 
-### Express × FastAPI — quadro final
+**Express × FastAPI — quadro final**
 
 | Aspecto       | Express                       | FastAPI                      |
 | ------------- | ----------------------------- | ---------------------------- |
@@ -1300,7 +1300,7 @@ Consolidar **todas** as funcionalidades em uma única versão, **sem introduzir 
 > A documentação automática (`/docs`) é um benefício do FastAPI, mas **não altera o contrato**: a
 > API consumida é a mesma nos dois frameworks.
 
-### Contrato HTTP
+**Contrato HTTP**
 
 Documentação do contrato que Express e FastAPI atendem:
 
@@ -1324,13 +1324,13 @@ Documentação do contrato que Express e FastAPI atendem:
 > Esse é o contrato que qualquer cliente consumidor recebe — identificado em cada framework conforme
 > evoluímos nas Aulas 2–12.
 
-### Pratique no Bruno
+**Pratique no Bruno**
 
 A pasta **Aula 13 – Integração** exercita o fluxo completo: listar, criar, ler, atualizar, remover,
 confirmar remoção e um caso inválido. Execute **tudo** nas duas tecnologias e observe o ciclo de vida
 de um recurso.
 
-### Conclusão
+**Conclusão**
 
 O objetivo não era aprender duas sintaxes para fazer a mesma coisa. Era **compreender o contrato de
 uma API HTTP** e perceber como **diferentes frameworks implementam esse contrato**. Ao final, você
@@ -1365,13 +1365,13 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 
 ## 📘 Aula 14 — Adicionando marca
 
-### 1. O que vamos aprender e o problema
+**1. O que vamos aprender e o problema**
 
 Nesta aula adicionamos o campo **`marca`** à entidade `Produto`.
 
 Ao introduzir `marca`, o produto passa a ter 4 atributos: `id`, `nome`, `preco` e `marca`. Nosso objetivo é integrar esse campo a todas as operações já existentes na API, garantindo que o cliente possa criar, atualizar, validar, filtrar, ordenar e pesquisar produtos pela marca.
 
-### 2. Alteração do modelo e dados
+**2. Alteração do modelo e dados**
 
 O objeto de produto passa a ter a estrutura:
 
@@ -1394,7 +1394,7 @@ class ProdutoInput(BaseModel):
     marca: str | None = None
 ```
 
-### 3. Validação
+**3. Validação**
 
 O campo `marca` deve seguir regras objetivas:
 - **Obrigatório** (não pode ser omitido);
@@ -1402,7 +1402,7 @@ O campo `marca` deve seguir regras objetivas:
 - **Não pode ser vazio** (após remover espaços em branco nas pontas);
 - **Tamanho:** deve possuir entre **2 e 50 caracteres**.
 
-#### Express
+**Express**
 
 Na função `validarProduto({ nome, preco, marca })`:
 
@@ -1422,7 +1422,7 @@ if (marca === undefined) {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 Na função `validar_produto(nome, preco, marca)`:
 
@@ -1442,11 +1442,11 @@ else:
 
 Se houver erros, a API responde com **`400 Bad Request`** e o corpo `{ "detail": { "marca": "..." } }`.
 
-### 4. Filtro por marca
+**4. Filtro por marca**
 
 Queremos permitir consultas como `GET /api/produtos/?marca=Samsung`. O filtro deve ser exato para o termo, mas insensível a maiúsculas/minúsculas (*case-insensitive*), e deve combinar perfeitamente com `preco_minimo` e `preco_maximo`.
 
-#### Express
+**Express**
 
 ```js
 const { marca, preco_minimo, preco_maximo, ... } = req.query;
@@ -1457,7 +1457,7 @@ if (marca !== undefined && marca !== "") {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 @app.get("/api/produtos/", response_model=RespostaPaginada)
@@ -1473,14 +1473,14 @@ def listar_produtos(
         resultado = [p for p in resultado if p.get("marca", "").lower() == termo_marca]
 ```
 
-### 5. Ordenação por marca
+**5. Ordenação por marca**
 
 Permitir `ordering=marca` (crescente, A→Z) e `ordering=-marca` (decrescente, Z→A).
 
 1. Adicionamos `"marca"` à lista de campos permitidos: `["nome", "preco", "marca"]`.
 2. Implementamos a comparação de strings alfabética.
 
-#### Express
+**Express**
 
 ```js
 const camposOrdenacao = ["nome", "preco", "marca"];
@@ -1494,7 +1494,7 @@ if (campoOrdenacao === "preco") {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 campos_ordenacao = ["nome", "preco", "marca"]
@@ -1507,11 +1507,11 @@ elif campo_ordenacao == "nome":
     resultado.sort(key=lambda p: p["nome"].lower(), reverse=ordem_desc)
 ```
 
-### 6. Busca textual (`search`)
+**6. Busca textual (`search`)**
 
 A partir desta aula, `marca` passa a fazer parte da busca textual. O parâmetro `?search=termo` deve encontrar produtos em que o termo apareça no **`nome`** OU na **`marca`**.
 
-#### Express
+**Express**
 
 ```js
 if (search !== undefined && search !== "") {
@@ -1523,7 +1523,7 @@ if (search !== undefined && search !== "") {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 if search is not None:
@@ -1534,7 +1534,7 @@ if search is not None:
     ]
 ```
 
-### 7. Contrato HTTP e testes no Bruno
+**7. Contrato HTTP e testes no Bruno**
 
 | Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
 | --- | --- | --- | --- | --- | --- |
@@ -1550,7 +1550,7 @@ if search is not None:
 | **10. Busca textual pela marca** | GET | `/api/produtos/?search=dell` | — | `200 OK` | Encontra produtos cuja marca contenha "dell" |
 | **11. Busca sem resultados** | GET | `/api/produtos/?search=termoinexistente` | — | `200 OK` | `results` vazia |
 
-### 8. O que observar
+**8. O que observar**
 
 Note a quantidade de partes que precisamos alterar para dar suporte a **um único campo**:
 1. O modelo de dados e persistência;
@@ -1566,13 +1566,13 @@ Note a quantidade de partes que precisamos alterar para dar suporte a **um únic
 
 ## 📘 Aula 15 — Adicionando estoque
 
-### 1. O que vamos aprender e o problema
+**1. O que vamos aprender e o problema**
 
 Nesta aula adicionamos o campo **`estoque`** à entidade `Produto`, partindo do código da Aula 14. O produto agora possui: `id`, `nome`, `preco`, `marca` e `estoque`.
 
 Ao contrário de `nome` e `marca` (que são textos), `estoque` é uma **quantidade inteira**. Isso traz novos desafios para validação e filtragem por faixa de valores. Além disso, veremos por que **nem todo campo deve entrar na busca textual**.
 
-### 2. Alteração do modelo e dados
+**2. Alteração do modelo e dados**
 
 O objeto de produto passa a ter a estrutura:
 
@@ -1597,7 +1597,7 @@ class ProdutoInput(BaseModel):
     estoque: int | None = None
 ```
 
-### 3. Validação
+**3. Validação**
 
 Regras para `estoque`:
 - **Obrigatório**;
@@ -1611,7 +1611,7 @@ Exemplos:
 - `estoque = "dez"` → ❌ inválido (tipo incorreto)
 - `estoque = 5.5` → ❌ inválido (unidades de estoque são inteiras)
 
-#### Express
+**Express**
 
 Na função `validarProduto`:
 
@@ -1626,7 +1626,7 @@ if (estoque === undefined) {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 Na função `validar_produto`:
 
@@ -1640,7 +1640,7 @@ elif estoque < 0:
     erros["estoque"] = "O estoque não pode ser negativo."
 ```
 
-### 4. Filtros por estoque
+**4. Filtros por estoque**
 
 Para trabalhar com quantidades em estoque, implementamos os query params:
 - `estoque_minimo`: retorna produtos com `estoque >= estoque_minimo`
@@ -1648,7 +1648,7 @@ Para trabalhar com quantidades em estoque, implementamos os query params:
 
 Se o usuário fornecer um valor não numérico nesses parâmetros (ex.: `?estoque_minimo=abc`), a API deve devolver **`400 Bad Request`**.
 
-#### Express
+**Express**
 
 ```js
 const { estoque_minimo, estoque_maximo, ... } = req.query;
@@ -1670,7 +1670,7 @@ if (estoque_maximo !== undefined && estoque_maximo !== "") {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 @app.get("/api/produtos/", response_model=RespostaPaginada)
@@ -1695,14 +1695,14 @@ def listar_produtos(
             resultado = [p for p in resultado if p.get("estoque", 0) <= val_max]
 ```
 
-### 5. Ordenação por estoque
+**5. Ordenação por estoque**
 
 Permitir `ordering=estoque` (crescente) e `ordering=-estoque` (decrescente).
 
 1. Adicionamos `"estoque"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque"]`.
 2. Lógica de ordenação numérica:
 
-#### Express
+**Express**
 
 ```js
 } else if (campoOrdenacao === "estoque") {
@@ -1710,14 +1710,14 @@ Permitir `ordering=estoque` (crescente) e `ordering=-estoque` (decrescente).
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 elif campo_ordenacao == "estoque":
     resultado.sort(key=lambda p: p.get("estoque", 0), reverse=ordem_desc)
 ```
 
-### 6. Busca textual: Por que NÃO incluir estoque?
+**6. Busca textual: Por que NÃO incluir estoque?**
 
 > [!IMPORTANT]
 > **O campo `estoque` NÃO deve ser incluído na busca textual (`search`).**
@@ -1728,7 +1728,7 @@ Se incluíssemos o estoque na busca, uma requisição como `GET /api/produtos/?s
 
 Para consultar quantidades numéricas, utilizamos **filtros dedicados** (`estoque_minimo`, `estoque_maximo`), e não a busca por texto livre.
 
-### 7. Contrato HTTP e testes no Bruno
+**7. Contrato HTTP e testes no Bruno**
 
 | Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
 | --- | --- | --- | --- | --- | --- |
@@ -1743,7 +1743,7 @@ Para consultar quantidades numéricas, utilizamos **filtros dedicados** (`estoqu
 | **09. Ordenar decrescente por estoque** | GET | `/api/produtos/?ordering=-estoque` | — | `200 OK` | Do maior estoque para o menor |
 | **10. Combinar marca, preço e estoque** | GET | `/api/produtos/?marca=Dell&preco_minimo=1000&estoque_minimo=1` | — | `200 OK` | Produtos Dell caros que estão disponíveis |
 
-### 8. O que observar
+**8. O que observar**
 
 - Atributos numéricos demandam validações de tipo estritas (número vs texto, inteiro vs ponto flutuante, faixas positivas/negativas).
 - Filtros de intervalo (`min`/`max`) são a forma idiomática de filtrar grandezas numéricas em APIs REST.
@@ -1753,14 +1753,14 @@ Para consultar quantidades numéricas, utilizamos **filtros dedicados** (`estoqu
 
 ## 📘 Aula 16 — Adicionando descrição
 
-### 1. O que vamos aprender e o problema
+**1. O que vamos aprender e o problema**
 
 Nesta aula completamos o ciclo de expansão adicionando o campo **`descricao`**. A entidade `Produto` agora atinge sua estrutura final nesta fase:
 `id`, `nome`, `preco`, `marca`, `estoque` e `descricao`.
 
 Diferente de `nome` e `marca` (que são textos curtos e obrigatórios), a `descricao` costuma ser um **texto longo e opcional**. Vamos analisar como tratar campos opcionais na validação e como integrá-los de forma completa à **busca textual multicampo**.
 
-### 2. Alteração do modelo e dados
+**2. Alteração do modelo e dados**
 
 O objeto de produto passa a ter a estrutura completa:
 
@@ -1787,14 +1787,14 @@ class ProdutoInput(BaseModel):
     descricao: str | None = None
 ```
 
-### 3. Validação
+**3. Validação**
 
 Regras para `descricao`:
 - **Opcional:** o cliente pode omitir o campo ou enviar `null`/`""`;
 - **Se informada:** deve ser uma string;
 - **Limite de tamanho:** no máximo **500 caracteres** (para evitar sobrecarga de dados no payload).
 
-#### Express
+**Express**
 
 Na função `validarProduto`:
 
@@ -1809,7 +1809,7 @@ if (descricao !== undefined && descricao !== null) {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 Na função `validar_produto`:
 
@@ -1822,19 +1822,19 @@ if descricao is not None:
         erros["descricao"] = "A descrição não pode ultrapassar 500 caracteres."
 ```
 
-### 4. Filtro vs. Busca textual
+**4. Filtro vs. Busca textual**
 
 > **Por que não criamos um filtro exato `?descricao=...`?**
 > Um filtro exato (`?marca=Dell`) faz sentido para atributos categóricos. Textos longos como descrições raramente são consultados por igualdade exata. O mecanismo adequado e natural para consultar descrições é a **busca textual (`search`)**. Criar um filtro exato de descrição seria redundante e pouco útil.
 
-### 5. Ordenação por descrição
+**5. Ordenação por descrição**
 
 Permitir `ordering=descricao` e `ordering=-descricao`.
 
 1. Adicionamos `"descricao"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque", "descricao"]`.
 2. Tratamento de campos opcionais/nulos na ordenação:
 
-#### Express
+**Express**
 
 ```js
 } else if (campoOrdenacao === "descricao") {
@@ -1844,14 +1844,14 @@ Permitir `ordering=descricao` e `ordering=-descricao`.
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 elif campo_ordenacao == "descricao":
     resultado.sort(key=lambda p: (p.get("descricao") or "").lower(), reverse=ordem_desc)
 ```
 
-### 6. Busca textual multicampo (nome, marca, descricao)
+**6. Busca textual multicampo (nome, marca, descricao)**
 
 Agora nossa busca textual atinge seu formato mais poderoso. O parâmetro `?search=termo` pesquisa simultaneamente em todos os campos de texto:
 1. **`nome`**
@@ -1860,7 +1860,7 @@ Agora nossa busca textual atinge seu formato mais poderoso. O parâmetro `?searc
 
 Se o termo procurado for encontrado em **qualquer um** desses três campos, o produto é retornado.
 
-#### Express
+**Express**
 
 ```js
 if (search !== undefined && search !== "") {
@@ -1874,7 +1874,7 @@ if (search !== undefined && search !== "") {
 }
 ```
 
-#### FastAPI
+**FastAPI**
 
 ```python
 if search is not None:
@@ -1887,13 +1887,13 @@ if search is not None:
     ]
 ```
 
-#### Exemplos de busca:
+**Exemplos de busca:**
 
 - `GET /api/produtos/?search=notebook` → localiza produtos cujo **nome** contém "notebook";
 - `GET /api/produtos/?search=dell` → localiza produtos cuja **marca** é "Dell";
 - `GET /api/produtos/?search=oled` → localiza produtos que possuem a palavra "oled" no meio da **descrição**, mesmo que a palavra não apareça no nome nem na marca!
 
-### 7. Contrato HTTP e testes no Bruno
+**7. Contrato HTTP e testes no Bruno**
 
 | Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
 | --- | --- | --- | --- | --- | --- |
@@ -1905,7 +1905,7 @@ if search is not None:
 | **06. Buscar termo presente na marca** | GET | `/api/produtos/?search=ugreen` | — | `200 OK` | Encontra pela marca |
 | **07. Buscar termo presente no nome** | GET | `/api/produtos/?search=monitor` | — | `200 OK` | Encontra pelo nome |
 
-### 8. O que observar
+**8. O que observar**
 
 - Campos opcionais exigem cuidado com valores ausentes (`null` ou `undefined`) para evitar exceções em tempo de execução ao ordenar ou buscar;
 - A busca textual unificada oferece uma experiência excelente para o cliente da API sem a necessidade de múltiplos filtros complexos.
