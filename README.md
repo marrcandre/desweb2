@@ -162,7 +162,7 @@ https://www.usebruno.com/downloads.
 
 ---
 
-## 7. Visão geral das 13 aulas
+## 7. Visão geral das aulas
 
 | Aula | Conceito             | Parte                             |
 | ---- | -------------------- | -------------------------------- |
@@ -179,6 +179,9 @@ https://www.usebruno.com/downloads.
 | 11   | Persistência em JSON | Parte 4 — Persistência e paginação |
 | 12   | Paginação            | Parte 4                          |
 | 13   | API completa         | Parte 5 — Consolidação           |
+| 14   | Adicionando marca    | Parte 6 — Complexidade progressiva |
+| 15   | Adicionando estoque  | Parte 6 — Complexidade progressiva |
+| 16   | Adicionando descrição| Parte 6 — Complexidade progressiva |
 
 ---
 
@@ -1342,22 +1345,604 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 
 ---
 
-## 8. Convenções e observações finais
+# 🧭 Parte 6 — Complexidade progressiva: novos campos na entidade
 
-- **Dataset:**
-  - Aulas 2–10: **5 produtos em memória**, definidos no código; último dataset `{id, nome, preco}`.
-  - Aulas 11–13: **60 produtos** em `produtos.json` (ids 1–60).
+> **Objetivo pedagógico desta parte:**
+> Até a Aula 13, construímos uma API completa para um modelo simples: `Produto(id, nome, preco)`.
+> Agora, vamos vivenciar na prática o que acontece quando o modelo de negócio evolui e novos campos precisam ser adicionados.
+> 
+> Adicionar um campo a uma entidade **não é apenas alterar a estrutura dos dados (JSON)**. Cada novo atributo pode exigir mudanças em:
+> - **Criação e atualização (POST e PUT):** receber, processar e persistir o novo dado;
+> - **Validação:** garantir regras de tipo, formato, obrigatoriedade e limites;
+> - **Filtros:** permitir que o cliente filtre a coleção por esse campo;
+> - **Ordenação:** permitir que a listagem seja ordenada crescente ou decrescentemente por esse campo;
+> - **Busca textual:** decidir se o novo campo deve ser incluído na busca global (`search`);
+> - **Testes e documentação:** atualizar as coleções de requisições e garantir que todos os cenários (válidos e inválidos) continuem funcionando.
+> 
+> Esta seção é **incremental e cumulativa**: cada aula adiciona um novo campo sobre o código da aula anterior. Faremos isso de forma manual em **Express** e **FastAPI**, para entender o esforço necessário antes de conhecermos as abstrações de frameworks de mais alto nível (como o Django REST Framework).
 
-- **Progressão:**
-  - Aulas 2–10: sem `produtos.json`, sem persistência, sem paginação.
-  - Aula 11: persistência em JSON (ainda sem paginação).
-  - Aula 12: paginação (sobre dados persistidos).
-  - Aula 13: consolidação, **sem conceito novo**.
+---
 
-- **Bruno:** coleções em `express-bsi4/http/express/` e `fastapi-bsi4/http/fastapi/`, sempre com o
-  ambiente `Local` selecionado. As duas coleções têm os **mesmos cenários**; a diferença é o nome e a
-  porta base (3000 vs 8000).
+## 📘 Aula 14 — Adicionando marca
 
-- **Contrato:** Express e FastAPI respeitam **o mesmo contrato HTTP** (consolidado na Aula 13).
+### 1. O que vamos aprender e o problema
 
-- **PATCH:** não faz parte desta sequência (o `PUT` é atualização completa). Será retomado depois.
+Nesta aula adicionamos o campo **`marca`** à entidade `Produto`.
+
+Ao introduzir `marca`, o produto passa a ter 4 atributos: `id`, `nome`, `preco` e `marca`. Nosso objetivo é integrar esse campo a todas as operações já existentes na API, garantindo que o cliente possa criar, atualizar, validar, filtrar, ordenar e pesquisar produtos pela marca.
+
+### 2. Alteração do modelo e dados
+
+O objeto de produto passa a ter a estrutura:
+
+```json
+{
+  "id": 1,
+  "nome": "Notebook Pro",
+  "preco": 3500.0,
+  "marca": "Dell"
+}
+```
+
+- No **Express**, o `req.body` em POST e PUT passa a extrair `marca`, e o objeto persistido inclui `marca: marca.trim()`.
+- No **FastAPI**, o modelo `ProdutoInput` é atualizado:
+
+```python
+class ProdutoInput(BaseModel):
+    nome: str | None = None
+    preco: float | None = None
+    marca: str | None = None
+```
+
+### 3. Validação
+
+O campo `marca` deve seguir regras objetivas:
+- **Obrigatório** (não pode ser omitido);
+- **Deve ser string**;
+- **Não pode ser vazio** (após remover espaços em branco nas pontas);
+- **Tamanho:** deve possuir entre **2 e 50 caracteres**.
+
+#### Express
+
+Na função `validarProduto({ nome, preco, marca })`:
+
+```js
+// Validação de marca
+if (marca === undefined) {
+  erros.marca = "O campo é obrigatório.";
+} else if (typeof marca !== "string") {
+  erros.marca = "O campo deve ser uma string.";
+} else {
+  const marcaLimpa = marca.trim();
+  if (marcaLimpa === "") {
+    erros.marca = "O campo não pode ser vazio.";
+  } else if (marcaLimpa.length < 2 || marcaLimpa.length > 50) {
+    erros.marca = "A marca deve possuir entre 2 e 50 caracteres.";
+  }
+}
+```
+
+#### FastAPI
+
+Na função `validar_produto(nome, preco, marca)`:
+
+```python
+# Validação de marca
+if marca is None:
+    erros["marca"] = "O campo é obrigatório."
+elif not isinstance(marca, str):
+    erros["marca"] = "O campo deve ser uma string."
+else:
+    marca_limpa = marca.strip()
+    if marca_limpa == "":
+        erros["marca"] = "O campo não pode ser vazio."
+    elif len(marca_limpa) < 2 or len(marca_limpa) > 50:
+        erros["marca"] = "A marca deve possuir entre 2 e 50 caracteres."
+```
+
+Se houver erros, a API responde com **`400 Bad Request`** e o corpo `{ "detail": { "marca": "..." } }`.
+
+### 4. Filtro por marca
+
+Queremos permitir consultas como `GET /api/produtos/?marca=Samsung`. O filtro deve ser exato para o termo, mas insensível a maiúsculas/minúsculas (*case-insensitive*), e deve combinar perfeitamente com `preco_minimo` e `preco_maximo`.
+
+#### Express
+
+```js
+const { marca, preco_minimo, preco_maximo, ... } = req.query;
+
+if (marca !== undefined && marca !== "") {
+  const termoMarca = marca.toLowerCase();
+  resultado = resultado.filter(p => p.marca && p.marca.toLowerCase() === termoMarca);
+}
+```
+
+#### FastAPI
+
+```python
+@app.get("/api/produtos/", response_model=RespostaPaginada)
+def listar_produtos(
+    marca: str | None = None,
+    preco_minimo: str | None = None,
+    preco_maximo: str | None = None,
+    ...
+):
+    ...
+    if marca is not None and marca != "":
+        termo_marca = marca.lower()
+        resultado = [p for p in resultado if p.get("marca", "").lower() == termo_marca]
+```
+
+### 5. Ordenação por marca
+
+Permitir `ordering=marca` (crescente, A→Z) e `ordering=-marca` (decrescente, Z→A).
+
+1. Adicionamos `"marca"` à lista de campos permitidos: `["nome", "preco", "marca"]`.
+2. Implementamos a comparação de strings alfabética.
+
+#### Express
+
+```js
+const camposOrdenacao = ["nome", "preco", "marca"];
+// ...
+if (campoOrdenacao === "preco") {
+  comparacao = a.preco - b.preco;
+} else if (campoOrdenacao === "marca") {
+  comparacao = a.marca.toLowerCase().localeCompare(b.marca.toLowerCase());
+} else {
+  comparacao = a.nome.toLowerCase().localeCompare(b.nome.toLowerCase());
+}
+```
+
+#### FastAPI
+
+```python
+campos_ordenacao = ["nome", "preco", "marca"]
+# ...
+if campo_ordenacao == "preco":
+    resultado.sort(key=lambda p: p["preco"], reverse=ordem_desc)
+elif campo_ordenacao == "marca":
+    resultado.sort(key=lambda p: p.get("marca", "").lower(), reverse=ordem_desc)
+elif campo_ordenacao == "nome":
+    resultado.sort(key=lambda p: p["nome"].lower(), reverse=ordem_desc)
+```
+
+### 6. Busca textual (`search`)
+
+A partir desta aula, `marca` passa a fazer parte da busca textual. O parâmetro `?search=termo` deve encontrar produtos em que o termo apareça no **`nome`** OU na **`marca`**.
+
+#### Express
+
+```js
+if (search !== undefined && search !== "") {
+  const termo = search.toLowerCase();
+  resultado = resultado.filter(p =>
+    p.nome.toLowerCase().includes(termo) ||
+    (p.marca && p.marca.toLowerCase().includes(termo))
+  );
+}
+```
+
+#### FastAPI
+
+```python
+if search is not None:
+    termo = search.lower()
+    resultado = [
+        p for p in resultado
+        if termo in p["nome"].lower() or (p.get("marca") and termo in p["marca"].lower())
+    ]
+```
+
+### 7. Contrato HTTP e testes no Bruno
+
+| Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
+| --- | --- | --- | --- | --- | --- |
+| **01. Criar produto com marca válida** | POST | `/api/produtos/` | `{"nome": "Monitor Ultra", "preco": 1200.0, "marca": "Dell"}` | `201 Created` | Retorna produto com `id` gerado e `"marca": "Dell"` |
+| **02. Criar com marca ausente** | POST | `/api/produtos/` | `{"nome": "Monitor Ultra", "preco": 1200.0}` | `400 Bad Request` | `detail.marca` indica campo obrigatório |
+| **03. Criar com marca vazia/curta** | POST | `/api/produtos/` | `{"nome": "Monitor", "preco": 1000.0, "marca": " "}` | `400 Bad Request` | `detail.marca` indica erro de validação |
+| **04. Atualizar marca via PUT** | PUT | `/api/produtos/1/` | `{"nome": "Notebook Pro", "preco": 3800.0, "marca": "Lenovo"}` | `200 OK` | Produto atualizado com a nova marca |
+| **05. Filtrar por marca existente** | GET | `/api/produtos/?marca=Dell` | — | `200 OK` | Apenas produtos com marca Dell na lista |
+| **06. Filtrar por marca inexistente** | GET | `/api/produtos/?marca=MarcaFantasma` | — | `200 OK` | `results` vazia (`[]`), `total_pages: 0` |
+| **07. Combinar marca e preço** | GET | `/api/produtos/?marca=Dell&preco_minimo=2000` | — | `200 OK` | Produtos Dell com preço >= 2000 |
+| **08. Ordenação crescente por marca** | GET | `/api/produtos/?ordering=marca` | — | `200 OK` | Lista em ordem alfabética de marca (A→Z) |
+| **09. Ordenação decrescente por marca** | GET | `/api/produtos/?ordering=-marca` | — | `200 OK` | Lista em ordem reversa de marca (Z→A) |
+| **10. Busca textual pela marca** | GET | `/api/produtos/?search=dell` | — | `200 OK` | Encontra produtos cuja marca contenha "dell" |
+| **11. Busca sem resultados** | GET | `/api/produtos/?search=termoinexistente` | — | `200 OK` | `results` vazia |
+
+### 8. O que observar
+
+Note a quantidade de partes que precisamos alterar para dar suporte a **um único campo**:
+1. O modelo de dados e persistência;
+2. As rotas POST e PUT;
+3. A função de validação com regras de string e tamanho;
+4. Os parâmetros aceitos no GET (query params);
+5. A lógica do filtro;
+6. A lista de campos aceitos na ordenação e a comparação de strings;
+7. A expressão lógica da busca textual;
+8. As requisições de teste.
+
+---
+
+## 📘 Aula 15 — Adicionando estoque
+
+### 1. O que vamos aprender e o problema
+
+Nesta aula adicionamos o campo **`estoque`** à entidade `Produto`, partindo do código da Aula 14. O produto agora possui: `id`, `nome`, `preco`, `marca` e `estoque`.
+
+Ao contrário de `nome` e `marca` (que são textos), `estoque` é uma **quantidade inteira**. Isso traz novos desafios para validação e filtragem por faixa de valores. Além disso, veremos por que **nem todo campo deve entrar na busca textual**.
+
+### 2. Alteração do modelo e dados
+
+O objeto de produto passa a ter a estrutura:
+
+```json
+{
+  "id": 1,
+  "nome": "Notebook Pro",
+  "preco": 3500.0,
+  "marca": "Dell",
+  "estoque": 15
+}
+```
+
+- No **Express**, extraímos `estoque` no POST/PUT e persistimos como número inteiro.
+- No **FastAPI**, atualizamos o `ProdutoInput`:
+
+```python
+class ProdutoInput(BaseModel):
+    nome: str | None = None
+    preco: float | None = None
+    marca: str | None = None
+    estoque: int | None = None
+```
+
+### 3. Validação
+
+Regras para `estoque`:
+- **Obrigatório**;
+- **Deve ser um número inteiro** (não pode ser string, booleano ou float com casas decimais);
+- **Não pode ser negativo** (`estoque >= 0`).
+
+Exemplos:
+- `estoque = 10` → ✅ válido
+- `estoque = 0` → ✅ válido (estoque zerado é comum no comércio)
+- `estoque = -1` → ❌ inválido (não existe estoque negativo)
+- `estoque = "dez"` → ❌ inválido (tipo incorreto)
+- `estoque = 5.5` → ❌ inválido (unidades de estoque são inteiras)
+
+#### Express
+
+Na função `validarProduto`:
+
+```js
+// Validação de estoque
+if (estoque === undefined) {
+  erros.estoque = "O campo é obrigatório.";
+} else if (typeof estoque !== "number" || !Number.isInteger(estoque)) {
+  erros.estoque = "O campo deve ser um número inteiro.";
+} else if (estoque < 0) {
+  erros.estoque = "O estoque não pode ser negativo.";
+}
+```
+
+#### FastAPI
+
+Na função `validar_produto`:
+
+```python
+# Validação de estoque
+if estoque is None:
+    erros["estoque"] = "O campo é obrigatório."
+elif not isinstance(estoque, int) or isinstance(estoque, bool):
+    erros["estoque"] = "O campo deve ser um número inteiro."
+elif estoque < 0:
+    erros["estoque"] = "O estoque não pode ser negativo."
+```
+
+### 4. Filtros por estoque
+
+Para trabalhar com quantidades em estoque, implementamos os query params:
+- `estoque_minimo`: retorna produtos com `estoque >= estoque_minimo`
+- `estoque_maximo`: retorna produtos com `estoque <= estoque_maximo`
+
+Se o usuário fornecer um valor não numérico nesses parâmetros (ex.: `?estoque_minimo=abc`), a API deve devolver **`400 Bad Request`**.
+
+#### Express
+
+```js
+const { estoque_minimo, estoque_maximo, ... } = req.query;
+
+if (estoque_minimo !== undefined && estoque_minimo !== "") {
+  if (!/^[0-9]+$/.test(estoque_minimo)) {
+    erros.estoque_minimo = "O valor deve ser um número inteiro não negativo.";
+  } else {
+    resultado = resultado.filter(p => p.estoque >= parseInt(estoque_minimo, 10));
+  }
+}
+
+if (estoque_maximo !== undefined && estoque_maximo !== "") {
+  if (!/^[0-9]+$/.test(estoque_maximo)) {
+    erros.estoque_maximo = "O valor deve ser um número inteiro não negativo.";
+  } else {
+    resultado = resultado.filter(p => p.estoque <= parseInt(estoque_maximo, 10));
+  }
+}
+```
+
+#### FastAPI
+
+```python
+@app.get("/api/produtos/", response_model=RespostaPaginada)
+def listar_produtos(
+    estoque_minimo: str | None = None,
+    estoque_maximo: str | None = None,
+    ...
+):
+    ...
+    if estoque_minimo is not None:
+        if not estoque_minimo.isdigit():
+            erros["estoque_minimo"] = "O valor deve ser um número inteiro não negativo."
+        else:
+            val_min = int(estoque_minimo)
+            resultado = [p for p in resultado if p.get("estoque", 0) >= val_min]
+
+    if estoque_maximo is not None:
+        if not estoque_maximo.isdigit():
+            erros["estoque_maximo"] = "O valor deve ser um número inteiro não negativo."
+        else:
+            val_max = int(estoque_maximo)
+            resultado = [p for p in resultado if p.get("estoque", 0) <= val_max]
+```
+
+### 5. Ordenação por estoque
+
+Permitir `ordering=estoque` (crescente) e `ordering=-estoque` (decrescente).
+
+1. Adicionamos `"estoque"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque"]`.
+2. Lógica de ordenação numérica:
+
+#### Express
+
+```js
+} else if (campoOrdenacao === "estoque") {
+  comparacao = a.estoque - b.estoque;
+}
+```
+
+#### FastAPI
+
+```python
+elif campo_ordenacao == "estoque":
+    resultado.sort(key=lambda p: p.get("estoque", 0), reverse=ordem_desc)
+```
+
+### 6. Busca textual: Por que NÃO incluir estoque?
+
+> [!IMPORTANT]
+> **O campo `estoque` NÃO deve ser incluído na busca textual (`search`).**
+
+A busca textual tem como objetivo encontrar itens a partir de **termos textuais e palavras-chave** (nomes, marcas, categorias). 
+
+Se incluíssemos o estoque na busca, uma requisição como `GET /api/produtos/?search=10` retornaria produtos que têm "10" no nome, produtos da marca "10" E também qualquer produto que por acaso tivesse exatamente 10 unidades no estoque. Isso poluiria os resultados com correspondências sem sentido para o usuário.
+
+Para consultar quantidades numéricas, utilizamos **filtros dedicados** (`estoque_minimo`, `estoque_maximo`), e não a busca por texto livre.
+
+### 7. Contrato HTTP e testes no Bruno
+
+| Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
+| --- | --- | --- | --- | --- | --- |
+| **01. Criar com estoque válido** | POST | `/api/produtos/` | `{"nome": "Mouse Sem Fio", "preco": 80.0, "marca": "Logitech", "estoque": 25}` | `201 Created` | Retorna produto com `"estoque": 25` |
+| **02. Criar com estoque zero** | POST | `/api/produtos/` | `{"nome": "Teclado Mecânico", "preco": 250.0, "marca": "Keychron", "estoque": 0}` | `201 Created` | Sucesso (`estoque: 0` é válido) |
+| **03. Criar com estoque negativo** | POST | `/api/produtos/` | `{"nome": "Fone", "preco": 150.0, "marca": "Sony", "estoque": -5}` | `400 Bad Request` | `detail.estoque` avisa que não pode ser negativo |
+| **04. Criar com tipo inválido** | POST | `/api/produtos/` | `{"nome": "Fone", "preco": 150.0, "marca": "Sony", "estoque": "muitos"}` | `400 Bad Request` | `detail.estoque` avisa que deve ser inteiro |
+| **05. Filtrar por estoque mínimo** | GET | `/api/produtos/?estoque_minimo=10` | — | `200 OK` | Apenas produtos com estoque >= 10 |
+| **06. Filtrar por estoque máximo** | GET | `/api/produtos/?estoque_maximo=5` | — | `200 OK` | Apenas produtos com estoque <= 5 (itens acabando) |
+| **07. Filtrar por faixa de estoque** | GET | `/api/produtos/?estoque_minimo=10&estoque_maximo=30` | — | `200 OK` | Apenas produtos no intervalo [10, 30] |
+| **08. Ordenar crescente por estoque** | GET | `/api/produtos/?ordering=estoque` | — | `200 OK` | Do menor estoque para o maior |
+| **09. Ordenar decrescente por estoque** | GET | `/api/produtos/?ordering=-estoque` | — | `200 OK` | Do maior estoque para o menor |
+| **10. Combinar marca, preço e estoque** | GET | `/api/produtos/?marca=Dell&preco_minimo=1000&estoque_minimo=1` | — | `200 OK` | Produtos Dell caros que estão disponíveis |
+
+### 8. O que observar
+
+- Atributos numéricos demandam validações de tipo estritas (número vs texto, inteiro vs ponto flutuante, faixas positivas/negativas).
+- Filtros de intervalo (`min`/`max`) são a forma idiomática de filtrar grandezas numéricas em APIs REST.
+- A modelagem de uma API exige decisões de design conscientes: nem todo campo participa de todos os mecanismos (como a busca textual).
+
+---
+
+## 📘 Aula 16 — Adicionando descrição
+
+### 1. O que vamos aprender e o problema
+
+Nesta aula completamos o ciclo de expansão adicionando o campo **`descricao`**. A entidade `Produto` agora atinge sua estrutura final nesta fase:
+`id`, `nome`, `preco`, `marca`, `estoque` e `descricao`.
+
+Diferente de `nome` e `marca` (que são textos curtos e obrigatórios), a `descricao` costuma ser um **texto longo e opcional**. Vamos analisar como tratar campos opcionais na validação e como integrá-los de forma completa à **busca textual multicampo**.
+
+### 2. Alteração do modelo e dados
+
+O objeto de produto passa a ter a estrutura completa:
+
+```json
+{
+  "id": 1,
+  "nome": "Notebook Pro",
+  "preco": 3500.0,
+  "marca": "Dell",
+  "estoque": 15,
+  "descricao": "Notebook de alta performance com tela OLED e processador octa-core."
+}
+```
+
+- No **Express**, o POST e o PUT aceitam `descricao` (armazenando string tratada ou `""`/`null`).
+- No **FastAPI**, o `ProdutoInput` inclui `descricao`:
+
+```python
+class ProdutoInput(BaseModel):
+    nome: str | None = None
+    preco: float | None = None
+    marca: str | None = None
+    estoque: int | None = None
+    descricao: str | None = None
+```
+
+### 3. Validação
+
+Regras para `descricao`:
+- **Opcional:** o cliente pode omitir o campo ou enviar `null`/`""`;
+- **Se informada:** deve ser uma string;
+- **Limite de tamanho:** no máximo **500 caracteres** (para evitar sobrecarga de dados no payload).
+
+#### Express
+
+Na função `validarProduto`:
+
+```js
+// Validação de descricao (opcional, máximo 500 caracteres se informada)
+if (descricao !== undefined && descricao !== null) {
+  if (typeof descricao !== "string") {
+    erros.descricao = "O campo deve ser uma string.";
+  } else if (descricao.trim().length > 500) {
+    erros.descricao = "A descrição não pode ultrapassar 500 caracteres.";
+  }
+}
+```
+
+#### FastAPI
+
+Na função `validar_produto`:
+
+```python
+# Validação de descricao (opcional, máximo 500 caracteres se informada)
+if descricao is not None:
+    if not isinstance(descricao, str):
+        erros["descricao"] = "O campo deve ser uma string."
+    elif len(descricao.strip()) > 500:
+        erros["descricao"] = "A descrição não pode ultrapassar 500 caracteres."
+```
+
+### 4. Filtro vs. Busca textual
+
+> **Por que não criamos um filtro exato `?descricao=...`?**
+> Um filtro exato (`?marca=Dell`) faz sentido para atributos categóricos. Textos longos como descrições raramente são consultados por igualdade exata. O mecanismo adequado e natural para consultar descrições é a **busca textual (`search`)**. Criar um filtro exato de descrição seria redundante e pouco útil.
+
+### 5. Ordenação por descrição
+
+Permitir `ordering=descricao` e `ordering=-descricao`.
+
+1. Adicionamos `"descricao"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque", "descricao"]`.
+2. Tratamento de campos opcionais/nulos na ordenação:
+
+#### Express
+
+```js
+} else if (campoOrdenacao === "descricao") {
+  const descA = (a.descricao || "").toLowerCase();
+  const descB = (b.descricao || "").toLowerCase();
+  comparacao = descA.localeCompare(descB);
+}
+```
+
+#### FastAPI
+
+```python
+elif campo_ordenacao == "descricao":
+    resultado.sort(key=lambda p: (p.get("descricao") or "").lower(), reverse=ordem_desc)
+```
+
+### 6. Busca textual multicampo (nome, marca, descricao)
+
+Agora nossa busca textual atinge seu formato mais poderoso. O parâmetro `?search=termo` pesquisa simultaneamente em todos os campos de texto:
+1. **`nome`**
+2. **`marca`**
+3. **`descricao`**
+
+Se o termo procurado for encontrado em **qualquer um** desses três campos, o produto é retornado.
+
+#### Express
+
+```js
+if (search !== undefined && search !== "") {
+  const termo = search.toLowerCase();
+  resultado = resultado.filter(p => {
+    const noNome = p.nome.toLowerCase().includes(termo);
+    const naMarca = p.marca && p.marca.toLowerCase().includes(termo);
+    const naDescricao = p.descricao && p.descricao.toLowerCase().includes(termo);
+    return noNome || naMarca || naDescricao;
+  });
+}
+```
+
+#### FastAPI
+
+```python
+if search is not None:
+    termo = search.lower()
+    resultado = [
+        p for p in resultado
+        if termo in p["nome"].lower()
+        or (p.get("marca") and termo in p["marca"].lower())
+        or (p.get("descricao") and termo in p["descricao"].lower())
+    ]
+```
+
+#### Exemplos de busca:
+
+- `GET /api/produtos/?search=notebook` → localiza produtos cujo **nome** contém "notebook";
+- `GET /api/produtos/?search=dell` → localiza produtos cuja **marca** é "Dell";
+- `GET /api/produtos/?search=oled` → localiza produtos que possuem a palavra "oled" no meio da **descrição**, mesmo que a palavra não apareça no nome nem na marca!
+
+### 7. Contrato HTTP e testes no Bruno
+
+| Cenário de Teste | Método | URL | Corpo (JSON) | Status Esperado | O que validar |
+| --- | --- | --- | --- | --- | --- |
+| **01. Criar produto completo** | POST | `/api/produtos/` | `{"nome": "Monitor Pro 4K", "preco": 2800.0, "marca": "LG", "estoque": 8, "descricao": "Painel IPS com HDR e conexões USB-C"}` | `201 Created` | Retorna o produto com todos os 6 campos |
+| **02. Criar produto sem descrição** | POST | `/api/produtos/` | `{"nome": "Cabo HDMI", "preco": 35.0, "marca": "Ugreen", "estoque": 50}` | `201 Created` | Sucesso (campo opcional) |
+| **03. Descrição com mais de 500 chars** | POST | `/api/produtos/` | `{"nome": "X", "preco": 10.0, "marca": "Y", "estoque": 1, "descricao": "texto muito longo..."}` | `400 Bad Request` | `detail.descricao` acusa limite excedido |
+| **04. Ordenar por descrição** | GET | `/api/produtos/?ordering=descricao` | — | `200 OK` | Ordena alfabeticamente pela descrição |
+| **05. Buscar termo presente na descrição** | GET | `/api/produtos/?search=usb-c` | — | `200 OK` | Encontra o produto pela especificação na descrição |
+| **06. Buscar termo presente na marca** | GET | `/api/produtos/?search=ugreen` | — | `200 OK` | Encontra pela marca |
+| **07. Buscar termo presente no nome** | GET | `/api/produtos/?search=monitor` | — | `200 OK` | Encontra pelo nome |
+
+### 8. O que observar
+
+- Campos opcionais exigem cuidado com valores ausentes (`null` ou `undefined`) para evitar exceções em tempo de execução ao ordenar ou buscar;
+- A busca textual unificada oferece uma experiência excelente para o cliente da API sem a necessidade de múltiplos filtros complexos.
+
+---
+
+## O que mudou ao adicionar apenas três campos?
+
+Ao final destas três aulas, a entidade `Produto` passou a contar com seis campos:
+
+```text
+id
+nome
+preco
+marca
+estoque
+descricao
+```
+
+Observe a matriz de impacto de cada um dos novos campos adicionados:
+
+| Campo | Validação | Filtro | Ordenação | Busca textual |
+|---|---|---|---|---|
+| **marca** | ✓ *(obrigatório, string, 2–50 chars)* | ✓ *(exato, case-insensitive)* | ✓ *(alfabética)* | ✓ *(participa do `search`)* |
+| **estoque** | ✓ *(obrigatório, int, >= 0)* | ✓ *(intervalo: mín e máx)* | ✓ *(numérica)* | — *(não participa)* |
+| **descricao** | ✓ *(opcional, string, máx 500 chars)* | — *(resolvido pela busca)* | ✓ *(alfabética)* | ✓ *(participa do `search`)* |
+
+A principal conclusão prática desta etapa é:
+
+> **Quanto mais informações uma entidade possui, mais comportamentos precisam ser considerados quando esses dados são expostos por uma API.**
+
+Ao implementar esses três campos manualmente no Express e no FastAPI, percebemos que:
+- Cada novo campo exige validações manuais repetitivas (`if`/`else`, checagem de tipo, limites);
+- Para cada novo campo filtrável, precisamos extrair query params, tratar ausências e encadear filtros;
+- A ordenação exige manter listas de campos permitidos e tratar tipos diferentes (número vs. string vs. nulos);
+- A busca textual cresce em complexidade lógica a cada novo campo adicionado;
+- Os testes precisam cobrir um número muito maior de combinações de requisições válidas e inválidas.
+
+Esse crescimento de esforço manual prepara o terreno para a próxima etapa do nosso aprendizado: o **Django REST Framework (DRF)**. No DRF, veremos como abstrações poderosas (como **Models**, **Serializers**, **ModelViewSets** e **FilterBackends**) automatizam grande parte desse trabalho repetitivo de forma declarativa e padronizada.
+
