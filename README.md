@@ -1345,9 +1345,10 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 
 ---
 
-# 🧭 Parte 6 — Exercícios — Complexidade progressiva: novos campos na entidade
+# 🧭 Parte 6 — Exercícios — novos campos na entidade
 
-> **Objetivo pedagógico desta parte:**
+> **Objetivo:**
+
 > Até a Aula 13, construímos uma API completa para um modelo simples: `Produto(id, nome, preco)`.
 > Agora, vamos vivenciar na prática o que acontece quando o modelo de negócio evolui e novos campos precisam ser adicionados.
 > 
@@ -1358,10 +1359,9 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 > - **Ordenação:** permitir que a listagem seja ordenada crescente ou decrescentemente por esse campo;
 > - **Busca textual:** decidir se o novo campo deve ser incluído na busca global (`search`);
 > - **Testes e documentação:** atualizar as coleções de requisições e garantir que todos os cenários (válidos e inválidos) continuem funcionando.
-> 
-> Esta seção é **incremental e cumulativa**: cada aula adiciona um novo campo sobre o código da aula anterior.
 
-> [!TIP]
+Esta seção é **incremental e cumulativa**: cada aula adiciona um novo campo sobre o código da aula anterior. Inclusive o arquivo com os produtos (produtos.json) terá sua estrutura alterada a cada aula e não funcionará com os arquivos das aulas anteriores. Se vocẽ quiser que ele funcione com as aulas anteriores, faça uma cópia do arquivo products.json para cada aula e utilize outro nome para o arquivo. Por exemplo, na aula 14, utilize o arquivo products14.json.
+
 > **💡 Como realizar estes exercícios (Dinâmica Ativa):**
 > 1. **Escolha da tecnologia:** Você pode optar por implementar os exercícios em apenas **uma** das tecnologias (**Express** ou **FastAPI**). Se preferir e quiser aprofundar a comparação, sinta-se à vontade para fazer nas **duas**!
 > 2. **Leia a especificação e as regras de negócio** de cada tópico com atenção antes de olhar o código.
