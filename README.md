@@ -1345,7 +1345,7 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 
 ---
 
-# 🧭 Parte 6 — Complexidade progressiva: novos campos na entidade
+# 🧭 Parte 6 — Exercícios — Complexidade progressiva: novos campos na entidade
 
 > **Objetivo pedagógico desta parte:**
 > Até a Aula 13, construímos uma API completa para um modelo simples: `Produto(id, nome, preco)`.
@@ -1359,7 +1359,15 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 > - **Busca textual:** decidir se o novo campo deve ser incluído na busca global (`search`);
 > - **Testes e documentação:** atualizar as coleções de requisições e garantir que todos os cenários (válidos e inválidos) continuem funcionando.
 > 
-> Esta seção é **incremental e cumulativa**: cada aula adiciona um novo campo sobre o código da aula anterior. Faremos isso de forma manual em **Express** e **FastAPI**, para entender o esforço necessário antes de conhecermos as abstrações de frameworks de mais alto nível (como o Django REST Framework).
+> Esta seção é **incremental e cumulativa**: cada aula adiciona um novo campo sobre o código da aula anterior.
+
+> [!TIP]
+> **💡 Como realizar estes exercícios (Dinâmica Ativa):**
+> 1. **Escolha da tecnologia:** Você pode optar por implementar os exercícios em apenas **uma** das tecnologias (**Express** ou **FastAPI**). Se preferir e quiser aprofundar a comparação, sinta-se à vontade para fazer nas **duas**!
+> 2. **Leia a especificação e as regras de negócio** de cada tópico com atenção antes de olhar o código.
+> 3. **Tente programar a alteração sozinho** no seu arquivo da aula anterior (`aula13_api_completa` ou uma cópia dedicada para o exercício).
+> 4. **Abra o bloco retrátil** apenas para **conferir sua solução**, comparar abordagens ou tirar dúvidas caso trave.
+> 5. **Execute e valide no Bruno** usando a tabela de testes fornecida ao final de cada aula.
 
 ---
 
@@ -1385,7 +1393,10 @@ O objeto de produto passa a ter a estrutura:
 ```
 
 - No **Express**, o `req.body` em POST e PUT passa a extrair `marca`, e o objeto persistido inclui `marca: marca.trim()`.
-- No **FastAPI**, o modelo `ProdutoInput` é atualizado:
+- No **FastAPI**, o modelo `ProdutoInput` deve ser atualizado com o novo campo.
+
+<details>
+<summary><strong>Ver alteração no ProdutoInput (FastAPI)</strong></summary>
 
 ```python
 class ProdutoInput(BaseModel):
@@ -1394,15 +1405,20 @@ class ProdutoInput(BaseModel):
     marca: str | None = None
 ```
 
+</details>
+
 **3. Validação**
 
-O campo `marca` deve seguir regras objetivas:
+**Regras para o campo `marca`:**
 - **Obrigatório** (não pode ser omitido);
 - **Deve ser string**;
 - **Não pode ser vazio** (após remover espaços em branco nas pontas);
 - **Tamanho:** deve possuir entre **2 e 50 caracteres**.
 
-**Express**
+> ✏️ **Desafio:** Atualize a função de validação manual no seu código para validar o campo `marca` conforme as regras acima e retornar `400 Bad Request` com o formato `{ "detail": { "marca": "..." } }`.
+
+<details>
+<summary><strong>Ver solução no Express (Node.js)</strong></summary>
 
 Na função `validarProduto({ nome, preco, marca })`:
 
@@ -1422,7 +1438,10 @@ if (marca === undefined) {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver solução no FastAPI (Python)</strong></summary>
 
 Na função `validar_produto(nome, preco, marca)`:
 
@@ -1440,13 +1459,16 @@ else:
         erros["marca"] = "A marca deve possuir entre 2 e 50 caracteres."
 ```
 
-Se houver erros, a API responde com **`400 Bad Request`** e o corpo `{ "detail": { "marca": "..." } }`.
+</details>
 
 **4. Filtro por marca**
 
 Queremos permitir consultas como `GET /api/produtos/?marca=Samsung`. O filtro deve ser exato para o termo, mas insensível a maiúsculas/minúsculas (*case-insensitive*), e deve combinar perfeitamente com `preco_minimo` e `preco_maximo`.
 
-**Express**
+> ✏️ **Desafio:** Receba o query param `marca` e filtre a lista de produtos de forma case-insensitive, mantendo os filtros por preço funcionando em conjunto.
+
+<details>
+<summary><strong>Ver solução de filtro no Express</strong></summary>
 
 ```js
 const { marca, preco_minimo, preco_maximo, ... } = req.query;
@@ -1457,7 +1479,10 @@ if (marca !== undefined && marca !== "") {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver solução de filtro no FastAPI</strong></summary>
 
 ```python
 @app.get("/api/produtos/", response_model=RespostaPaginada)
@@ -1473,14 +1498,16 @@ def listar_produtos(
         resultado = [p for p in resultado if p.get("marca", "").lower() == termo_marca]
 ```
 
+</details>
+
 **5. Ordenação por marca**
 
 Permitir `ordering=marca` (crescente, A→Z) e `ordering=-marca` (decrescente, Z→A).
 
-1. Adicionamos `"marca"` à lista de campos permitidos: `["nome", "preco", "marca"]`.
-2. Implementamos a comparação de strings alfabética.
+> ✏️ **Desafio:** Adicione `"marca"` à lista de campos permitidos na ordenação e implemente a comparação alfabética de strings.
 
-**Express**
+<details>
+<summary><strong>Ver solução de ordenação no Express</strong></summary>
 
 ```js
 const camposOrdenacao = ["nome", "preco", "marca"];
@@ -1494,7 +1521,10 @@ if (campoOrdenacao === "preco") {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver solução de ordenação no FastAPI</strong></summary>
 
 ```python
 campos_ordenacao = ["nome", "preco", "marca"]
@@ -1507,11 +1537,16 @@ elif campo_ordenacao == "nome":
     resultado.sort(key=lambda p: p["nome"].lower(), reverse=ordem_desc)
 ```
 
+</details>
+
 **6. Busca textual (`search`)**
 
 A partir desta aula, `marca` passa a fazer parte da busca textual. O parâmetro `?search=termo` deve encontrar produtos em que o termo apareça no **`nome`** OU na **`marca`**.
 
-**Express**
+> ✏️ **Desafio:** Amplie a expressão lógica da busca textual para pesquisar tanto no `nome` quanto na `marca`.
+
+<details>
+<summary><strong>Ver solução de busca textual no Express</strong></summary>
 
 ```js
 if (search !== undefined && search !== "") {
@@ -1523,7 +1558,10 @@ if (search !== undefined && search !== "") {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver solução de busca textual no FastAPI</strong></summary>
 
 ```python
 if search is not None:
@@ -1533,6 +1571,8 @@ if search is not None:
         if termo in p["nome"].lower() or (p.get("marca") and termo in p["marca"].lower())
     ]
 ```
+
+</details>
 
 **7. Contrato HTTP e testes no Bruno**
 
@@ -1589,6 +1629,9 @@ O objeto de produto passa a ter a estrutura:
 - No **Express**, extraímos `estoque` no POST/PUT e persistimos como número inteiro.
 - No **FastAPI**, atualizamos o `ProdutoInput`:
 
+<details>
+<summary><strong>Ver alteração no ProdutoInput (FastAPI)</strong></summary>
+
 ```python
 class ProdutoInput(BaseModel):
     nome: str | None = None
@@ -1597,9 +1640,11 @@ class ProdutoInput(BaseModel):
     estoque: int | None = None
 ```
 
+</details>
+
 **3. Validação**
 
-Regras para `estoque`:
+**Regras para o campo `estoque`:**
 - **Obrigatório**;
 - **Deve ser um número inteiro** (não pode ser string, booleano ou float com casas decimais);
 - **Não pode ser negativo** (`estoque >= 0`).
@@ -1611,7 +1656,10 @@ Exemplos:
 - `estoque = "dez"` → ❌ inválido (tipo incorreto)
 - `estoque = 5.5` → ❌ inválido (unidades de estoque são inteiras)
 
-**Express**
+> ✏️ **Desafio:** Implemente a validação de `estoque` na sua função de validação, garantindo que valores negativos, não inteiros ou de tipos incorretos retornem `400 Bad Request` com `{ "detail": { "estoque": "..." } }`.
+
+<details>
+<summary><strong>Ver validação de estoque no Express</strong></summary>
 
 Na função `validarProduto`:
 
@@ -1626,7 +1674,10 @@ if (estoque === undefined) {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver validação de estoque no FastAPI</strong></summary>
 
 Na função `validar_produto`:
 
@@ -1640,6 +1691,8 @@ elif estoque < 0:
     erros["estoque"] = "O estoque não pode ser negativo."
 ```
 
+</details>
+
 **4. Filtros por estoque**
 
 Para trabalhar com quantidades em estoque, implementamos os query params:
@@ -1648,7 +1701,10 @@ Para trabalhar com quantidades em estoque, implementamos os query params:
 
 Se o usuário fornecer um valor não numérico nesses parâmetros (ex.: `?estoque_minimo=abc`), a API deve devolver **`400 Bad Request`**.
 
-**Express**
+> ✏️ **Desafio:** Implemente a leitura e validação dos query params `estoque_minimo` e `estoque_maximo`, filtrando os produtos pela quantidade em estoque e retornando `400` se os valores informados forem inválidos.
+
+<details>
+<summary><strong>Ver filtros de estoque no Express</strong></summary>
 
 ```js
 const { estoque_minimo, estoque_maximo, ... } = req.query;
@@ -1670,7 +1726,10 @@ if (estoque_maximo !== undefined && estoque_maximo !== "") {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver filtros de estoque no FastAPI</strong></summary>
 
 ```python
 @app.get("/api/produtos/", response_model=RespostaPaginada)
@@ -1695,14 +1754,16 @@ def listar_produtos(
             resultado = [p for p in resultado if p.get("estoque", 0) <= val_max]
 ```
 
+</details>
+
 **5. Ordenação por estoque**
 
 Permitir `ordering=estoque` (crescente) e `ordering=-estoque` (decrescente).
 
-1. Adicionamos `"estoque"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque"]`.
-2. Lógica de ordenação numérica:
+> ✏️ **Desafio:** Adicione `"estoque"` aos campos permitidos de ordenação e implemente a ordenação numérica crescente e decrescente.
 
-**Express**
+<details>
+<summary><strong>Ver ordenação por estoque no Express</strong></summary>
 
 ```js
 } else if (campoOrdenacao === "estoque") {
@@ -1710,12 +1771,17 @@ Permitir `ordering=estoque` (crescente) e `ordering=-estoque` (decrescente).
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver ordenação por estoque no FastAPI</strong></summary>
 
 ```python
 elif campo_ordenacao == "estoque":
     resultado.sort(key=lambda p: p.get("estoque", 0), reverse=ordem_desc)
 ```
+
+</details>
 
 **6. Busca textual: Por que NÃO incluir estoque?**
 
@@ -1778,6 +1844,9 @@ O objeto de produto passa a ter a estrutura completa:
 - No **Express**, o POST e o PUT aceitam `descricao` (armazenando string tratada ou `""`/`null`).
 - No **FastAPI**, o `ProdutoInput` inclui `descricao`:
 
+<details>
+<summary><strong>Ver ProdutoInput completo (FastAPI)</strong></summary>
+
 ```python
 class ProdutoInput(BaseModel):
     nome: str | None = None
@@ -1787,14 +1856,19 @@ class ProdutoInput(BaseModel):
     descricao: str | None = None
 ```
 
+</details>
+
 **3. Validação**
 
-Regras para `descricao`:
+**Regras para o campo `descricao`:**
 - **Opcional:** o cliente pode omitir o campo ou enviar `null`/`""`;
 - **Se informada:** deve ser uma string;
 - **Limite de tamanho:** no máximo **500 caracteres** (para evitar sobrecarga de dados no payload).
 
-**Express**
+> ✏️ **Desafio:** Valide `descricao` como campo opcional: se fornecido, deve ser uma string de até 500 caracteres; se omitido ou nulo, deve ser aceito normalmente.
+
+<details>
+<summary><strong>Ver validação de descrição no Express</strong></summary>
 
 Na função `validarProduto`:
 
@@ -1809,7 +1883,10 @@ if (descricao !== undefined && descricao !== null) {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver validação de descrição no FastAPI</strong></summary>
 
 Na função `validar_produto`:
 
@@ -1822,6 +1899,8 @@ if descricao is not None:
         erros["descricao"] = "A descrição não pode ultrapassar 500 caracteres."
 ```
 
+</details>
+
 **4. Filtro vs. Busca textual**
 
 > **Por que não criamos um filtro exato `?descricao=...`?**
@@ -1831,10 +1910,10 @@ if descricao is not None:
 
 Permitir `ordering=descricao` e `ordering=-descricao`.
 
-1. Adicionamos `"descricao"` em `camposOrdenacao = ["nome", "preco", "marca", "estoque", "descricao"]`.
-2. Tratamento de campos opcionais/nulos na ordenação:
+> ✏️ **Desafio:** Permita ordenar por `descricao` alfabeticamente, tratando produtos que não possuem descrição (ou com valor nulo) sem causar erros de execução.
 
-**Express**
+<details>
+<summary><strong>Ver ordenação por descrição no Express</strong></summary>
 
 ```js
 } else if (campoOrdenacao === "descricao") {
@@ -1844,12 +1923,17 @@ Permitir `ordering=descricao` e `ordering=-descricao`.
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver ordenação por descrição no FastAPI</strong></summary>
 
 ```python
 elif campo_ordenacao == "descricao":
     resultado.sort(key=lambda p: (p.get("descricao") or "").lower(), reverse=ordem_desc)
 ```
+
+</details>
 
 **6. Busca textual multicampo (nome, marca, descricao)**
 
@@ -1860,7 +1944,10 @@ Agora nossa busca textual atinge seu formato mais poderoso. O parâmetro `?searc
 
 Se o termo procurado for encontrado em **qualquer um** desses três campos, o produto é retornado.
 
-**Express**
+> ✏️ **Desafio:** Atualize o filtro de busca (`search`) para verificar a presença do termo em `nome`, `marca` ou `descricao`.
+
+<details>
+<summary><strong>Ver busca multicampo no Express</strong></summary>
 
 ```js
 if (search !== undefined && search !== "") {
@@ -1874,7 +1961,10 @@ if (search !== undefined && search !== "") {
 }
 ```
 
-**FastAPI**
+</details>
+
+<details>
+<summary><strong>Ver busca multicampo no FastAPI</strong></summary>
 
 ```python
 if search is not None:
@@ -1886,6 +1976,8 @@ if search is not None:
         or (p.get("descricao") and termo in p["descricao"].lower())
     ]
 ```
+
+</details>
 
 **Exemplos de busca:**
 
@@ -1945,4 +2037,5 @@ Ao implementar esses três campos manualmente no Express e no FastAPI, percebemo
 - Os testes precisam cobrir um número muito maior de combinações de requisições válidas e inválidas.
 
 Esse crescimento de esforço manual prepara o terreno para a próxima etapa do nosso aprendizado: o **Django REST Framework (DRF)**. No DRF, veremos como abstrações poderosas (como **Models**, **Serializers**, **ModelViewSets** e **FilterBackends**) automatizam grande parte desse trabalho repetitivo de forma declarativa e padronizada.
+
 
