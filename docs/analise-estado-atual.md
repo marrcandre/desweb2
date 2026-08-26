@@ -1,5 +1,7 @@
 # Relatório técnico — Estado atual do repositório Desenvolvimento Web 2
 
+> **Registro histórico.** Este documento descreve o estado encontrado antes da reorganização da Parte 7. A documentação vigente da Parte 7 está no README e começa na Aula 17; as referências ao estado anterior do workspace são históricas.
+
 ## 0. Amostra analisada
 
 Foram lidos integralmente: `desweb2/docs/plan.md`, `desweb2/README.md`, os READMEs de `express-bsi4`, `fastapi-bsi4` e `django-bsi4`, todos os arquivos `.js` de `express-bsi4`, todos os `.py` de `fastapi-bsi4`, todos os arquivos relevantes de `django-bsi4` (models, serializers, views, filters, admin, urls, settings, migration, requirements), o `bsi4.code-workspace`, os `.gitignore` e os dados de apoio (`produtos.json`).
