@@ -1921,6 +1921,7 @@ if search is not None:
 | **05. Buscar termo presente na descrição** | GET | `/api/produtos/?search=usb-c` | — | `200 OK` | Encontra o produto pela especificação na descrição |
 | **06. Buscar termo presente na marca** | GET | `/api/produtos/?search=ugreen` | — | `200 OK` | Encontra pela marca |
 | **07. Buscar termo presente no nome** | GET | `/api/produtos/?search=monitor` | — | `200 OK` | Encontra pelo nome |
+| **08. Buscar termo em qualquer campo** | GET | `/api/produtos/?search=lg` | — | `200 OK` | Encontra por nome, marca ou descrição |
 
 **8. O que observar**
 
@@ -1929,7 +1930,7 @@ if search is not None:
 
 ---
 
-## O que mudou ao adicionar apenas três campos?
+## 📘 Conclusão — O que mudou ao adicionar apenas três campos?
 
 Ao final destas três aulas, a entidade `Produto` passou a contar com seis campos:
 
@@ -1986,17 +1987,17 @@ Model → ORM → SQLite
   └── API REST
 ```
 
-## Aula 17 — Conhecendo o Django e criando o projeto
+## 📘 Aula 17 — Conhecendo o Django e criando o projeto
 
-### Objetivo
+**Objetivo**
 
 Criar o projeto `django-bsi4`, entender projeto e aplicação, executar o primeiro servidor e publicar o repositório que será usado nas aulas seguintes.
 
-### Antes de começar
+**Antes de começar**
 
 Comece com uma pasta de trabalho vazia. Você já conhece endpoints e APIs pelas Partes 1–6; aqui o foco é a organização específica do Django.
 
-### 1. Criando o projeto
+**1. Criando o projeto**
 
 ```bash
 mkdir django-bsi4
@@ -2011,7 +2012,7 @@ O comando `startproject` cria a configuração global. O comando `startapp` cria
 
 Em `config/settings.py`, adicione `produtos` a `INSTALLED_APPS`. Nesta primeira aula, o DRF ainda não será configurado; a instalação das dependências pode acontecer antes da configuração de cada recurso.
 
-### 2. Entendendo a estrutura
+**2. Entendendo a estrutura**
 
 - `manage.py`: ponto de entrada dos comandos do projeto;
 - `config/settings.py`: configurações globais;
@@ -2023,7 +2024,7 @@ Em `config/settings.py`, adicione `produtos` a `INSTALLED_APPS`. Nesta primeira 
 
 Projeto é o conjunto de configurações. Aplicação é um módulo funcional dentro do projeto.
 
-### 3. Executando
+**3. Executando**
 
 ```bash
 uv run python manage.py runserver
@@ -2031,7 +2032,7 @@ uv run python manage.py runserver
 
 Acesse `http://127.0.0.1:8000/`. A página inicial do Django confirma que o projeto funciona. Ainda não há Model de produto nem API REST.
 
-### 4. Versionando e publicando
+**4. Versionando e publicando**
 
 Em outro terminal, dentro de `django-bsi4`, inicialize o Git e faça o primeiro commit:
 
@@ -2051,7 +2052,7 @@ git push -u origin main
 
 Esse repositório será atualizado ao final das próximas aulas. Não é necessário usar comandos específicos da interface do GitHub para criar o repositório remoto.
 
-### Resultado
+**Resultado**
 
 ```text
 django-bsi4/
@@ -2062,17 +2063,17 @@ django-bsi4/
 └── produtos/
 ```
 
-## Aula 18 — Model, SQLite e migrations
+## 📘 Aula 18 — Model, SQLite e migrations
 
-### Objetivo
+**Objetivo**
 
 Criar o Model inicial `Produto` com `nome` e `preco`, gerar uma migration e persistir a tabela no SQLite.
 
-### Antes de começar
+**Antes de começar**
 
 O servidor funciona, mas `produtos/models.py` ainda não possui um modelo de negócio.
 
-### 1. Criando o Model
+**1. Criando o Model**
 
 Substitua o conteúdo de `produtos/models.py` por:
 
@@ -2090,7 +2091,7 @@ class Produto(models.Model):
 
 O campo `id` é criado automaticamente. O Model descreve a tabela, mas ainda não alterou o banco.
 
-### 2. Gerando e aplicando a migration
+**2. Gerando e aplicando a migration**
 
 ```bash
 uv run python manage.py makemigrations
@@ -2101,21 +2102,21 @@ uv run python manage.py check
 
 `makemigrations` registra a mudança em `produtos/migrations/`. `migrate` aplica a mudança em `db.sqlite3`. `showmigrations` mostra quais migrations foram aplicadas.
 
-### Resultado
+**Resultado**
 
 Agora existem o arquivo de migration, o banco `db.sqlite3` e a tabela de produtos. O ORM poderá consultar `Produto.objects.all()` sem SQL escrito manualmente.
 
-## Aula 19 — Django Admin
+## 📘 Aula 19 — Django Admin
 
-### Objetivo
+**Objetivo**
 
 Gerenciar produtos no painel administrativo antes de criar qualquer endpoint REST.
 
-### Antes de começar
+**Antes de começar**
 
 O Model e a tabela SQLite já existem, mas o Admin ainda não conhece `Produto`.
 
-### 1. Registrando o Model
+**1. Registrando o Model**
 
 Edite `produtos/admin.py`:
 
@@ -2130,7 +2131,7 @@ class ProdutoAdmin(admin.ModelAdmin):
   search_fields = ("nome",)
 ```
 
-### 2. Criando e usando o acesso
+**2. Criando e usando o acesso**
 
 ```bash
 uv run python manage.py createsuperuser
@@ -2139,21 +2140,21 @@ uv run python manage.py runserver
 
 Acesse `http://127.0.0.1:8000/admin/`, entre com o superusuário e cadastre pelo menos três produtos. Edite um produto, pesquise pelo nome e exclua um registro de teste.
 
-### Teste e resultado
+**Teste e resultado**
 
 Os produtos cadastrados aparecem na tabela SQLite e serão exatamente os produtos retornados pela API. Admin não substitui a API: são interfaces diferentes sobre o mesmo Model e banco.
 
-## Aula 20 — Django REST Framework e ModelSerializer
+## 📘 Aula 20 — Django REST Framework e ModelSerializer
 
-### Objetivo
+**Objetivo**
 
 Configurar o DRF e criar o primeiro `ModelSerializer`, sem transformá-lo ainda em um endpoint.
 
-### Antes de começar
+**Antes de começar**
 
 O projeto tem Model, banco e dados administrados pelo Admin. Ainda não existe uma URL de API.
 
-### 1. Configurando o DRF
+**1. Configurando o DRF**
 
 Em `config/settings.py`, acrescente somente a linha `"rest_framework",` à lista existente `INSTALLED_APPS`, mantendo os aplicativos já existentes:
 
@@ -2165,7 +2166,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-### 2. Criando o serializer
+**2. Criando o serializer**
 
 Crie `produtos/serializers.py`:
 
@@ -2184,23 +2185,23 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
 Para observar a ideia, uma instância serializada produz um dicionário com `id`, `nome` e `preco`. O serializer sozinho não é uma rota: ainda precisamos conectá-lo a uma view e a uma URL.
 
-### Resultado
+**Resultado**
 
 ```text
 Model → ModelSerializer → representação Python → JSON
 ```
 
-## Aula 21 — Primeiro endpoint e Swagger/OpenAPI
+## 📘 Aula 21 — Primeiro endpoint e Swagger/OpenAPI
 
-### Objetivo
+**Objetivo**
 
 Criar o primeiro endpoint de leitura e configurar Swagger/OpenAPI no mesmo momento.
 
-### Antes de começar
+**Antes de começar**
 
 O serializer existe, mas não há endpoint público. Ao final, o Swagger já documentará `GET /api/produtos/`.
 
-### 1. Criando a view
+**1. Criando a view**
 
 Crie ou substitua `produtos/views.py`:
 
@@ -2215,7 +2216,7 @@ class ProdutoListAPIView(ListAPIView):
   serializer_class = ProdutoSerializer
 ```
 
-### 2. Configurando OpenAPI
+**2. Configurando OpenAPI**
 
 Em `config/settings.py`, adicione `drf_spectacular` a `INSTALLED_APPS` e acrescente:
 
@@ -2231,7 +2232,7 @@ SPECTACULAR_SETTINGS = {
 }
 ```
 
-### 3. Criando as URLs
+**3. Criando as URLs**
 
 Em `config/urls.py`, mantenha a rota do Admin e adicione as novas rotas:
 
@@ -2250,7 +2251,7 @@ urlpatterns = [
 ]
 ```
 
-### 4. Testando
+**4. Testando**
 
 ```text
 GET http://127.0.0.1:8000/api/produtos/
@@ -2258,17 +2259,17 @@ GET http://127.0.0.1:8000/api/produtos/
 
 Abra também `/api/schema/` para ver o documento OpenAPI bruto e `/api/docs/` para testar pelo Swagger UI. A documentação começa agora e será atualizada a cada evolução.
 
-## Aula 22 — ModelViewSet, Router e CRUD
+## 📘 Aula 22 — ModelViewSet, Router e CRUD
 
-### Objetivo
+**Objetivo**
 
 Evoluir de `ListAPIView` para `ModelViewSet` e usar `DefaultRouter` para gerar as rotas do CRUD.
 
-### Antes de começar
+**Antes de começar**
 
 O endpoint de listagem funciona com uma view específica. Agora a mesma consulta será colocada em uma ViewSet, que também fornece detalhe, criação, atualização e exclusão.
 
-### 1. Substituindo a view
+**1. Substituindo a view**
 
 Substitua `produtos/views.py` por:
 
@@ -2285,7 +2286,7 @@ class ProdutoViewSet(ModelViewSet):
 
 A `ListAPIView` deixa de ser utilizada. O ModelViewSet fornece ações padronizadas sobre o queryset.
 
-### 2. Registrando o Router
+**2. Registrando o Router**
 
 Em `config/urls.py`, importe `include`, `DefaultRouter` e `ProdutoViewSet`. Remova a rota direta da `ListAPIView` e adicione:
 
@@ -2306,7 +2307,7 @@ path("api/", include(router.urls)),
 
 Mantenha as rotas `/api/schema/` e `/api/docs/`.
 
-### 3. Testando
+**3. Testando**
 
 ```text
 GET /api/produtos/
@@ -2318,21 +2319,21 @@ DELETE /api/produtos/{id}/
 
 Confira novamente o Swagger. O `ModelViewSet` também disponibiliza `PATCH`; ele é uma ação padrão do DRF, mas não é o foco do contrato desta etapa.
 
-### Resultado
+**Resultado**
 
 O Router substitui várias rotas escritas manualmente por um registro declarativo. A documentação acompanha as novas operações automaticamente.
 
-## Aula 23 — Validações
+## 📘 Aula 23 — Validações
 
-### Objetivo
+**Objetivo**
 
 Adicionar regras de negócio ao `ProdutoSerializer` e verificar entradas válidas e inválidas.
 
-### Antes de começar
+**Antes de começar**
 
 O CRUD aceita os tipos básicos definidos pelo Model. Agora vamos exigir nome com 2–100 caracteres após `strip()` e preço maior que zero.
 
-### 1. Desafio: nome
+**1. Desafio: nome**
 
 Antes de abrir a solução, adicione um método `validate_nome` dentro de `ProdutoSerializer`. Ele deve remover espaços nas pontas e rejeitar nomes menores que 2 caracteres.
 
@@ -2348,7 +2349,7 @@ def validate_nome(self, value):
 ```
 </details>
 
-### 2. Desafio: preço
+**2. Desafio: preço**
 
 Adicione `validate_preco` e rejeite valores menores ou iguais a zero.
 
@@ -2368,23 +2369,23 @@ def validate_preco(self, value):
 
 Os dois métodos devem ficar dentro da classe `ProdutoSerializer`.
 
-### 3. Testando
+**3. Testando**
 
 No Swagger, envie `nome: "A"` e `preco: 0`. A resposta deve ser `400 Bad Request` com os campos inválidos. Depois envie, por exemplo, `{"nome": "Cabo USB", "preco": 20.00}` e confirme `201 Created`.
 
 A validação ocorre antes de o objeto ser salvo no banco.
 
-## Aula 24 — Filtros
+## 📘 Aula 24 — Filtros
 
-### Objetivo
+**Objetivo**
 
 Adicionar filtros estruturados de preço usando `django-filter`.
 
-### Antes de começar
+**Antes de começar**
 
 O endpoint lista produtos e aceita busca por nome apenas nas próximas aulas. Ainda não há filtros de consulta.
 
-### 1. Configuração
+**1. Configuração**
 
 Adicione `django_filters` a `INSTALLED_APPS`. No `REST_FRAMEWORK`, preserve o schema e acrescente:
 
@@ -2417,7 +2418,7 @@ filter_backends = [DjangoFilterBackend]
 filterset_class = ProdutoFilter
 ```
 
-### 2. Testando
+**2. Testando**
 
 ```text
 GET /api/produtos/?preco_minimo=100&preco_maximo=1000
@@ -2425,13 +2426,13 @@ GET /api/produtos/?preco_minimo=100&preco_maximo=1000
 
 Teste também somente um limite e uma combinação sem resultados. Abra o Swagger e observe os parâmetros documentados.
 
-## Aula 25 — Ordenação e busca textual
+## 📘 Aula 25 — Ordenação e busca textual
 
-### Objetivo
+**Objetivo**
 
 Adicionar `OrderingFilter` e `SearchFilter` usando somente os campos existentes: `nome` e `preco`.
 
-### 1. Desafio
+**1. Desafio**
 
 Atualize a `ProdutoViewSet` para permitir `ordering=nome`, `ordering=-preco` e `search=mouse`, sem incluir campos que ainda não existem no Model.
 
@@ -2449,7 +2450,7 @@ ordering = ["id"]
 ```
 </details>
 
-### 2. Testando
+**2. Testando**
 
 ```text
 GET /api/produtos/?ordering=nome
@@ -2460,9 +2461,9 @@ GET /api/produtos/?preco_minimo=100&search=teclado&ordering=nome
 
 Confira no Swagger que filtros, busca e ordenação aparecem no mesmo endpoint. Na Aula 26, `marca` e `descricao` serão acrescentadas à busca; `estoque` ficará fora dela por ser numérico.
 
-## Aula 26 — Evoluindo o Produto
+## 📘 Aula 26 — Evoluindo o Produto
 
-### Objetivo
+**Objetivo**
 
 Repetir no Django a evolução feita nas Aulas 14–16 e perceber que uma mudança no Model atravessa migrations, serializer, validações, consulta, documentação e testes.
 
@@ -2473,13 +2474,13 @@ Model → migration → serializer → validação
     → filtro → ordenação → busca → Swagger → teste
 ```
 
-### 1. Marca
+**1. Marca**
 
-#### O que vamos acrescentar?
+**O que vamos acrescentar?**
 
 `marca` será um texto obrigatório, entre 2 e 50 caracteres, usado em filtro exato, ordenação e busca textual.
 
-#### Desafio
+**Desafio**
 
 Adicione `marca` ao Model e atualize as camadas necessárias antes de abrir as soluções. A migration deve ser criada e aplicada antes de testar o endpoint.
 
@@ -2522,7 +2523,7 @@ marca = filters.CharFilter(field_name="marca", lookup_expr="iexact")
 Na ViewSet, acrescente `marca` a `search_fields` e `ordering_fields`.
 </details>
 
-#### Testes
+**Testes**
 
 ```text
 POST com marca válida → 201
@@ -2534,13 +2535,13 @@ GET /api/produtos/?search=dell → 200
 
 Atualize o Swagger e confirme que o novo campo e seus parâmetros aparecem.
 
-### 2. Estoque
+**2. Estoque**
 
-#### O que vamos acrescentar?
+**O que vamos acrescentar?**
 
 `estoque` será uma quantidade inteira não negativa. O valor zero é válido. O campo será filtrável e ordenável, mas não participará da busca textual.
 
-#### Desafio
+**Desafio**
 
 Adicione o campo, gere a migration e atualize serializer, validação, filtros e ordenação. Teste também o que acontece com `-1`, `"dez"` e `5.5`.
 
@@ -2579,7 +2580,7 @@ estoque_maximo = filters.NumberFilter(field_name="estoque", lookup_expr="lte")
 Inclua `estoque` em `Meta.fields` e em `ordering_fields`. Não o inclua em `search_fields`.
 </details>
 
-#### Testes
+**Testes**
 
 ```text
 POST com estoque 0 → 201
@@ -2591,13 +2592,13 @@ GET /api/produtos/?ordering=-estoque → 200
 
 A busca textual procura palavras; para quantidades, use filtros de intervalo.
 
-### 3. Descrição
+**3. Descrição**
 
-#### O que vamos acrescentar?
+**O que vamos acrescentar?**
 
 `descricao` será um texto opcional, com no máximo 500 caracteres. Ele será ordenável e participará da busca textual.
 
-#### Desafio
+**Desafio**
 
 Adicione o campo, aplique a migration e atualize serializer, validação, ordenação e busca. Teste um produto sem descrição e outro com descrição longa.
 
@@ -2629,7 +2630,7 @@ def validate_descricao(self, value):
 Inclua `descricao` em `search_fields` e `ordering_fields`. O campo deve permanecer opcional; valores nulos não podem causar erro em consultas ou ordenações.
 </details>
 
-#### Testes
+**Testes**
 
 ```text
 POST sem descricao → 201
@@ -2640,17 +2641,17 @@ GET /api/produtos/?ordering=descricao → 200
 
 Depois de cada campo, recarregue o Swagger e confirme que os endpoints anteriores continuam funcionando.
 
-## Aula 27 — Exercício: evoluindo a API
+## 📘 Aula 27 — Exercício: evoluindo a API
 
-### Objetivo
+**Objetivo**
 
 Consolidar no projeto Django a evolução incremental praticada na Parte 6, sem receber a implementação completa antecipadamente.
 
-### Ponto de partida
+**Ponto de partida**
 
 Use o estado do projeto ao final da Aula 25, antes da inclusão guiada dos três campos. Se a turma acompanhou a Aula 26 inteira, retome um commit anterior para praticar novamente o processo.
 
-### Requisitos
+**Requisitos**
 
 Implemente `marca`, `estoque` e `descricao`, cada um com:
 
@@ -2664,7 +2665,7 @@ Implemente `marca`, `estoque` e `descricao`, cada um com:
 - atualização visível no Swagger;
 - testes positivos e negativos.
 
-### Critérios mínimos de conclusão
+**Critérios mínimos de conclusão**
 
 ```text
 POST completo → 201
@@ -2681,6 +2682,6 @@ DELETE de produto existente → 204
 
 Registre cada etapa em um commit pequeno. Ao final, verifique migrations, Admin, CRUD e Swagger.
 
-### Resultado da Parte 7
+**Resultado da Parte 7**
 
 Ao concluir a Aula 27, o projeto `django-bsi4` terá sido construído pelo aluno desde a primeira pasta e conterá Django, app `produtos`, SQLite, migrations, Admin, ModelSerializer, ModelViewSet, Router, CRUD, OpenAPI/Swagger, validações, filtros, ordenação, busca, `marca`, `estoque` e `descricao`.
