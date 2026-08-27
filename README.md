@@ -1351,7 +1351,7 @@ endpoint simples → recurso por ID → CRUD → validação → filtros → bus
 
 > Até a Aula 13, construímos uma API completa para um modelo simples: `Produto(id, nome, preco)`.
 > Agora, vamos vivenciar na prática o que acontece quando o modelo de negócio evolui e novos campos precisam ser adicionados.
-> 
+>
 > Adicionar um campo a uma entidade **não é apenas alterar a estrutura dos dados (JSON)**. Cada novo atributo pode exigir mudanças em:
 > - **Criação e atualização (POST e PUT):** receber, processar e persistir o novo dado;
 > - **Validação:** garantir regras de tipo, formato, obrigatoriedade e limites;
@@ -1394,6 +1394,29 @@ O objeto de produto passa a ter a estrutura:
 
 - No **Express**, o `req.body` em POST e PUT passa a extrair `marca`, e o objeto persistido inclui `marca: marca.trim()`.
 - No **FastAPI**, o modelo `ProdutoInput` deve ser atualizado com o novo campo.
+
+<details>
+<summary><strong>Ver alteração no req.body e persistência no Express</strong></summary>
+
+```js
+const { nome, preco, marca } = req.body;
+
+const erros = validarProduto({ nome, preco, marca });
+if (Object.keys(erros).length > 0) {
+  return res.status(400).json({ detail: erros });
+}
+
+const novoProduto = {
+  id: novoId,
+  nome: nome.trim(),
+  preco,
+  marca: marca.trim(),
+};
+```
+
+Em `PUT`, o mesmo padrão vale para o objeto existente: `marca` entra no payload e é persistido já normalizado com `trim()`, sem espaços nas bordas.
+
+</details>
 
 <details>
 <summary><strong>Ver alteração no ProdutoInput (FastAPI)</strong></summary>
@@ -1630,6 +1653,30 @@ O objeto de produto passa a ter a estrutura:
 - No **FastAPI**, atualizamos o `ProdutoInput`:
 
 <details>
+<summary><strong>Ver alteração no req.body e persistência no Express</strong></summary>
+
+```js
+const { nome, preco, marca, estoque } = req.body;
+
+const erros = validarProduto({ nome, preco, marca, estoque });
+if (Object.keys(erros).length > 0) {
+  return res.status(400).json({ detail: erros });
+}
+
+const novoProduto = {
+  id: novoId,
+  nome: nome.trim(),
+  preco,
+  marca: marca.trim(),
+  estoque: Number(estoque),
+};
+```
+
+Em `PUT`, o estoque também entra no payload e é salvo como valor numérico inteiro, respeitando a regra `estoque >= 0`.
+
+</details>
+
+<details>
 <summary><strong>Ver alteração no ProdutoInput (FastAPI)</strong></summary>
 
 ```python
@@ -1788,7 +1835,7 @@ elif campo_ordenacao == "estoque":
 > [!IMPORTANT]
 > **O campo `estoque` NÃO deve ser incluído na busca textual (`search`).**
 
-A busca textual tem como objetivo encontrar itens a partir de **termos textuais e palavras-chave** (nomes, marcas, categorias). 
+A busca textual tem como objetivo encontrar itens a partir de **termos textuais e palavras-chave** (nomes, marcas, categorias).
 
 Se incluíssemos o estoque na busca, uma requisição como `GET /api/produtos/?search=10` retornaria produtos que têm "10" no nome, produtos da marca "10" E também qualquer produto que por acaso tivesse exatamente 10 unidades no estoque. Isso poluiria os resultados com correspondências sem sentido para o usuário.
 
@@ -1843,6 +1890,31 @@ O objeto de produto passa a ter a estrutura completa:
 
 - No **Express**, o POST e o PUT aceitam `descricao` (armazenando string tratada ou `""`/`null`).
 - No **FastAPI**, o `ProdutoInput` inclui `descricao`:
+
+<details>
+<summary><strong>Ver alteração no req.body e persistência no Express</strong></summary>
+
+```js
+const { nome, preco, marca, estoque, descricao } = req.body;
+
+const erros = validarProduto({ nome, preco, marca, estoque, descricao });
+if (Object.keys(erros).length > 0) {
+  return res.status(400).json({ detail: erros });
+}
+
+const novoProduto = {
+  id: novoId,
+  nome: nome.trim(),
+  preco,
+  marca: marca.trim(),
+  estoque: Number(estoque),
+  descricao: typeof descricao === "string" ? descricao.trim() : descricao ?? "",
+};
+```
+
+Em `PUT`, o campo `descricao` é tratado como opcional: se vier como texto, é salvo já normalizado; se vier vazio, nulo ou ausente, o objeto continua válido.
+
+</details>
 
 <details>
 <summary><strong>Ver ProdutoInput completo (FastAPI)</strong></summary>
