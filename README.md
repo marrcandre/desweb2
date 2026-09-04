@@ -105,8 +105,8 @@ O **Bruno** é o cliente HTTP oficial da disciplina. Ele permite **guardar as re
 | 23   | Validações | Parte 7 | Django + DRF |
 | 24   | Filtros | Parte 7 | Django + DRF |
 | 25   | Ordenação e busca textual | Parte 7 | Django + DRF |
-| 26   | Evoluindo o Produto | Parte 7 | Django + DRF |
-| 27   | Exercício | Parte 7 | Django + DRF |
+| 26   | Paginação | Parte 7 | Django + DRF |
+| 27   | Evoluindo o Produto | Parte 7 | Django + DRF |
 
 ---
 
@@ -2463,9 +2463,68 @@ GET /api/produtos/?search=mouse
 GET /api/produtos/?preco_minimo=100&search=teclado&ordering=nome
 ```
 
-Confira no Swagger que filtros, busca e ordenação aparecem no mesmo endpoint. Na Aula 26, `marca` e `descricao` serão acrescentadas à busca; `estoque` ficará fora dela por ser numérico.
+Confira no Swagger que filtros, busca e ordenação aparecem no mesmo endpoint. Na Aula 27, `marca` e `descricao` serão acrescentadas à busca; `estoque` ficará fora dela por ser numérico.
 
-## 📘 Aula 26 — Exercícios - Evoluindo o Produto
+## 📘 Aula 26 — Paginação
+
+**Objetivo**
+
+Fechar, no Django, o mesmo contrato de paginação já construído nas Aulas 11–12 para Express e FastAPI: `page`, `page_size`, resposta `{ page, page_size, total_pages, results }`.
+
+**Antes de começar**
+
+O `PageNumberPagination` padrão do DRF devolve `count`/`next`/`previous`/`results`, formato diferente do contrato do curso. Por isso criamos uma classe de paginação customizada em vez de usar a configuração padrão diretamente.
+
+**1. Classe de paginação customizada**
+
+Crie `produtos/pagination.py` só com a lógica de formatação da resposta (os valores padrão de tamanho de página ficam centralizados no `settings.py`, no próximo passo):
+
+```python
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+
+
+class ProdutoPagination(PageNumberPagination):
+  page_size_query_param = "page_size"
+  max_page_size = 100
+
+  def get_paginated_response(self, data):
+    return Response({
+      "page": self.page.number,
+      "page_size": self.page.paginator.per_page,
+      "total_pages": self.page.paginator.num_pages,
+      "results": data,
+    })
+```
+
+**2. Ativando globalmente em `settings.py`**
+
+Assim como já foi feito para `DEFAULT_FILTER_BACKENDS` (Aula 24) e para o schema (Aula 21), a paginação é uma política da API como um todo. Em `config/settings.py`, acrescente ao `REST_FRAMEWORK`:
+
+```python
+REST_FRAMEWORK = {
+    ...
+    "DEFAULT_PAGINATION_CLASS": "produtos.pagination.ProdutoPagination",
+    "PAGE_SIZE": 10,
+}
+```
+
+**3. Testando**
+
+```text
+GET /api/produtos/?page=1
+GET /api/produtos/?page=2&page_size=20
+GET /api/produtos/?search=mouse&ordering=-preco&page=1&page_size=5
+```
+
+Teste também `page_size` acima de 100 (deve ser limitado a 100) e uma página além do limite (`results` vazia). Confira no Swagger que a resposta paginada aparece com o schema `{ page, page_size, total_pages, results }`.
+
+**O que observar**
+
+- O contrato de resposta é **idêntico** ao das Aulas 11–12 (Express/FastAPI); muda apenas o mecanismo: lá o cálculo de `total_pages` e o corte da lista são manuais, aqui o DRF cuida da paginação e apenas reformatamos a resposta.
+- Filtro → busca → ordenação → paginação continua sendo a ordem de aplicação, agora resolvida pelo próprio DRF.
+
+## 📘 Aula 27 — Exercícios - Evoluindo o Produto
 
 **Objetivo**
 
