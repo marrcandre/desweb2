@@ -1972,21 +1972,6 @@ Nas Partes 1–6 construímos uma API de produtos com Express e FastAPI. Agora v
 
 O contrato continua familiar: `/api/produtos/`, com listagem, detalhe, criação, atualização e exclusão. A diferença está nas ferramentas integradas do Django: Model, ORM, migrations, SQLite, Admin e Django REST Framework.
 
-```text
-projeto vazio → Django → Model → SQLite/migrations → Admin
-→ DRF/ModelSerializer → primeiro endpoint/Swagger
-→ ModelViewSet/Router/CRUD → validações → filtros
-→ ordenação/busca → marca/estoque/descricao → exercício
-```
-
-O Admin vem antes do DRF porque Admin e API são duas interfaces para os mesmos dados:
-
-```text
-Model → ORM → SQLite
-  ├── Admin
-  └── API REST
-```
-
 ## 📘 Aula 17 — Conhecendo o Django e criando o projeto
 
 **Objetivo**
@@ -1997,12 +1982,30 @@ Criar o projeto `django-bsi4`, entender projeto e aplicação, executar o primei
 
 Comece com uma pasta de trabalho vazia. Você já conhece endpoints e APIs pelas Partes 1–6; aqui o foco é a organização específica do Django.
 
+**1. Instalando o uv**
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+
 **1. Criando o projeto**
 
 ```bash
 mkdir django-bsi4
 cd django-bsi4
 uv init --app .
+```
+
+**2.Abrindo o projeto no VS Code:**
+
+```bash
+code .
+```
+
+**3. Instalando as dependências**
+
+```bash
 uv add django djangorestframework drf-spectacular django-filter
 uv run django-admin startproject config .
 uv run python manage.py startapp produtos
@@ -2012,7 +2015,7 @@ O comando `startproject` cria a configuração global. O comando `startapp` cria
 
 Em `config/settings.py`, adicione `produtos` a `INSTALLED_APPS`. Nesta primeira aula, o DRF ainda não será configurado; a instalação das dependências pode acontecer antes da configuração de cada recurso.
 
-**2. Entendendo a estrutura**
+**4. Entendendo a estrutura**
 
 - `manage.py`: ponto de entrada dos comandos do projeto;
 - `config/settings.py`: configurações globais;
@@ -2024,7 +2027,7 @@ Em `config/settings.py`, adicione `produtos` a `INSTALLED_APPS`. Nesta primeira 
 
 Projeto é o conjunto de configurações. Aplicação é um módulo funcional dentro do projeto.
 
-**3. Executando**
+**5. Executando**
 
 ```bash
 uv run python manage.py runserver
@@ -2032,27 +2035,13 @@ uv run python manage.py runserver
 
 Acesse `http://127.0.0.1:8000/`. A página inicial do Django confirma que o projeto funciona. Ainda não há Model de produto nem API REST.
 
-**4. Versionando e publicando**
+**6. Versionando e publicando**
 
-Em outro terminal, dentro de `django-bsi4`, inicialize o Git e faça o primeiro commit:
-
-```bash
-git init
-git add .
-git commit -m "cria projeto Django"
-```
-
-No GitHub, crie um repositório vazio chamado `django-bsi4`, sem gerar README, `.gitignore` ou licença adicionais. Copie a URL HTTPS ou SSH fornecida pelo GitHub e configure o remote:
-
-```bash
-git remote add origin URL_DO_REPOSITORIO
-git branch -M main
-git push -u origin main
-```
-
-Esse repositório será atualizado ao final das próximas aulas. Não é necessário usar comandos específicos da interface do GitHub para criar o repositório remoto.
+No VS Code, vá em **Source Control** e clique em **Initialize Repository**. Crie o repositório no GitHub e publique.
 
 **Resultado**
+
+O projeto inicial do Django está pronto para evoluir. A estrutura de pastas é:
 
 ```text
 django-bsi4/
@@ -2100,11 +2089,21 @@ uv run python manage.py showmigrations
 uv run python manage.py check
 ```
 
-`makemigrations` registra a mudança em `produtos/migrations/`. `migrate` aplica a mudança em `db.sqlite3`. `showmigrations` mostra quais migrations foram aplicadas.
+`makemigrations` registra a mudança em `produtos/migrations/`. `migrate` aplica a mudança em `db.sqlite3`. `showmigrations` mostra quais migrations foram aplicadas. `check` verifica a consistência do projeto.
 
 **Resultado**
 
 Agora existem o arquivo de migration, o banco `db.sqlite3` e a tabela de produtos. O ORM poderá consultar `Produto.objects.all()` sem SQL escrito manualmente.
+
+**Carregando os dados de um arquivo JSON**
+
+Baixe o arquivo `produtos.json` e execute:
+
+```bash
+uv run python manage.py loaddata produtos.json
+```
+
+Os produtos do arquivo JSON serão inseridos no banco de dados.
 
 ## 📘 Aula 19 — Django Admin
 
@@ -2114,7 +2113,7 @@ Gerenciar produtos no painel administrativo antes de criar qualquer endpoint RES
 
 **Antes de começar**
 
-O Model e a tabela SQLite já existem, mas o Admin ainda não conhece `Produto`.
+O Admin é uma interface web pronta para gerenciar Models. Ele permite criar, editar, excluir e pesquisar registros. O Django já fornece o Admin, mas precisamos registrar o Model para que ele apareça. O Model e a tabela SQLite já existem, mas o Admin ainda não conhece `Produto`.
 
 **1. Registrando o Model**
 
@@ -2122,6 +2121,7 @@ Edite `produtos/admin.py`:
 
 ```python
 from django.contrib import admin
+
 from .models import Produto
 
 
@@ -2132,6 +2132,8 @@ class ProdutoAdmin(admin.ModelAdmin):
 ```
 
 **2. Criando e usando o acesso**
+
+Para acessar o Admin, precisamos de um superusuário. Execute:
 
 ```bash
 uv run python manage.py createsuperuser
@@ -2172,13 +2174,14 @@ Crie `produtos/serializers.py`:
 
 ```python
 from rest_framework import serializers
+
 from .models import Produto
 
 
 class ProdutoSerializer(serializers.ModelSerializer):
   class Meta:
     model = Produto
-    fields = ["id", "nome", "preco"]
+    fields = ("id", "nome", "preco")
 ```
 
 `ModelSerializer` converte uma instância do Model em uma representação Python que pode virar JSON e também valida entradas antes de salvar.
@@ -2207,6 +2210,7 @@ Crie ou substitua `produtos/views.py`:
 
 ```python
 from rest_framework.generics import ListAPIView
+
 from .models import Produto
 from .serializers import ProdutoSerializer
 
@@ -2240,6 +2244,7 @@ Em `config/urls.py`, mantenha a rota do Admin e adicione as novas rotas:
 from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
 from produtos.views import ProdutoListAPIView
 
 
@@ -2275,6 +2280,7 @@ Substitua `produtos/views.py` por:
 
 ```python
 from rest_framework.viewsets import ModelViewSet
+
 from .models import Produto
 from .serializers import ProdutoSerializer
 
@@ -2288,24 +2294,26 @@ A `ListAPIView` deixa de ser utilizada. O ModelViewSet fornece ações padroniza
 
 **2. Registrando o Router**
 
-Em `config/urls.py`, importe `include`, `DefaultRouter` e `ProdutoViewSet`. Remova a rota direta da `ListAPIView` e adicione:
+Substitua o conteúdo de `config/urls.py` por:
 
 ```python
+from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
+
 from produtos.views import ProdutoViewSet
 
 router = DefaultRouter()
 router.register("produtos", ProdutoViewSet, basename="produto")
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+]
 ```
-
-Dentro de `urlpatterns`, use:
-
-```python
-path("api/", include(router.urls)),
-```
-
-Mantenha as rotas `/api/schema/` e `/api/docs/`.
 
 **3. Testando**
 
@@ -2317,7 +2325,7 @@ PUT /api/produtos/{id}/
 DELETE /api/produtos/{id}/
 ```
 
-Confira novamente o Swagger. O `ModelViewSet` também disponibiliza `PATCH`; ele é uma ação padrão do DRF, mas não é o foco do contrato desta etapa.
+Confira novamente o Swagger.
 
 **Resultado**
 
@@ -2333,12 +2341,9 @@ Adicionar regras de negócio ao `ProdutoSerializer` e verificar entradas válida
 
 O CRUD aceita os tipos básicos definidos pelo Model. Agora vamos exigir nome com 2–100 caracteres após `strip()` e preço maior que zero.
 
-**1. Desafio: nome**
+**1. Validar nome**
 
 Antes de abrir a solução, adicione um método `validate_nome` dentro de `ProdutoSerializer`. Ele deve remover espaços nas pontas e rejeitar nomes menores que 2 caracteres.
-
-<details>
-<summary>Ver solução</summary>
 
 ```python
 def validate_nome(self, value):
@@ -2347,14 +2352,10 @@ def validate_nome(self, value):
     raise serializers.ValidationError("O nome deve possuir pelo menos 2 caracteres.")
   return nome_limpo
 ```
-</details>
 
-**2. Desafio: preço**
+**2. Validar preço**
 
 Adicione `validate_preco` e rejeite valores menores ou iguais a zero.
-
-<details>
-<summary>Ver solução</summary>
 
 ```python
 from decimal import Decimal
@@ -2365,7 +2366,6 @@ def validate_preco(self, value):
     raise serializers.ValidationError("O preço deve ser maior que zero.")
   return value
 ```
-</details>
 
 Os dois métodos devem ficar dentro da classe `ProdutoSerializer`.
 
@@ -2381,10 +2381,6 @@ A validação ocorre antes de o objeto ser salvo no banco.
 
 Adicionar filtros estruturados de preço usando `django-filter`.
 
-**Antes de começar**
-
-O endpoint lista produtos e aceita busca por nome apenas nas próximas aulas. Ainda não há filtros de consulta.
-
 **1. Configuração**
 
 Adicione `django_filters` a `INSTALLED_APPS`. No `REST_FRAMEWORK`, preserve o schema e acrescente:
@@ -2399,6 +2395,7 @@ Crie `produtos/filters.py`:
 
 ```python
 from django_filters import rest_framework as filters
+
 from .models import Produto
 
 
@@ -2408,13 +2405,14 @@ class ProdutoFilter(filters.FilterSet):
 
   class Meta:
     model = Produto
-    fields = ["preco_minimo", "preco_maximo"]
+    fields = ("preco_minimo", "preco_maximo")
+
 ```
 
 Na `ProdutoViewSet`, importe `DjangoFilterBackend` e adicione:
 
 ```python
-filter_backends = [DjangoFilterBackend]
+filter_backends = (DjangoFilterBackend,)
 filterset_class = ProdutoFilter
 ```
 
@@ -2432,23 +2430,29 @@ Teste também somente um limite e uma combinação sem resultados. Abra o Swagge
 
 Adicionar `OrderingFilter` e `SearchFilter` usando somente os campos existentes: `nome` e `preco`.
 
-**1. Desafio**
+**1. Incluindo a ordenação e a busca**
 
-Atualize a `ProdutoViewSet` para permitir `ordering=nome`, `ordering=-preco` e `search=mouse`, sem incluir campos que ainda não existem no Model.
-
-<details>
-<summary>Ver solução</summary>
+Atualize a `ProdutoViewSet` para permitir `ordering=nome`, `ordering=-nome`, `ordering=preco`, `ordering=-preco` e `search=mouse`.
 
 ```python
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.viewsets import ModelViewSet
 
-filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-filterset_class = ProdutoFilter
-search_fields = ["nome"]
-ordering_fields = ["nome", "preco"]
-ordering = ["id"]
+from .filters import ProdutoFilter
+from .models import Produto
+from .serializers import ProdutoSerializer
+
+
+class ProdutoViewSet(ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter,)
+    filterset_class = ProdutoFilter
+    ordering_fields = ("nome", "preco")
+    ordering = ("id",)
+    search_fields = ("nome",)
 ```
-</details>
 
 **2. Testando**
 
@@ -2461,7 +2465,7 @@ GET /api/produtos/?preco_minimo=100&search=teclado&ordering=nome
 
 Confira no Swagger que filtros, busca e ordenação aparecem no mesmo endpoint. Na Aula 26, `marca` e `descricao` serão acrescentadas à busca; `estoque` ficará fora dela por ser numérico.
 
-## 📘 Aula 26 — Evoluindo o Produto
+## 📘 Aula 26 — Exercícios - Evoluindo o Produto
 
 **Objetivo**
 
@@ -2483,6 +2487,8 @@ Model → migration → serializer → validação
 **Desafio**
 
 Adicione `marca` ao Model e atualize as camadas necessárias antes de abrir as soluções. A migration deve ser criada e aplicada antes de testar o endpoint.
+
+Dica: você pode baixar o arquivo `produtos_com_marca.json` e carregar no banco para testar a ordenação, busca e os filtros de marca.
 
 <details>
 <summary>Alteração do Model e migration</summary>
@@ -2641,47 +2647,3 @@ GET /api/produtos/?ordering=descricao → 200
 
 Depois de cada campo, recarregue o Swagger e confirme que os endpoints anteriores continuam funcionando.
 
-## 📘 Aula 27 — Exercício: evoluindo a API
-
-**Objetivo**
-
-Consolidar no projeto Django a evolução incremental praticada na Parte 6, sem receber a implementação completa antecipadamente.
-
-**Ponto de partida**
-
-Use o estado do projeto ao final da Aula 25, antes da inclusão guiada dos três campos. Se a turma acompanhou a Aula 26 inteira, retome um commit anterior para praticar novamente o processo.
-
-**Requisitos**
-
-Implemente `marca`, `estoque` e `descricao`, cada um com:
-
-- alteração no Model;
-- migration gerada e aplicada;
-- campo no ModelSerializer;
-- validação de entrada;
-- filtros quando fizer sentido;
-- ordenação;
-- busca textual para `marca` e `descricao`;
-- atualização visível no Swagger;
-- testes positivos e negativos.
-
-**Critérios mínimos de conclusão**
-
-```text
-POST completo → 201
-nome curto → 400
-preço negativo → 400
-marca ausente ou curta → 400
-estoque negativo → 400
-descrição longa → 400
-filtro por marca e faixa de estoque → 200
-ordering=-preco → 200
-search aplicado à descrição → 200
-DELETE de produto existente → 204
-```
-
-Registre cada etapa em um commit pequeno. Ao final, verifique migrations, Admin, CRUD e Swagger.
-
-**Resultado da Parte 7**
-
-Ao concluir a Aula 27, o projeto `django-bsi4` terá sido construído pelo aluno desde a primeira pasta e conterá Django, app `produtos`, SQLite, migrations, Admin, ModelSerializer, ModelViewSet, Router, CRUD, OpenAPI/Swagger, validações, filtros, ordenação, busca, `marca`, `estoque` e `descricao`.
