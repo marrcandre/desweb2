@@ -1,0 +1,542 @@
+[
+  {
+    "model": "produtos.produto",
+    "pk": 1,
+    "fields": {
+      "nome": "Pen drive 128 GB Kingston",
+      "preco": "64.99",
+      "descricao": "Pen drive USB 3.0 com 128 GB de capacidade, ideal para armazenar e transportar arquivos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 2,
+    "fields": {
+      "nome": "Impressora 3D",
+      "preco": "5999.99",
+      "descricao": "Impressora 3D para prototipagem e criação de peças em diversos materiais."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 3,
+    "fields": {
+      "nome": "Notebook",
+      "preco": "4999.99",
+      "descricao": "Notebook versátil para uso profissional e pessoal, com bom desempenho no dia a dia."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 4,
+    "fields": {
+      "nome": "Mouse USB",
+      "preco": "39.99",
+      "descricao": "Mouse com fio USB, design ergonômico e alta precisão de rastreamento."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 5,
+    "fields": {
+      "nome": "Teclado USB",
+      "preco": "89.99",
+      "descricao": "Teclado com fio USB, teclas silenciosas e resistentes ao uso intenso."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 6,
+    "fields": {
+      "nome": "Monitor Ultra Wide",
+      "preco": "899.99",
+      "descricao": "Monitor ultra wide com ampla área de visualização, ideal para multitarefas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 7,
+    "fields": {
+      "nome": "Mouse com fio",
+      "preco": "9.99",
+      "descricao": "Mouse com fio simples e prático para uso doméstico ou escritório."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 8,
+    "fields": {
+      "nome": "Teclado com fio",
+      "preco": "30.00",
+      "descricao": "Teclado com fio de entrada, layout ABNT2 e boa durabilidade."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 9,
+    "fields": {
+      "nome": "Caneta Bic Azul",
+      "preco": "1.99",
+      "descricao": "Caneta esferográfica azul, escrita macia e traço uniforme."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 10,
+    "fields": {
+      "nome": "Lápis 2B",
+      "preco": "1.99",
+      "descricao": "Lápis grafite 2B, ideal para escrita e desenho escolar."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 11,
+    "fields": {
+      "nome": "Caderno Universitário 200 folhas",
+      "preco": "19.90",
+      "descricao": "Caderno universitário com 200 folhas pautadas, capa dura."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 12,
+    "fields": {
+      "nome": "Apontador Duplo",
+      "preco": "2.50",
+      "descricao": "Apontador escolar com dois furos e depósito para aparas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 13,
+    "fields": {
+      "nome": "Borracha branca",
+      "preco": "1.20",
+      "descricao": "Borracha branca macia, não mancha o papel."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 14,
+    "fields": {
+      "nome": "Régua 30 cm",
+      "preco": "3.90",
+      "descricao": "Régua de 30 cm em plástico resistente, com marcações precisas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 15,
+    "fields": {
+      "nome": "Mochila Escolar",
+      "preco": "129.90",
+      "descricao": "Mochila escolar resistente, com diversos compartimentos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 16,
+    "fields": {
+      "nome": "Tablet Android 10”",
+      "preco": "1599.99",
+      "descricao": "Tablet com tela de 10 polegadas, sistema Android e bom desempenho para uso diário."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 17,
+    "fields": {
+      "nome": "Smartphone Android",
+      "preco": "2399.99",
+      "descricao": "Smartphone com sistema Android, câmera de qualidade e boa autonomia de bateria."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 18,
+    "fields": {
+      "nome": "Carregador USB-C",
+      "preco": "59.90",
+      "descricao": "Carregador rápido com conector USB-C, compatível com diversos dispositivos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 19,
+    "fields": {
+      "nome": "Caixa de Som Bluetooth",
+      "preco": "299.90",
+      "descricao": "Caixa de som portátil com conexão Bluetooth e boa qualidade sonora."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 20,
+    "fields": {
+      "nome": "Fone de Ouvido Sem Fio",
+      "preco": "499.90",
+      "descricao": "Fone de ouvido sem fio com cancelamento de ruído e conexão Bluetooth."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 21,
+    "fields": {
+      "nome": "Headset Gamer",
+      "preco": "249.90",
+      "descricao": "Headset gamer com som surround e microfone integrado."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 22,
+    "fields": {
+      "nome": "HD Externo 1TB",
+      "preco": "399.99",
+      "descricao": "HD externo portátil com 1TB de armazenamento, conexão USB."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 23,
+    "fields": {
+      "nome": "SSD 512GB",
+      "preco": "499.99",
+      "descricao": "SSD de 512GB com alta velocidade de leitura e gravação."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 24,
+    "fields": {
+      "nome": "Placa de Vídeo RTX 4060",
+      "preco": "2499.99",
+      "descricao": "Placa de vídeo RTX 4060, ideal para jogos e edição gráfica."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 25,
+    "fields": {
+      "nome": "Processador Ryzen 7",
+      "preco": "1599.99",
+      "descricao": "Processador AMD Ryzen 7, alto desempenho para multitarefas e jogos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 26,
+    "fields": {
+      "nome": "Memória RAM 16GB",
+      "preco": "299.90",
+      "descricao": "Memória RAM de 16GB, aumenta o desempenho geral do computador."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 27,
+    "fields": {
+      "nome": "Placa-mãe ASUS",
+      "preco": "899.99",
+      "descricao": "Placa-mãe ASUS compatível com múltiplos processadores e periféricos modernos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 28,
+    "fields": {
+      "nome": "Fonte 650W",
+      "preco": "429.90",
+      "descricao": "Fonte de alimentação de 650W, certificada para eficiência energética."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 29,
+    "fields": {
+      "nome": "Gabinete Gamer",
+      "preco": "349.90",
+      "descricao": "Gabinete gamer com boa ventilação e iluminação LED."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 30,
+    "fields": {
+      "nome": "Cooler para CPU",
+      "preco": "599.90",
+      "descricao": "Cooler para CPU com dissipação eficiente de calor."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 31,
+    "fields": {
+      "nome": "Smart TV 50”",
+      "preco": "2799.90",
+      "descricao": "Smart TV de 50 polegadas com resolução 4K e aplicativos integrados."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 32,
+    "fields": {
+      "nome": "Controle Remoto Universal",
+      "preco": "49.90",
+      "descricao": "Controle remoto universal compatível com diversas marcas de TV."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 33,
+    "fields": {
+      "nome": "Impressora Multifuncional",
+      "preco": "699.99",
+      "descricao": "Impressora multifuncional para impressão, cópia e digitalização."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 34,
+    "fields": {
+      "nome": "Scanner Portátil",
+      "preco": "899.99",
+      "descricao": "Scanner portátil compacto para digitalização rápida de documentos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 35,
+    "fields": {
+      "nome": "Projetor Full HD",
+      "preco": "1999.99",
+      "descricao": "Projetor Full HD ideal para apresentações e home theater."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 36,
+    "fields": {
+      "nome": "Lousa Branca 1x1m",
+      "preco": "149.90",
+      "descricao": "Lousa branca de 1x1 metro, superfície lisa para escrita com marcador."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 37,
+    "fields": {
+      "nome": "Marcador de Quadro Branco",
+      "preco": "19.90",
+      "descricao": "Marcador para quadro branco, tinta de fácil remoção."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 38,
+    "fields": {
+      "nome": "Post-it Amarelo",
+      "preco": "12.90",
+      "descricao": "Bloco de notas adesivas amarelas para lembretes rápidos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 39,
+    "fields": {
+      "nome": "Clips de Papel",
+      "preco": "5.90",
+      "descricao": "Caixa de clips de papel metálicos para organização de documentos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 40,
+    "fields": {
+      "nome": "Grampeador de Mesa",
+      "preco": "29.90",
+      "descricao": "Grampeador de mesa resistente, para uso escolar e escritório."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 41,
+    "fields": {
+      "nome": "Estabilizador 500VA",
+      "preco": "249.90",
+      "descricao": "Estabilizador de energia 500VA, protege equipamentos eletrônicos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 42,
+    "fields": {
+      "nome": "Nobreak 1200VA",
+      "preco": "1199.99",
+      "descricao": "Nobreak 1200VA, garante autonomia em caso de queda de energia."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 43,
+    "fields": {
+      "nome": "Webcam Full HD",
+      "preco": "349.90",
+      "descricao": "Webcam Full HD com microfone integrado, ideal para videochamadas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 44,
+    "fields": {
+      "nome": "Microfone Condensador USB",
+      "preco": "799.90",
+      "descricao": "Microfone condensador USB com boa captação sonora para gravações."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 45,
+    "fields": {
+      "nome": "Tripé Ajustável",
+      "preco": "129.90",
+      "descricao": "Tripé ajustável compatível com câmeras e smartphones."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 46,
+    "fields": {
+      "nome": "Notebook Gamer",
+      "preco": "8999.99",
+      "descricao": "Notebook gamer com alto desempenho gráfico e de processamento."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 47,
+    "fields": {
+      "nome": "Ultrabook Dell XPS",
+      "preco": "7499.99",
+      "descricao": "Ultrabook premium, leve e com excelente desempenho."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 48,
+    "fields": {
+      "nome": "Chromebook Lenovo",
+      "preco": "2299.90",
+      "descricao": "Chromebook Lenovo com sistema ChromeOS, ideal para tarefas leves."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 49,
+    "fields": {
+      "nome": "MacBook Air M2",
+      "preco": "10499.99",
+      "descricao": "MacBook Air com chip M2, leve e com ótima autonomia de bateria."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 50,
+    "fields": {
+      "nome": "Servidor Torre",
+      "preco": "14999.99",
+      "descricao": "Servidor em formato torre, indicado para pequenas e médias empresas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 51,
+    "fields": {
+      "nome": "Caixa Organizadora",
+      "preco": "24.90",
+      "descricao": "Caixa organizadora plástica, ideal para armazenar itens diversos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 52,
+    "fields": {
+      "nome": "Estojo Escolar",
+      "preco": "39.90",
+      "descricao": "Estojo escolar com espaço para lápis, canetas e outros materiais."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 53,
+    "fields": {
+      "nome": "Tesoura Escolar",
+      "preco": "7.90",
+      "descricao": "Tesoura escolar com ponta arredondada, segura para crianças."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 54,
+    "fields": {
+      "nome": "Cola Branca 90g",
+      "preco": "4.90",
+      "descricao": "Cola branca escolar de 90g, ideal para trabalhos manuais."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 55,
+    "fields": {
+      "nome": "Agenda 2025",
+      "preco": "59.90",
+      "descricao": "Agenda anual 2025 com espaço para anotações diárias."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 56,
+    "fields": {
+      "nome": "Plastificadora A4",
+      "preco": "399.90",
+      "descricao": "Plastificadora A4 para proteção de documentos e materiais impressos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 57,
+    "fields": {
+      "nome": "Calculadora Científica",
+      "preco": "129.90",
+      "descricao": "Calculadora científica com múltiplas funções matemáticas."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 58,
+    "fields": {
+      "nome": "Cadeira Gamer",
+      "preco": "1199.99",
+      "descricao": "Cadeira gamer ergonômica, com ajuste de altura e reclínio."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 59,
+    "fields": {
+      "nome": "Mesa para Computador",
+      "preco": "499.90",
+      "descricao": "Mesa para computador com espaço para monitor e periféricos."
+    }
+  },
+  {
+    "model": "produtos.produto",
+    "pk": 60,
+    "fields": {
+      "nome": "Cadeira de Escritório",
+      "preco": "699.90",
+      "descricao": "Cadeira de escritório ergonômica, confortável para uso prolongado."
+    }
+  }
+]

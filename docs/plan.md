@@ -372,9 +372,9 @@ FastAPI → ordenação
 
 A paginação será introduzida depois que filtros, busca e ordenação estiverem compreendidos.
 
-Será adotado como padrão comum o modelo de paginação baseado em **número da página**, semelhante ao `PageNumberPagination` do Django REST Framework.
+Para Express, FastAPI e Django REST Framework, será adotado como padrão comum o modelo de paginação baseado em **número da página**, semelhante ao `PageNumberPagination` do Django REST Framework.
 
-A decisão é utilizar **um único contrato de paginação para Express, FastAPI e Django**, permitindo que o aluno aprenda uma única forma de solicitar e interpretar páginas de resultados.
+A decisão é utilizar **um único contrato de paginação entre Express, FastAPI e Django** nesta etapa. Na Parte 7, a Aula 25 implementa esse contrato com uma classe baseada em `PageNumberPagination`.
 
 Os parâmetros serão:
 
@@ -510,7 +510,7 @@ FastAPI → paginação
         ↓
 Comparação
         ↓
-Django → paginação com abstração do DRF
+Django → paginação com abstração do DRF na Aula 25
 ```
 
 O princípio é:
@@ -1028,6 +1028,8 @@ http/
 └── drf/
 ```
 
+> **Nota de decisão:** Atualmente, as coleções do Bruno estão disponíveis nos repositórios do Express (`express-bsi4`) e FastAPI (`fastapi-bsi4`). Para o Django (`django-bsi4`), os testes e validações das requisições são realizados via Swagger UI (`/api/docs/`) e interface navegável do DRF. A disponibilização de uma coleção Bruno equivalente para o Django fica registrada como melhoria futura.
+
 Cada tecnologia deve possuir sua coleção de requisições organizada por aula/conceito. Exemplo:
 
 ```text
@@ -1206,49 +1208,19 @@ Depois disso, o Django poderá evoluir de acordo com suas próprias vantagens e 
 
 # 20. Evolução posterior do Django
 
-A aplicação Django atualmente já possui recursos que vão além do modelo inicial.
+A aplicação Django evoluiu mantendo campos escalares no modelo `Produto` em vez de introduzir uma entidade `Categoria` com relacionamento `ForeignKey`.
 
-Entre eles:
+Os campos escalares adicionados ao modelo `Produto` foram:
 
 ```text
-descricao
+marca
 estoque
-criado_em
-atualizado_em
-categoria
+descricao
 ```
 
-e uma entidade:
+Essa escolha por campos escalares simplifica o projeto e foca nas capacidades do Django REST Framework (serializers, validações personalizadas, Django Filter, SearchFilter, OrderingFilter e paginação) sem a complexidade adicional de relacionamentos de chave estrangeira nesta etapa.
 
-```text
-Categoria
-```
-
-com relacionamento `ForeignKey`.
-
-Esses recursos **não precisam ser removidos**.
-
-Eles poderão ser utilizados posteriormente para demonstrar uma evolução natural da API.
-
-A progressão poderá ser:
-
-```text
-Produto básico
-    ↓
-novos campos
-    ↓
-Categoria
-    ↓
-relacionamento entre entidades
-    ↓
-filtros mais sofisticados
-    ↓
-API mais completa
-```
-
-A decisão importante é que **não devemos adicionar Categoria, estoque, relacionamentos ou outros recursos ao Express e ao FastAPI apenas para igualá-los ao Django**.
-
-O Django poderá avançar além da API-base justamente para demonstrar suas capacidades de abstração e modelagem.
+A decisão adotada para a disciplina é manter a evolução do Django baseada em campos escalares no próprio modelo `Produto`, garantindo que o plano reflita com precisão a abordagem implementada no tutorial e nos repositórios.
 
 ---
 
@@ -1603,14 +1575,12 @@ O Django começará comparável à API-base, mas não precisa permanecer artific
 
 ## Etapa 6 — Evolução da API
 
-Somente depois de consolidada a API básica poderão ser introduzidos recursos mais sofisticados, especialmente no Django:
+Somente depois de consolidada a API básica poderão ser introduzidos recursos mais sofisticados no modelo `Produto` (utilizando campos escalares):
 
-* descrição;
+* marca;
 * estoque;
-* timestamps;
-* Categoria;
-* relacionamentos;
-* filtros mais avançados.
+* descrição;
+* filtros, busca e ordenação sobre os novos campos.
 
 Essa etapa deverá ser controlada para não comprometer o tempo destinado aos projetos.
 
@@ -1835,7 +1805,7 @@ Produto
 - preco
 ```
 
-A paginação deverá utilizar o mecanismo de paginação baseado em número de página do Django REST Framework.
+Na Aula 25, a paginação utiliza o mecanismo baseado em número de página do Django REST Framework, com uma classe customizada para preservar o contrato comum da API.
 
 A configuração pedagógica de referência será equivalente a:
 
@@ -1888,17 +1858,13 @@ Depois poderá evoluir para:
 Produto
 - id
 - nome
-- descricao
+- marca
 - estoque
 - preco
-- criado_em
-- atualizado_em
-- categoria
+- descricao
 ```
 
-A estrutura atual com `Categoria` não precisa ser apagada neste momento.
-
-Ela poderá ser utilizada posteriormente como uma evolução didática.
+A evolução do modelo no Django utiliza campos escalares no próprio `Produto` (`marca`, `estoque`, `descricao`), sem introduzir uma entidade `Categoria`.
 
 O Django, portanto, não deverá ser artificialmente limitado apenas para reproduzir todas as decisões tomadas para Express e FastAPI.
 
@@ -2163,7 +2129,7 @@ resposta
 
 No Express e FastAPI a paginação será implementada manualmente.
 
-No Django REST Framework será utilizada uma implementação baseada em `PageNumberPagination`, com `page_size_query_param = 'page_size'` e `max_page_size = 100`.
+No Django REST Framework, a Aula 25 utiliza uma implementação baseada em `PageNumberPagination`, com `page_size_query_param = 'page_size'` e `max_page_size = 100`, para manter o contrato comum entre as três tecnologias.
 
 O contrato externo deverá ser equivalente nas três tecnologias.
 
@@ -2326,3 +2292,37 @@ VUE.JS
     ↓
 PROJETO INDIVIDUAL
 ```
+
+## Parte 7 — Django
+
+A Parte 7 é a continuação das Partes 1–6 e começa na **Aula 17**. Ela não reinicia a numeração nem cria uma sequência independente.
+
+O objetivo pedagógico é construir um único projeto Django a partir de uma pasta vazia, seguindo esta sequência:
+
+```text
+Aula 17 — projeto Django com uv
+    ↓
+Aula 18 — Model Produto, SQLite e migrations
+    ↓
+Aula 19 — Django Admin
+    ↓
+Aula 20 — primeiro endpoint com ModelSerializer, ModelViewSet e Router
+    ↓
+Aula 21 — OpenAPI e Swagger
+    ↓
+Aula 22 — validações
+    ↓
+Aula 23 — filtros
+    ↓
+Aula 24 — ordenação e busca textual
+    ↓
+Aula 25 — paginação
+    ↓
+Aula 26 — exercício: evoluindo o Produto
+```
+
+O Django Admin deve ser apresentado antes do DRF. O Swagger/OpenAPI deve ser configurado junto do primeiro endpoint e continuar evoluindo com as rotas, campos e parâmetros de consulta.
+
+O projeto `django-bsi4` é criado pelos alunos na Aula 17 e evolui durante as Aulas 18–26. O README é a fonte principal da documentação didática e orienta a criação de cada arquivo e alteração progressivamente.
+
+A Parte 7 inclui paginação na Aula 25 e termina na Aula 26. O exercício da Aula 26 evolui o Model com `marca`, `estoque` e `descricao`, sem introduzir `Categoria`.
