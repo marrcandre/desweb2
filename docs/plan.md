@@ -1028,6 +1028,8 @@ http/
 └── drf/
 ```
 
+> **Nota de decisão:** Atualmente, as coleções do Bruno estão disponíveis nos repositórios do Express (`express-bsi4`) e FastAPI (`fastapi-bsi4`). Para o Django (`django-bsi4`), os testes e validações das requisições são realizados via Swagger UI (`/api/docs/`) e interface navegável do DRF. A disponibilização de uma coleção Bruno equivalente para o Django fica registrada como melhoria futura.
+
 Cada tecnologia deve possuir sua coleção de requisições organizada por aula/conceito. Exemplo:
 
 ```text
@@ -1206,49 +1208,19 @@ Depois disso, o Django poderá evoluir de acordo com suas próprias vantagens e 
 
 # 20. Evolução posterior do Django
 
-A aplicação Django atualmente já possui recursos que vão além do modelo inicial.
+A aplicação Django evoluiu mantendo campos escalares no modelo `Produto` em vez de introduzir uma entidade `Categoria` com relacionamento `ForeignKey`.
 
-Entre eles:
+Os campos escalares adicionados ao modelo `Produto` foram:
 
 ```text
-descricao
+marca
 estoque
-criado_em
-atualizado_em
-categoria
+descricao
 ```
 
-e uma entidade:
+Essa escolha por campos escalares simplifica o projeto e foca nas capacidades do Django REST Framework (serializers, validações personalizadas, Django Filter, SearchFilter, OrderingFilter e paginação) sem a complexidade adicional de relacionamentos de chave estrangeira nesta etapa.
 
-```text
-Categoria
-```
-
-com relacionamento `ForeignKey`.
-
-Esses recursos **não precisam ser removidos**.
-
-Eles poderão ser utilizados posteriormente para demonstrar uma evolução natural da API.
-
-A progressão poderá ser:
-
-```text
-Produto básico
-    ↓
-novos campos
-    ↓
-Categoria
-    ↓
-relacionamento entre entidades
-    ↓
-filtros mais sofisticados
-    ↓
-API mais completa
-```
-
-A decisão importante é que **não devemos adicionar Categoria, estoque, relacionamentos ou outros recursos ao Express e ao FastAPI apenas para igualá-los ao Django**.
-
-O Django poderá avançar além da API-base justamente para demonstrar suas capacidades de abstração e modelagem.
+A decisão adotada para a disciplina é manter a evolução do Django baseada em campos escalares no próprio modelo `Produto`, garantindo que o plano reflita com precisão a abordagem implementada no tutorial e nos repositórios.
 
 ---
 
@@ -1603,14 +1575,12 @@ O Django começará comparável à API-base, mas não precisa permanecer artific
 
 ## Etapa 6 — Evolução da API
 
-Somente depois de consolidada a API básica poderão ser introduzidos recursos mais sofisticados, especialmente no Django:
+Somente depois de consolidada a API básica poderão ser introduzidos recursos mais sofisticados no modelo `Produto` (utilizando campos escalares):
 
-* descrição;
+* marca;
 * estoque;
-* timestamps;
-* Categoria;
-* relacionamentos;
-* filtros mais avançados.
+* descrição;
+* filtros, busca e ordenação sobre os novos campos.
 
 Essa etapa deverá ser controlada para não comprometer o tempo destinado aos projetos.
 
@@ -1888,17 +1858,13 @@ Depois poderá evoluir para:
 Produto
 - id
 - nome
-- descricao
+- marca
 - estoque
 - preco
-- criado_em
-- atualizado_em
-- categoria
+- descricao
 ```
 
-A estrutura atual com `Categoria` não precisa ser apagada neste momento.
-
-Ela poderá ser utilizada posteriormente como uma evolução didática.
+A evolução do modelo no Django utiliza campos escalares no próprio `Produto` (`marca`, `estoque`, `descricao`), sem introduzir uma entidade `Categoria`.
 
 O Django, portanto, não deverá ser artificialmente limitado apenas para reproduzir todas as decisões tomadas para Express e FastAPI.
 

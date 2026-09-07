@@ -44,7 +44,7 @@ O tutorial **explica os conceitos e a arquitetura**. Nas Partes 1–6, consulte 
 Você precisa ter instalado:
 
 - **Node.js** (versão 18 ou superior) e **npm** — para o Express;
-- **Python** (versão 3.10 ou superior) — para o FastAPI e Django;
+- **Python** (versão 3.14 ou superior) — para o FastAPI e Django;
 - **uv** (gerenciador moderno de pacotes e ambientes Python) — para o Django + DRF;
 - **pip** — instalador padrão do Python;
 - **Bruno** (aplicação de desktop) — cliente HTTP para testar a API.
@@ -73,6 +73,8 @@ Você precisa ter instalado:
 O **Bruno** é o cliente HTTP oficial da disciplina. Ele permite **guardar as requisições junto com o código** e **versioná-las no repositório**. Assim, cada aula tem uma coleção de requisições que exercita exatamente o que foi construído.
 
 **Executar o servidor ≠ testar a API.** O servidor (a aula que você inicia com `node`, `uvicorn` ou `manage.py runserver`) **processa** as requisições e devolve respostas. O **Bruno** ou a interface **Swagger** enviam essas requisições para você observar o que a API responde.
+
+> **Nota:** As coleções oficiais do Bruno acompanham os repositórios `express-bsi4` e `fastapi-bsi4`. Para o `django-bsi4` (Parte 7), os testes e interações são realizados via Swagger UI (`/api/docs/`) e interface navegável do DRF, ficando a coleção Bruno registrada como evolução futura.
 
 ---
 
@@ -1997,7 +1999,7 @@ cd django-bsi4
 uv init --app .
 ```
 
-**2.Abrindo o projeto no VS Code:**
+**2. Abrindo o projeto no VS Code:**
 
 ```bash
 code .
@@ -2253,26 +2255,6 @@ urlpatterns = [
   path("api/produtos/", ProdutoListAPIView.as_view(), name="produto-list"),
   path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
   path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-from django.contrib import admin
-from django.urls import include, path
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
-)
-from rest_framework.routers import DefaultRouter
-
-from produtos.views import ProdutoViewSet
-
-router = DefaultRouter()
-router.register("produtos", ProdutoViewSet, basename="produto")
-
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 ```
 
@@ -2317,21 +2299,6 @@ A `ListAPIView` deixa de ser utilizada. O ModelViewSet fornece ações padroniza
 Substitua o conteúdo de `config/urls.py` por:
 
 ```python
-from django.contrib import admin
-from django.urls import include, path
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework.routers import DefaultRouter
-
-from produtos.views import ProdutoViewSet
-
-router = DefaultRouter()
-router.register("produtos", ProdutoViewSet, basename="produto")
-
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
