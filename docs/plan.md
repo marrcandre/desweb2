@@ -372,9 +372,9 @@ FastAPI → ordenação
 
 A paginação será introduzida depois que filtros, busca e ordenação estiverem compreendidos.
 
-Para Express e FastAPI, será adotado como padrão comum o modelo de paginação baseado em **número da página**, semelhante ao `PageNumberPagination` do Django REST Framework. A adoção desse recurso no Django fica para uma etapa futura, fora da Parte 7.
+Para Express, FastAPI e Django REST Framework, será adotado como padrão comum o modelo de paginação baseado em **número da página**, semelhante ao `PageNumberPagination` do Django REST Framework.
 
-A decisão é utilizar **um único contrato de paginação entre Express e FastAPI** nesta etapa. O Django poderá adotar o mesmo contrato futuramente, depois da conclusão das Aulas 17–27.
+A decisão é utilizar **um único contrato de paginação entre Express, FastAPI e Django** nesta etapa. Na Parte 7, a Aula 25 implementa esse contrato com uma classe baseada em `PageNumberPagination`.
 
 Os parâmetros serão:
 
@@ -510,7 +510,7 @@ FastAPI → paginação
         ↓
 Comparação
         ↓
-Django → paginação com abstração do DRF em etapa futura
+Django → paginação com abstração do DRF na Aula 25
 ```
 
 O princípio é:
@@ -1805,7 +1805,7 @@ Produto
 - preco
 ```
 
-Em uma etapa futura, a paginação poderá utilizar o mecanismo baseado em número de página do Django REST Framework. Ela não faz parte da Parte 7, que termina na Aula 27.
+Na Aula 25, a paginação utiliza o mecanismo baseado em número de página do Django REST Framework, com uma classe customizada para preservar o contrato comum da API.
 
 A configuração pedagógica de referência será equivalente a:
 
@@ -2129,7 +2129,7 @@ resposta
 
 No Express e FastAPI a paginação será implementada manualmente.
 
-No Django REST Framework, uma etapa futura poderá utilizar uma implementação baseada em `PageNumberPagination`, com `page_size_query_param = 'page_size'` e `max_page_size = 100`. Essa configuração não pertence às Aulas 17–27.
+No Django REST Framework, a Aula 25 utiliza uma implementação baseada em `PageNumberPagination`, com `page_size_query_param = 'page_size'` e `max_page_size = 100`, para manter o contrato comum entre as três tecnologias.
 
 O contrato externo deverá ser equivalente nas três tecnologias.
 
@@ -2306,25 +2306,23 @@ Aula 18 — Model Produto, SQLite e migrations
     ↓
 Aula 19 — Django Admin
     ↓
-Aula 20 — DRF e ModelSerializer
+Aula 20 — primeiro endpoint com ModelSerializer, ModelViewSet e Router
     ↓
-Aula 21 — primeiro endpoint e Swagger/OpenAPI
+Aula 21 — OpenAPI e Swagger
     ↓
-Aula 22 — ModelViewSet, Router e CRUD
+Aula 22 — validações
     ↓
-Aula 23 — validações
+Aula 23 — filtros
     ↓
-Aula 24 — filtros
+Aula 24 — ordenação e busca textual
     ↓
-Aula 25 — ordenação e busca textual
+Aula 25 — paginação
     ↓
-Aula 26 — marca, estoque e descricao
-    ↓
-Aula 27 — exercício e testes
+Aula 26 — exercício: evoluindo o Produto
 ```
 
 O Django Admin deve ser apresentado antes do DRF. O Swagger/OpenAPI deve ser configurado junto do primeiro endpoint e continuar evoluindo com as rotas, campos e parâmetros de consulta.
 
-O projeto `django-bsi4` é criado pelos alunos na Aula 17 e evolui durante as Aulas 18–27. O README é a fonte principal da documentação didática e orienta a criação de cada arquivo e alteração progressivamente.
+O projeto `django-bsi4` é criado pelos alunos na Aula 17 e evolui durante as Aulas 18–26. O README é a fonte principal da documentação didática e orienta a criação de cada arquivo e alteração progressivamente.
 
-A Parte 7 não inclui paginação. O contrato de paginação descrito anteriormente neste plano permanece como possibilidade de etapa futura e não deve ser apresentado como requisito das Aulas 17–27.
+A Parte 7 inclui paginação na Aula 25 e termina na Aula 26. O exercício da Aula 26 evolui o Model com `marca`, `estoque` e `descricao`, sem introduzir `Categoria`.

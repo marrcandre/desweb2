@@ -2,6 +2,10 @@
 
 > **Registro histórico.** Este documento descreve o estado encontrado antes da reorganização da Parte 7. A documentação vigente da Parte 7 está no README e começa na Aula 17; as referências ao estado anterior do workspace são históricas.
 
+## Como interpretar este documento
+
+As seções de análise, propostas e diagnósticos anteriores preservam o histórico da revisão e podem mencionar `Categoria`, ausência de paginação ou a estrutura antiga da Parte 7. Essas afirmações não descrevem o tutorial atual. O estado vigente está consolidado exclusivamente na seção **10. Estado atual da Parte 7 — Django e Django REST Framework**, que deve ser usada como referência atual junto com o README.
+
 ## 0. Amostra analisada
 
 Foram lidos integralmente: `desweb2/docs/plan.md`, `desweb2/README.md`, os READMEs de `express-bsi4`, `fastapi-bsi4` e `django-bsi4`, todos os arquivos `.js` de `express-bsi4`, todos os `.py` de `fastapi-bsi4`, todos os arquivos relevantes de `django-bsi4` (models, serializers, views, filters, admin, urls, settings, migration, requirements), o `bsi4.code-workspace`, os `.gitignore` e os dados de apoio (`produtos.json`).
@@ -253,27 +257,42 @@ GET /api/produtos/?page=2&page_size=20
 
 ---
 
-## 10. Análise do Django
+## 10. Estado atual da Parte 7 — Django e Django REST Framework
 
-**Estado atual (mais avançado que a API-base):**
+O estado vigente do tutorial está documentado no README e compreende dez aulas, da 17 à 26:
 
-- **Modelos:** `Categoria(nome, descricao)` e `Produto(nome, descricao, estoque, preco, criado_em, atualizado_em, categoria FK → Categoria)`.
-  - Campos que **extrapolam** o model base (`id/nome/preco`): `descricao`, `estoque`, timestamps e o relacionamento `categoria`. ✅ previsto como "evolução".
-- **Relacionamentos:** `ForeignKey(Categoria, on_delete=PROTECT, null/blank, related_name='produtos')`.
-- **Serializers:** `ProdutoSerializer(meta fields='__all__')`, `CategoriaSerializer`. Nenhuma validação customizada ainda.
-- **ViewSets:** `ProdutoViewSet` e `CategoriaViewSet` (`ModelViewSet`).
-- **Routers:** `DefaultRouter` com `categorias` e `produtos` prefixados por `api/` → `/api/produtos/`, `/api/categorias/` (**com barra final e prefixo `/api`** — já segue o padrão-alvo do contrato). ✔
-- **Filtros:** `django-filter` com `ProdutoFilter` (`preco_minimo`, `preco_maximo`, `estoque`) e `filterset_fields` para `estoque` (`exact/gte/lte`).
-- **Busca:** `search_fields = ['nome', 'categoria__nome']`.
-- **Ordenação:** `ordering_fields = ['nome','preco','atualizado_em']`, default `-atualizado_em`.
-- **Paginação:** **NÃO configurada** (nem `PAGE_SIZE`, nem `DEFAULT_PAGINATION_CLASS`). A Aula 13 descreve isso, mas o código ainda não implementa.
-- **Documentação:** drf-spectacular configurado (`/api/schema`, `/api/docs`, `/api/redoc`).
-- **Admin:** registrado e estruturado (`list_display`, `search_fields`, `list_filter`).
-- **API resultante:** `/api/produtos/` e `/api/categorias/` com CRUD completo + filtros + busca + ordenação + docs. **Sem paginação e sem validação customizada** (embora descritas no README).
+```text
+17 projeto Django
+18 Model, SQLite e migrations
+19 Django Admin
+20 ModelSerializer + ModelViewSet + Router + CRUD
+21 OpenAPI e Swagger
+22 validações
+23 filtros
+24 busca e ordenação
+25 paginação
+26 evolução do Produto
+```
 
-**Onde o Django já está à frente (potencial de "evolução didática" posterior):** campos extras + `Categoria` + relacionamento + ORM/SQLite + admin. Esses recursos **não devem ser removidos nem replicados** no Express/FastAPI (decisão explícita do plano). Servirão para demonstrar modelagem/abstração mais tarde.
+O modelo final do tutorial é:
 
-**Atenção:** a **validação** e a **paginação** descritas nas Aulas 13–14 **ainda não existem no código** — isso deve ser harmonizado quando o Django for trabalhado (não agora, nesta fase de análise).
+```text
+Produto
+├── id
+├── nome
+├── preco
+├── marca
+├── estoque
+└── descricao
+```
+
+O DRF utiliza `ModelSerializer`, `ModelViewSet` e `DefaultRouter` desde a Aula 20. A Aula 25 configura `PageNumberPagination` com o contrato `page`, `page_size`, `total_pages` e `results`. A Aula 26 evolui o Model, o serializer, as validações, os filtros, a busca, a ordenação, a documentação e os testes.
+
+`Categoria` e relacionamentos não fazem parte da implementação atual. Menções a eles em trechos anteriores deste documento são registros históricos da análise realizada antes da consolidação da Parte 7.
+
+## 10.1 Limite do estado vigente
+
+As seções posteriores retomam análises e propostas históricas do repositório. Quando houver divergência com a seção 10 ou com o README, prevalece o estado vigente descrito na seção 10: a Parte 7 termina na Aula 26, usa `ModelSerializer + ModelViewSet + Router`, possui paginação na Aula 25 e evolui `Produto` com `marca`, `estoque` e `descricao`.
 
 ---
 
