@@ -2122,7 +2122,7 @@ django-bsi4/
 └── produtos/
 ```
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Ao final da aula, depois de confirmar que o servidor abre, faça:
 
@@ -2186,7 +2186,7 @@ Os produtos serão inseridos no banco. O ORM poderá consultar `Produto.objects.
 
 O projeto tem Model, migration, banco SQLite e dados persistidos.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de aplicar a migration e confirmar `showmigrations`:
 
@@ -2230,7 +2230,7 @@ Acesse `http://127.0.0.1:8000/admin/`, entre com o superusuário, cadastre produ
 
 O Admin grava na mesma tabela SQLite usada pelo ORM e pela futura API. Ele não substitui a API: são interfaces diferentes sobre o mesmo Model e banco.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de registrar o Model e verificar o CRUD no Admin:
 
@@ -2344,7 +2344,7 @@ DELETE /api/produtos/{id}/
 
 Use o navegador para o GET e a interface navegável do DRF para testar criação, atualização parcial, atualização completa e exclusão. Ao final, a API funciona, mas ainda não possui documentação OpenAPI configurada.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de testar as seis operações do CRUD:
 
@@ -2406,7 +2406,7 @@ Abra `/api/schema/` para o documento OpenAPI, `/api/docs/` para o Swagger UI e `
 
 Aula 20: a API funciona. Aula 21: a API funciona e também tem documentação automática. Nenhuma ViewSet é criada ou substituída nesta aula.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de abrir `/api/docs/` e confirmar todas as operações:
 
@@ -2454,7 +2454,7 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
 No Swagger, envie `nome: "A"` e `preco: 0`: a resposta deve ser `400 Bad Request`. Depois envie `{"nome": "Cabo USB", "preco": 20.00}` e confirme `201 Created`. O objeto só é salvo depois que todas as validações passam.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de testar casos válidos e inválidos no Swagger:
 
@@ -2528,7 +2528,7 @@ GET /api/produtos/?preco_maximo=1000
 
 Confira no Swagger que os parâmetros aparecem no endpoint e teste também uma combinação sem resultados.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de testar os dois limites e o intervalo:
 
@@ -2576,7 +2576,7 @@ GET /api/produtos/?preco_minimo=100&search=teclado&ordering=nome
 
 Os três mecanismos se combinam no queryset: filtros estruturados, busca, ordenação e, na aula seguinte, paginação. `marca` e `descricao` entrarão na busca na Aula 26; `estoque` ficará fora por ser numérico.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de conferir consultas isoladas e combinadas no Swagger:
 
@@ -2682,7 +2682,7 @@ GET /api/produtos/?page=999
 
 A última requisição deve retornar `200` com `results` vazia. Teste também `page_size=101`, que deve retornar `400` com `detail`; valores até 100 seguem normalmente. Filtros, busca e ordenação são aplicados ao queryset antes da paginação, exatamente como no contrato anterior.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de verificar o formato da resposta, o limite de tamanho e as combinações:
 
@@ -2711,7 +2711,7 @@ Model
 
 Os exercícios são cumulativos. Depois de cada campo, gere e aplique a migration, atualize o código, confira o Swagger e execute os testes.
 
-### 1. Marca
+**1. Marca**
 
 `marca` será obrigatório, terá de 2 a 50 caracteres e participará do filtro exato, da ordenação e da busca.
 
@@ -2757,7 +2757,7 @@ Inclua `marca` em `Meta.fields`, em `ordering_fields` e em `search_fields`. O fi
 
 Teste `POST` válido, `POST` com marca curta, `GET /api/produtos/?marca=dell`, `?ordering=marca` e `?search=dell`.
 
-### 2. Estoque
+**2. Estoque**
 
 `estoque` será inteiro, obrigatório, não negativo, filtrável por intervalo e ordenável. Ele **não** participará da busca textual.
 
@@ -2798,7 +2798,7 @@ Inclua os dois filtros em `Meta.fields` e `estoque` em `ordering_fields`. Não i
 
 Teste `estoque=0` (válido), `-1`, `"dez"`, `5.5`, `?estoque_minimo=10&estoque_maximo=30` e `?ordering=-estoque`. O campo inteiro do Model e o campo gerado pelo ModelSerializer rejeitam tipos incompatíveis antes da persistência.
 
-### 3. Descrição
+**3. Descrição**
 
 `descricao` será opcional, aceitará `null` ou texto vazio, terá no máximo 500 caracteres, será ordenável e participará da busca.
 
@@ -2839,7 +2839,7 @@ Não é necessário filtro exato para descrição: textos longos são consultado
 
 Teste `POST` sem descrição, texto acima de 500 caracteres, `?search=usb-c` e `?ordering=descricao`. Depois de cada campo, confirme no Swagger que o schema, os parâmetros e as operações do CRUD continuam atualizados.
 
-### 💾 Commit sugerido
+**💾 Commit sugerido**
 
 Depois de concluir os três campos e testar o ciclo completo:
 
