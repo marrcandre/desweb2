@@ -2083,7 +2083,15 @@ uv run python manage.py startapp produtos
 
 O `startproject` cria a configuração global. O `startapp` cria uma aplicação, que reunirá o catálogo de produtos. Nesta aula instalamos somente o Django; DRF, documentação e filtros entram quando forem utilizados.
 
-Em `config/settings.py`, acrescente `produtos` a `INSTALLED_APPS`, mantendo os aplicativos padrão que o Django já criou.
+Em `config/settings.py`, acrescente `produtos` a `INSTALLED_APPS`, mantendo os aplicativos padrão que o Django já criou:
+
+```python
+INSTALLED_APPS = [
+    ...
+    "produtos",
+]
+```
+
 
 **3. Entendendo a estrutura**
 
