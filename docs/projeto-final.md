@@ -24,13 +24,13 @@ O projeto deverá aplicar os conceitos trabalhados na disciplina, incluindo:
 - documentação de API;
 - integração entre backend e frontend, quando o requisito de frontend for realizado.
 
-Os requisitos 1 a 4 são obrigatórios. Os requisitos 5 a 8 são recursos de evolução opcionais, e cada um vale 1,0 ponto adicional.
+Os requisitos 1 a 4 são obrigatórios e correspondem à implementação técnica da aplicação. O requisito 5, apresentação do projeto, também é obrigatório. Os requisitos 1 a 4 totalizam 5,0 pontos, e a apresentação completa os 6,0 pontos fundamentais. Os requisitos 6 a 9 são recursos de evolução opcionais, e cada um vale 1,0 ponto adicional.
 
 ## 3. Requisitos obrigatórios
 
-Os requisitos fundamentais totalizam 6,0 pontos. Eles não podem ser substituídos por funcionalidades opcionais.
+Os requisitos técnicos fundamentais totalizam 5,0 pontos. Com a apresentação obrigatória, os requisitos fundamentais totalizam 6,0 pontos. Eles não podem ser substituídos por funcionalidades opcionais.
 
-### 3.1 API REST — 2,0 pontos
+### 3.1 API REST — 1,5 ponto
 
 Crie uma API REST funcional para o domínio escolhido.
 
@@ -49,9 +49,9 @@ A API deverá:
 
 O `PUT` deverá representar a atualização completa do recurso, conforme trabalhado nas aulas. A documentação deverá informar o formato esperado das requisições e respostas.
 
-Você poderá utilizar Express, FastAPI ou Django REST Framework, conforme os conteúdos da disciplina, ou outra tecnologia previamente aprovada pelo professor.
+Você poderá utilizar Express, FastAPI ou Django REST Framework, conforme os conteúdos da disciplina. O uso de outra tecnologia de backend poderá ser autorizado previamente pelo professor, desde que permita demonstrar os mesmos conceitos e requisitos previstos neste projeto.
 
-### 3.2 Persistência de dados — 1,5 ponto
+### 3.2 Persistência de dados — 1,0 ponto
 
 Os dados não podem permanecer somente em memória durante a execução da aplicação.
 
@@ -90,9 +90,27 @@ Deverá possuir, de forma funcional e demonstrável:
 
 Esses recursos deverão ser documentados, possuir parâmetros compreensíveis e funcionar com os dados persistidos da aplicação.
 
+### 3.5 Apresentação do projeto — 1,0 ponto
+
+A apresentação do projeto é obrigatória e será realizada em sala de aula, para toda a turma, após a data de entrega.
+
+Durante a apresentação, você deverá demonstrar e explicar:
+
+- o domínio escolhido;
+- as principais entidades e models;
+- o funcionamento da API;
+- as operações principais;
+- a persistência;
+- a validação;
+- a regra de negócio;
+- o filtro, a busca textual, a ordenação e a paginação;
+- os recursos opcionais implementados, quando houver.
+
+Quando o trabalho for realizado em dupla, os dois integrantes deverão participar da apresentação e demonstrar individualmente domínio do projeto desenvolvido.
+
 ## 4. Recursos de evolução
 
-Os recursos a seguir são opcionais. Cada requisito realizado vale 1,0 ponto, até o limite de 4,0 pontos adicionais. Eles não compensam a ausência de qualquer requisito obrigatório.
+Os recursos a seguir correspondem aos requisitos 6 a 9 e são opcionais. Cada requisito realizado vale 1,0 ponto, até o limite de 4,0 pontos adicionais. Eles não compensam a ausência de qualquer requisito obrigatório.
 
 ### 4.1 Frontend — 1,0 ponto
 
@@ -105,18 +123,18 @@ O frontend deverá:
 - apresentar os resultados das operações e os erros de forma compreensível;
 - funcionar como parte da aplicação, e não apenas como uma página estática ou um mock da API.
 
-### 4.2 Modelagem com mais de 3 models/tabelas — 1,0 ponto
+### 4.2 Modelagem com 3 ou mais models/tabelas — 1,0 ponto
 
-A aplicação deverá possuir **3 ou mais models/tabelas relacionados** ao domínio.
+A aplicação deverá possuir **3 ou mais models/tabelas** que representem de forma coerente o domínio da aplicação.
 
-Os relacionamentos deverão:
+Os models/tabelas deverão:
 
 - representar necessidades reais do domínio;
 - possuir nomes e campos coerentes;
 - ser utilizados por alguma operação da aplicação;
 - estar documentados.
 
-Não serão considerados para este requisito models/tabelas artificiais criados somente para atingir a quantidade mínima.
+Não serão considerados para este requisito models/tabelas artificiais criados somente para atingir a quantidade mínima. Não é necessário que todos os models/tabelas tenham relacionamento direto entre si.
 
 ### 4.3 Publicação — 1,0 ponto
 
@@ -137,11 +155,13 @@ Implemente autenticação na API.
 
 Para cumprir este requisito:
 
-- deverá existir um mecanismo de autenticação de usuários;
-- a API deverá exigir autenticação nas operações ou recursos definidos no projeto;
-- o funcionamento da autenticação deverá ser demonstrável durante a avaliação.
+- deverá existir um mecanismo real de login e autenticação de usuários;
+- determinados endpoints ou operações poderão ser públicos;
+- determinados endpoints ou operações deverão exigir que o usuário esteja autenticado;
+- a API deverá identificar o usuário autenticado nas requisições protegidas;
+- deverá ser possível demonstrar uma requisição autenticada e o acesso a pelo menos um recurso protegido.
 
-O simples cadastro de usuários, sem um mecanismo de login e verificação da identidade do usuário nas requisições, não caracteriza autenticação.
+O simples cadastro de usuários, sem um mecanismo real de login e autenticação, não caracteriza autenticação. Não é necessário implementar perfis, roles, níveis diferentes de acesso ou permissões administrativas.
 
 ## 5. Sugestões de aplicações
 
@@ -268,12 +288,13 @@ A correção considerará os pontos previstos para cada requisito. Dentro desses
 - qualidade e organização das rotas, respostas e códigos HTTP;
 - validação dos dados e tratamento de erros;
 - implementação efetiva da regra de negócio;
-- funcionamento de filtro e/ou busca, ordenação e paginação;
+- funcionamento de filtro, busca textual, ordenação e paginação;
 - organização e legibilidade do código;
 - clareza e completude da documentação;
 - integração entre frontend e backend, quando aplicável;
-- coerência dos relacionamentos, quando o requisito de modelagem for realizado;
+- coerência dos models/tabelas, quando o requisito de modelagem for realizado;
 - funcionamento da autenticação, quando o requisito correspondente for realizado;
+- capacidade de demonstrar e explicar o projeto na apresentação obrigatória;
 - disponibilidade e funcionamento das URLs, quando o requisito de publicação for realizado.
 
 Esses critérios não criam pontos adicionais. Eles serão utilizados dentro da pontuação dos requisitos correspondentes.
@@ -284,27 +305,28 @@ Esses critérios não criam pontos adicionais. Eles serão utilizados dentro da 
 
 | Requisito | Obrigatório | Pontos |
 |---|---:|---:|
-| 1. API REST | Sim | 2,0 |
-| 2. Persistência de dados | Sim | 1,5 |
+| 1. API REST | Sim | 1,5 |
+| 2. Persistência de dados | Sim | 1,0 |
 | 3. Validação e regra de negócio | Sim | 1,5 |
 | 4. Consulta dos dados | Sim | 1,0 |
+| 5. Apresentação do projeto | Sim | 1,0 |
 | **Subtotal** |  | **6,0** |
 
 ### Recursos de evolução
 
 | Requisito | Obrigatório | Pontos |
 |---|---:|---:|
-| 5. Frontend | Não | 1,0 |
-| 6. Modelagem com mais de 3 models/tabelas, isto é, 4 ou mais | Não | 1,0 |
-| 7. Publicação | Não | 1,0 |
-| 8. Autenticação | Não | 1,0 |
+| 6. Frontend | Não | 1,0 |
+| 7. Modelagem com 3 ou mais models/tabelas | Não | 1,0 |
+| 8. Publicação | Não | 1,0 |
+| 9. Autenticação | Não | 1,0 |
 | **Subtotal** |  | **4,0** |
 
 | Resultado | Pontos |
 |---|---:|
 | **Nota máxima** | **10,0** |
 
-Os requisitos 1 a 4 são obrigatórios e representam os conceitos essenciais da disciplina. Os requisitos 5 a 8 são opcionais, valem 1,0 ponto cada e não podem ser usados para compensar a ausência de um requisito fundamental.
+Os requisitos 1 a 4 são obrigatórios e representam a implementação técnica essencial da disciplina. O requisito 5, apresentação do projeto, também é obrigatório. Os requisitos 1 a 4 totalizam 5,0 pontos, e os requisitos fundamentais totalizam 6,0 pontos com a apresentação. Os requisitos 6 a 9 são opcionais, valem 1,0 ponto cada e não podem ser usados para compensar a ausência de um requisito fundamental.
 
 ## 10. Checklist antes da entrega
 
@@ -314,14 +336,15 @@ Os requisitos 1 a 4 são obrigatórios e representam os conceitos essenciais da 
 - [ ] Os dados estão persistidos em um banco de dados.
 - [ ] Defini e implementei validações no backend.
 - [ ] Implementei pelo menos uma regra de negócio além do CRUD.
-- [ ] Implementei filtro e/ou busca, ordenação e paginação.
+- [ ] Implementei filtro, busca textual, ordenação e paginação.
 - [ ] Documentei a API e as instruções de execução.
 - [ ] Versionei o código em um repositório Git.
 - [ ] Informei todas as URLs necessárias para avaliação.
 - [ ] Publiquei a aplicação, caso tenha realizado o requisito de publicação.
 - [ ] Criei um frontend integrado à API, caso tenha realizado esse requisito.
-- [ ] Implementei 4 ou mais models/tabelas relacionados, caso tenha realizado o requisito de modelagem.
-- [ ] Implementei e testei a autenticação na API, caso tenha realizado esse requisito.
+- [ ] Implementei 3 ou mais models/tabelas relevantes para o domínio, sem contar tabelas automáticas ou internas do framework, caso tenha realizado esse requisito.
+- [ ] Implementei e testei login, autenticação e acesso a pelo menos um recurso protegido, caso tenha realizado esse requisito.
+- [ ] Preparei a demonstração e a explicação do projeto para a apresentação obrigatória.
 - [ ] Realizei a entrega pelo SIGAA, enviando o link do repositório GitHub do projeto.
 - [ ] Estou preparado para apresentar o projeto em sala de aula, para toda a turma, após a data de entrega.
 - [ ] Removi do repositório credenciais, senhas e chaves privadas.
