@@ -1,36 +1,36 @@
 # Projeto Final — Desenvolvimento Web 2
 
-## 1. Objetivo
+## 1. Visão rápida
 
-Desenvolver uma aplicação Web própria que utilize os conceitos estudados em Desenvolvimento Web 2. Você deverá construir uma aplicação baseada em uma API REST, com dados persistidos e regras coerentes com o domínio escolhido.
+Desenvolva uma aplicação Web própria, baseada em uma API REST, para um domínio escolhido por você. O trabalho pode ser realizado individualmente ou em duplas.
 
-## 2. Proposta
+Os requisitos 1 a 4 são obrigatórios e correspondem à implementação técnica, totalizando 5,0 pontos. O requisito 5, apresentação do projeto, também é obrigatório e completa os 6,0 pontos fundamentais. Os requisitos 6 a 9 são recursos de evolução opcionais, valendo 1,0 ponto cada. A nota máxima é 10,0 pontos.
 
-Escolha um domínio de sua preferência e desenvolva uma aplicação para esse domínio. A aplicação poderá tratar, por exemplo, de livros, eventos, cursos, jogos, tarefas ou outro assunto aprovado pelo professor.
+| Etapa | O que fazer | Obrigatório | Pontos |
+|---|---|:---:|---:|
+| 1 | API REST e CRUD | Sim | 1,5 |
+| 2 | Persistência em banco de dados | Sim | 1,0 |
+| 3 | Validação e regra de negócio | Sim | 1,5 |
+| 4 | Filtro, busca textual, ordenação e paginação | Sim | 1,0 |
+| 5 | Apresentação do projeto | Sim | 1,0 |
+| 6 | Frontend | Não | +1,0 |
+| 7 | 3 ou mais models/tabelas | Não | +1,0 |
+| 8 | Publicação | Não | +1,0 |
+| 9 | Autenticação | Não | +1,0 |
 
-O trabalho poderá ser realizado individualmente ou em duplas.
+Fluxo do projeto: escolher domínio → API → persistência → validação e regra de negócio → consultas → recursos opcionais → entrega → apresentação.
 
-O projeto deverá aplicar os conceitos trabalhados na disciplina, incluindo:
+O projeto deve aplicar os conceitos trabalhados na disciplina: HTTP, cliente e servidor, requisição e resposta, métodos HTTP, códigos de status, JSON, REST, CRUD, construção e consumo de APIs, persistência, ORM, validação, regras de negócio, filtros, busca, ordenação, paginação, documentação de API e integração entre backend e frontend, quando aplicável.
 
-- HTTP, cliente, servidor, requisição e resposta;
-- métodos HTTP e códigos de status;
-- JSON e organização REST;
-- operações de CRUD;
-- construção e consumo de APIs;
-- persistência de dados;
-- ORM, quando Django/DRF for utilizado;
-- validação e regras de negócio;
-- filtros, busca, ordenação e paginação;
-- documentação de API;
-- integração entre backend e frontend, quando o requisito de frontend for realizado.
+Na apresentação, realizada em sala para toda a turma após a entrega, você deverá demonstrar e explicar o projeto. Em duplas, os dois integrantes devem participar e demonstrar individualmente domínio do trabalho; a nota da apresentação poderá ser diferente entre eles.
 
-Os requisitos 1 a 4 são obrigatórios e correspondem à implementação técnica da aplicação. O requisito 5, apresentação do projeto, também é obrigatório. Os requisitos 1 a 4 totalizam 5,0 pontos, e a apresentação completa os 6,0 pontos fundamentais. Os requisitos 6 a 9 são recursos de evolução opcionais, e cada um vale 1,0 ponto adicional.
+## 2. Detalhamento dos requisitos
 
-## 3. Requisitos obrigatórios
+### 2.1 Requisitos obrigatórios
 
-Os requisitos técnicos fundamentais totalizam 5,0 pontos. Com a apresentação obrigatória, os requisitos fundamentais totalizam 6,0 pontos. Eles não podem ser substituídos por funcionalidades opcionais.
+Os requisitos 1 a 4 são obrigatórios e representam a implementação técnica essencial da disciplina. O requisito 5, apresentação do projeto, também é obrigatório. Os recursos opcionais não compensam a ausência de requisitos fundamentais.
 
-### 3.1 API REST — 1,5 ponto
+#### 2.1.1 API REST — 1,5 ponto
 
 Crie uma API REST funcional para o domínio escolhido.
 
@@ -51,7 +51,7 @@ O `PUT` deverá representar a atualização completa do recurso, conforme trabal
 
 Você poderá utilizar Express, FastAPI ou Django REST Framework, conforme os conteúdos da disciplina. O uso de outra tecnologia de backend poderá ser autorizado previamente pelo professor, desde que permita demonstrar os mesmos conceitos e requisitos previstos neste projeto.
 
-### 3.2 Persistência de dados — 1,0 ponto
+#### 2.1.2 Persistência de dados — 1,0 ponto
 
 Os dados não podem permanecer somente em memória durante a execução da aplicação.
 
@@ -64,7 +64,7 @@ A aplicação deverá:
 
 Quando Django/DRF for utilizado, deverá ser usado o ORM do Django. O projeto deverá possuir `models` e `migrations` adequadamente definidos.
 
-### 3.3 Validação e regra de negócio — 1,5 ponto
+#### 2.1.3 Validação e regra de negócio — 1,5 ponto
 
 A aplicação deverá validar os dados recebidos pela API e tratar entradas inválidas com respostas adequadas.
 
@@ -77,7 +77,7 @@ Além do CRUD, deverá existir pelo menos uma regra de negócio relacionada ao d
 
 Exemplos: impedir o empréstimo de um livro indisponível, impedir a inscrição em um evento lotado ou impedir a criação de uma reserva em conflito de horário.
 
-### 3.4 Consulta dos dados — 1,0 ponto
+#### 2.1.4 Consulta dos dados — 1,0 ponto
 
 A API deverá permitir consultar os dados além do simples `GET` da coleção.
 
@@ -90,7 +90,7 @@ Deverá possuir, de forma funcional e demonstrável:
 
 Esses recursos deverão ser documentados, possuir parâmetros compreensíveis e funcionar com os dados persistidos da aplicação.
 
-### 3.5 Apresentação do projeto — 1,0 ponto
+#### 2.1.5 Apresentação do projeto — 1,0 ponto
 
 A apresentação do projeto é obrigatória e será realizada em sala de aula, para toda a turma, após a data de entrega.
 
@@ -106,15 +106,13 @@ Durante a apresentação, você deverá demonstrar e explicar:
 - o filtro, a busca textual, a ordenação e a paginação;
 - os recursos opcionais implementados, quando houver.
 
-Quando o trabalho for realizado em dupla, os dois integrantes deverão participar da apresentação e demonstrar individualmente domínio do projeto desenvolvido.
+Quando o trabalho for realizado em dupla, os dois integrantes deverão participar da apresentação e demonstrar individualmente domínio suficiente sobre o projeto. Portanto, a nota da apresentação poderá ser diferente entre os integrantes da dupla, mesmo que o projeto seja o mesmo.
 
-Ambos deverão ser capazes de explicar o projeto e demonstrar individualmente domínio suficiente sobre o trabalho. Portanto, a nota da apresentação poderá ser diferente entre os integrantes da dupla, mesmo que o projeto seja o mesmo.
-
-## 4. Recursos de evolução
+### 2.2 Recursos de evolução
 
 Os recursos a seguir correspondem aos requisitos 6 a 9 e são opcionais. Cada requisito realizado vale 1,0 ponto, até o limite de 4,0 pontos adicionais. Eles não compensam a ausência de qualquer requisito obrigatório.
 
-### 4.1 Frontend — 1,0 ponto
+#### 2.2.1 Frontend — 1,0 ponto
 
 Desenvolva um frontend utilizando Vue.js ou outra tecnologia previamente aprovada pelo professor.
 
@@ -125,7 +123,7 @@ O frontend deverá:
 - apresentar os resultados das operações e os erros de forma compreensível;
 - funcionar como parte da aplicação, e não apenas como uma página estática ou um mock da API.
 
-### 4.2 Modelagem com 3 ou mais models/tabelas — 1,0 ponto
+#### 2.2.2 Modelagem com 3 ou mais models/tabelas — 1,0 ponto
 
 A aplicação deverá possuir **3 ou mais models/tabelas** que representem de forma coerente o domínio da aplicação.
 
@@ -138,7 +136,7 @@ Os models/tabelas deverão:
 
 Não serão considerados para este requisito models/tabelas artificiais criados somente para atingir a quantidade mínima. Não é necessário que todos os models/tabelas tenham relacionamento direto entre si.
 
-### 4.3 Publicação — 1,0 ponto
+#### 2.2.3 Publicação — 1,0 ponto
 
 Publique a aplicação para acesso externo pela Internet.
 
@@ -151,7 +149,7 @@ Para cumprir este requisito:
 
 Caso frontend e backend estejam em plataformas diferentes, as duas URLs deverão estar disponíveis e integradas. A plataforma de publicação fica a critério do aluno, desde que o acesso externo seja possível.
 
-### 4.4 Autenticação — 1,0 ponto
+#### 2.2.4 Autenticação — 1,0 ponto
 
 Implemente autenticação na API.
 
@@ -165,7 +163,7 @@ Para cumprir este requisito:
 
 O simples cadastro de usuários, sem um mecanismo real de login e autenticação, não caracteriza autenticação. Não é necessário implementar perfis, roles, níveis diferentes de acesso ou permissões administrativas.
 
-## 5. Sugestões de aplicações
+## 3. Sugestões de aplicações
 
 As ideias abaixo servem apenas como inspiração. Você não precisa escolher uma delas. Em qualquer caso, escolha um domínio que permita criar regras de negócio e, se desejar, uma modelagem com 3 ou mais models/tabelas.
 
@@ -249,7 +247,7 @@ As ideias abaixo servem apenas como inspiração. Você não precisa escolher um
 
 </details>
 
-## 6. Requisitos técnicos
+## 4. Requisitos técnicos
 
 O projeto deverá ser entregue com:
 
@@ -268,7 +266,7 @@ O uso de documentação, bibliotecas, frameworks, exemplos, ferramentas de desen
 
 Não são exigidos microserviços, Docker, Kubernetes, CI/CD, arquitetura excessivamente sofisticada ou testes extensivos. O foco é demonstrar os conceitos de desenvolvimento Web trabalhados na disciplina.
 
-## 7. Entrega
+## 5. Entrega
 
 Até **19/11/2026**, entregue:
 
@@ -283,7 +281,7 @@ As URLs e as credenciais devem estar válidas no momento da avaliação. Não pu
 
 Após a data de entrega, serão realizadas apresentações dos projetos em sala de aula, para toda a turma. A apresentação fará parte da avaliação da aplicação entregue.
 
-## 8. Critérios de avaliação
+## 6. Critérios de avaliação
 
 A correção considerará os pontos previstos para cada requisito. Dentro desses pontos, serão observados:
 
@@ -303,37 +301,9 @@ A correção considerará os pontos previstos para cada requisito. Dentro desses
 
 Esses critérios não criam pontos adicionais. Eles serão utilizados dentro da pontuação dos requisitos correspondentes.
 
-## 9. Tabela de pontuação
+## 7. Checklist
 
-### Requisitos fundamentais
-
-| Requisito | Obrigatório | Pontos |
-|---|---:|---:|
-| 1. API REST | Sim | 1,5 |
-| 2. Persistência de dados | Sim | 1,0 |
-| 3. Validação e regra de negócio | Sim | 1,5 |
-| 4. Consulta dos dados | Sim | 1,0 |
-| 5. Apresentação do projeto | Sim | 1,0 |
-| **Subtotal** |  | **6,0** |
-
-### Recursos de evolução
-
-| Requisito | Obrigatório | Pontos |
-|---|---:|---:|
-| 6. Frontend | Não | 1,0 |
-| 7. Modelagem com 3 ou mais models/tabelas | Não | 1,0 |
-| 8. Publicação | Não | 1,0 |
-| 9. Autenticação | Não | 1,0 |
-| **Subtotal** |  | **4,0** |
-
-| Resultado | Pontos |
-|---|---:|
-| **Nota máxima** | **10,0** |
-
-Os requisitos 1 a 4 são obrigatórios e representam a implementação técnica essencial da disciplina. O requisito 5, apresentação do projeto, também é obrigatório. Os requisitos 1 a 4 totalizam 5,0 pontos, e os requisitos fundamentais totalizam 6,0 pontos com a apresentação. Os requisitos 6 a 9 são opcionais, valem 1,0 ponto cada e não podem ser usados para compensar a ausência de um requisito fundamental.
-
-## 10. Checklist antes da entrega
-
+**Obrigatório**:
 - [ ] Escolhi um domínio próprio, diferente da simples reprodução da API de Produtos.
 - [ ] Implementei `GET` da coleção, `GET` individual, `POST`, `PUT` e `DELETE`.
 - [ ] Utilizei códigos HTTP adequados e respostas em JSON quando aplicável.
@@ -344,12 +314,14 @@ Os requisitos 1 a 4 são obrigatórios e representam a implementação técnica 
 - [ ] Documentei a API e as instruções de execução.
 - [ ] Versionei o código em um repositório Git.
 - [ ] Informei todas as URLs necessárias para avaliação.
+- [ ] Preparei a demonstração e a explicação do projeto para a apresentação obrigatória.
+- [ ] Realizei a entrega pelo SIGAA, enviando o link do repositório GitHub do projeto.
+- [ ] Estou preparado para apresentar o projeto em sala de aula, para toda a turma, após a data de entrega.
+- [ ] Testei a aplicação após instalar e configurar o projeto seguindo o `README`.
+
+**Opcional**:
 - [ ] Publiquei a aplicação, caso tenha realizado o requisito de publicação.
 - [ ] Criei um frontend integrado à API, caso tenha realizado esse requisito.
 - [ ] Implementei 3 ou mais models/tabelas relevantes para o domínio, sem contar tabelas automáticas ou internas do framework, caso tenha realizado esse requisito.
 - [ ] Implementei e testei login, autenticação e acesso a pelo menos um recurso protegido, caso tenha realizado esse requisito.
-- [ ] Preparei a demonstração e a explicação do projeto para a apresentação obrigatória.
-- [ ] Realizei a entrega pelo SIGAA, enviando o link do repositório GitHub do projeto.
-- [ ] Estou preparado para apresentar o projeto em sala de aula, para toda a turma, após a data de entrega.
 - [ ] Removi do repositório credenciais, senhas e chaves privadas.
-- [ ] Testei a aplicação após instalar e configurar o projeto seguindo o `README`.
