@@ -108,6 +108,8 @@ Durante a apresentação, você deverá demonstrar e explicar:
 
 Quando o trabalho for realizado em dupla, os dois integrantes deverão participar da apresentação e demonstrar individualmente domínio do projeto desenvolvido.
 
+Ambos deverão ser capazes de explicar o projeto e demonstrar individualmente domínio suficiente sobre o trabalho. Portanto, a nota da apresentação poderá ser diferente entre os integrantes da dupla, mesmo que o projeto seja o mesmo.
+
 ## 4. Recursos de evolução
 
 Os recursos a seguir correspondem aos requisitos 6 a 9 e são opcionais. Cada requisito realizado vale 1,0 ponto, até o limite de 4,0 pontos adicionais. Eles não compensam a ausência de qualquer requisito obrigatório.
@@ -217,7 +219,7 @@ As ideias abaixo servem apenas como inspiração. Você não precisa escolher um
 
 ### Música
 
-Possíveis entidades: `Musica`, `Album`, `Artista`, `Genero`, `Playlist` e `Usuario`.
+- Possíveis entidades: `Musica`, `Album`, `Artista`, `Genero`, `Playlist` e `Usuario`.
 - Regra possível: uma música não pode ser adicionada duas vezes à mesma playlist.
 
 ### Estoque
@@ -261,6 +263,8 @@ O projeto deverá ser entregue com:
 - URL da API, quando aplicável.
 
 A documentação da API poderá utilizar os recursos disponíveis na tecnologia escolhida, como Swagger/OpenAPI, quando aplicável.
+
+O uso de documentação, bibliotecas, frameworks, exemplos, ferramentas de desenvolvimento, ferramentas de IA ou outros recursos de apoio é permitido. Entretanto, os alunos deverão compreender o projeto entregue e ser capazes de explicar suas principais decisões, funcionamento e código durante a avaliação.
 
 Não são exigidos microserviços, Docker, Kubernetes, CI/CD, arquitetura excessivamente sofisticada ou testes extensivos. O foco é demonstrar os conceitos de desenvolvimento Web trabalhados na disciplina.
 
