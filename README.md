@@ -1,5 +1,18 @@
 # Desenvolvimento Web II — APIs com Express, FastAPI e Django
 
+**🧭 0. Agenda do curso**
+
+### BSI4 – Web2 (B3)
+
+| Data | Atividade |
+|---|---|
+| 13/10/2026 | Definição dos Projetos Finais pelas equipes |
+| 12/11/2026 | Prévia da apresentação do projeto final |
+| 17/11/2026 | Avaliação SIGAA |
+| 19/11/2026 | Data limite para entrega do projeto final no SIGAA |
+| 24/11/2026 | Apresentação do projeto final |
+| 26/11/2026 | Apresentação do projeto final |
+
 **1. Objetivo do tutorial**
 
 Este material ensina a **construir uma API REST**, do zero até uma versão completa e evolutiva, utilizando **três implementações da mesma API**:
@@ -2888,11 +2901,11 @@ Na apresentação, realizada em sala para toda a turma após a entrega, você de
 
 ## 2. Detalhamento dos requisitos
 
-### 2.1 Requisitos obrigatórios
+**2.1 Requisitos obrigatórios**
 
 Os requisitos 1 a 4 são obrigatórios e representam a implementação técnica essencial da disciplina. O requisito 5, apresentação do projeto, também é obrigatório. Os recursos opcionais não compensam a ausência de requisitos fundamentais.
 
-#### 2.1.1 API REST — 1,5 ponto
+**2.1.1 API REST — 1,5 ponto**
 
 Crie uma API REST funcional para o domínio escolhido.
 
@@ -2913,7 +2926,7 @@ O `PUT` deverá representar a atualização completa do recurso, conforme trabal
 
 Você poderá utilizar Express, FastAPI ou Django REST Framework, conforme os conteúdos da disciplina. O uso de outra tecnologia de backend poderá ser autorizado previamente pelo professor, desde que permita demonstrar os mesmos conceitos e requisitos previstos neste projeto.
 
-#### 2.1.2 Persistência de dados — 1,0 ponto
+**2.1.2 Persistência de dados — 1,0 ponto**
 
 Os dados não podem permanecer somente em memória durante a execução da aplicação.
 
@@ -2926,7 +2939,7 @@ A aplicação deverá:
 
 Quando Django/DRF for utilizado, deverá ser usado o ORM do Django. O projeto deverá possuir `models` e `migrations` adequadamente definidos.
 
-#### 2.1.3 Validação e regra de negócio — 1,5 ponto
+**2.1.3 Validação e regra de negócio — 1,5 ponto**
 
 A aplicação deverá validar os dados recebidos pela API e tratar entradas inválidas com respostas adequadas.
 
@@ -2939,7 +2952,7 @@ Além do CRUD, deverá existir pelo menos uma regra de negócio relacionada ao d
 
 Exemplos: impedir o empréstimo de um livro indisponível, impedir a inscrição em um evento lotado ou impedir a criação de uma reserva em conflito de horário.
 
-#### 2.1.4 Consulta dos dados — 1,0 ponto
+**2.1.4 Consulta dos dados — 1,0 ponto**
 
 A API deverá permitir consultar os dados além do simples `GET` da coleção.
 
@@ -2952,7 +2965,7 @@ Deverá possuir, de forma funcional e demonstrável:
 
 Esses recursos deverão ser documentados, possuir parâmetros compreensíveis e funcionar com os dados persistidos da aplicação.
 
-#### 2.1.5 Apresentação do projeto — 1,0 ponto
+**2.1.5 Apresentação do projeto — 1,0 ponto**
 
 A apresentação do projeto é obrigatória e será realizada em sala de aula, para toda a turma, após a data de entrega.
 
@@ -2970,11 +2983,11 @@ Durante a apresentação, você deverá demonstrar e explicar:
 
 Quando o trabalho for realizado em dupla, os dois integrantes deverão participar da apresentação e demonstrar individualmente domínio suficiente sobre o projeto. Portanto, a nota da apresentação poderá ser diferente entre os integrantes da dupla, mesmo que o projeto seja o mesmo.
 
-### 2.2 Recursos de evolução
+**2.2 Recursos de evolução**
 
 Os recursos a seguir correspondem aos requisitos 6 a 9 e são opcionais. Cada requisito realizado vale 1,0 ponto, até o limite de 4,0 pontos adicionais. Eles não compensam a ausência de qualquer requisito obrigatório.
 
-#### 2.2.1 Frontend — 1,0 ponto
+**2.2.1 Frontend — 1,0 ponto**
 
 Desenvolva um frontend utilizando Vue.js ou outra tecnologia previamente aprovada pelo professor.
 
@@ -2985,7 +2998,7 @@ O frontend deverá:
 - apresentar os resultados das operações e os erros de forma compreensível;
 - funcionar como parte da aplicação, e não apenas como uma página estática ou um mock da API.
 
-#### 2.2.2 Modelagem com 3 ou mais models/tabelas — 1,0 ponto
+**2.2.2 Modelagem com 3 ou mais models/tabelas — 1,0 ponto**
 
 A aplicação deverá possuir **3 ou mais models/tabelas** que representem de forma coerente o domínio da aplicação.
 
@@ -2998,7 +3011,7 @@ Os models/tabelas deverão:
 
 Não serão considerados para este requisito models/tabelas artificiais criados somente para atingir a quantidade mínima. Não é necessário que todos os models/tabelas tenham relacionamento direto entre si.
 
-#### 2.2.3 Publicação — 1,0 ponto
+**2.2.3 Publicação — 1,0 ponto**
 
 Publique a aplicação para acesso externo pela Internet.
 
@@ -3011,7 +3024,7 @@ Para cumprir este requisito:
 
 Caso frontend e backend estejam em plataformas diferentes, as duas URLs deverão estar disponíveis e integradas. A plataforma de publicação fica a critério do aluno, desde que o acesso externo seja possível.
 
-#### 2.2.4 Autenticação — 1,0 ponto
+**2.2.4 Autenticação — 1,0 ponto**
 
 Implemente autenticação na API.
 
@@ -3032,77 +3045,77 @@ As ideias abaixo servem apenas como inspiração. Você não precisa escolher um
 <details>
 <summary>Exemplos de entidades e regras de negócio</summary>
 
-### Biblioteca
+**Biblioteca**
 
 - Possíveis entidades: `Livro`, `Autor`, `Categoria`, `Usuario` e `Emprestimo`.
 - Regra possível: um livro indisponível não pode ser emprestado novamente.
 
-### Catálogo de filmes e séries
+**Catálogo de filmes e séries**
 
 - Possíveis entidades: `Filme`, `Serie`, `Genero`, `Ator`, `Avaliacao` e `Usuario`.
 - Regra possível: uma avaliação só pode ser registrada uma vez por usuário para cada título.
 
-### Gerenciamento de eventos
+**Gerenciamento de eventos**
 
 - Possíveis entidades: `Evento`, `Local`, `Organizador`, `Participante` e `Inscricao`.
 - Regra possível: não permitir inscrições quando a capacidade do evento estiver esgotada.
 
-### Cursos
+**Cursos**
 
 - Possíveis entidades: `Curso`, `Modulo`, `Aula`, `Aluno`, `Instrutor` e `Matricula`.
 - Regra possível: somente alunos matriculados podem registrar progresso nas aulas.
 
-### Animais e adoção
+**Animais e adoção**
 
 - Possíveis entidades: `Animal`, `Especie`, `Abrigo`, `Pessoa` e `Adocao`.
 - Regra possível: um animal já adotado não pode receber uma nova adoção.
 
-### Jogos
+**Jogos**
 
 - Possíveis entidades: `Jogo`, `Genero`, `Plataforma`, `Desenvolvedora`, `Usuario` e `Avaliacao`.
 - Regra possível: uma avaliação deve estar associada a um jogo que o usuário tenha registrado como jogado.
 
-### Restaurante
+**Restaurante**
 
 - Possíveis entidades: `Prato`, `Categoria`, `Ingrediente`, `Mesa`, `Pedido` e `ItemPedido`.
 - Regra possível: não permitir adicionar ao pedido um prato indisponível.
 
-### Academia
+**Academia**
 
 - Possíveis entidades: `Aluno`, `Plano`, `Professor`, `Treino`, `Exercicio` e `Aula`.
 - Regra possível: um aluno não pode reservar duas aulas no mesmo horário.
 
-### Viagens
+**Viagens**
 
 - Possíveis entidades: `Destino`, `Viagem`, `Passageiro`, `Reserva`, `Pagamento` e `Transporte`.
 - Regra possível: não permitir reservas acima da quantidade de vagas disponíveis.
 
-### Música
+**Música**
 
 - Possíveis entidades: `Musica`, `Album`, `Artista`, `Genero`, `Playlist` e `Usuario`.
 - Regra possível: uma música não pode ser adicionada duas vezes à mesma playlist.
 
-### Estoque
+**Estoque**
 
 - Possíveis entidades: `Produto`, `Categoria`, `Fornecedor`, `Entrada`, `Saida` e `Usuario`.
 - Regra possível: não permitir uma saída maior que a quantidade disponível em estoque.
 
-### Tarefas
+**Tarefas**
 
 - Possíveis entidades: `Projeto`, `Tarefa`, `Usuario`, `Equipe`, `Etiqueta` e `Comentario`.
 - Regra possível: somente usuários atribuídos ao projeto podem alterar suas tarefas.
 
-### Biblioteca de jogos
+**Biblioteca de jogos**
 
 - Possíveis entidades: `Jogo`, `Plataforma`, `Genero`, `Colecao`, `Usuario` e `Emprestimo`.
 - Regra possível: um jogo emprestado não pode ser incluído em outro empréstimo simultâneo.
 
-### Agenda
+**Agenda**
 
 - Possíveis entidades: `Contato`, `Evento`, `Local`, `Categoria`, `Usuario` e `Lembrete`.
 - Regra possível: impedir eventos com conflito de horário para o mesmo usuário.
 
-### Gerenciamento de projetos
+**Gerenciamento de projetos**
 
 - Possíveis entidades: `Projeto`, `Equipe`, `Membro`, `Tarefa`, `Status` e `Comentario`.
 - Regra possível: uma tarefa concluída não pode voltar para um estado anterior sem uma justificativa registrada.
@@ -3187,4 +3200,3 @@ Esses critérios não criam pontos adicionais. Eles serão utilizados dentro da 
 - [ ] Implementei 3 ou mais models/tabelas relevantes para o domínio, sem contar tabelas automáticas ou internas do framework, caso tenha realizado esse requisito.
 - [ ] Implementei e testei login, autenticação e acesso a pelo menos um recurso protegido, caso tenha realizado esse requisito.
 - [ ] Removi do repositório credenciais, senhas e chaves privadas.
-
