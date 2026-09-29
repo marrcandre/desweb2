@@ -13,6 +13,8 @@
 | 24/11/2026 | Apresentação do projeto final |
 | 26/11/2026 | Apresentação do projeto final |
 
+---
+
 **1. Objetivo do tutorial**
 
 Este material ensina a **construir uma API REST**, do zero até uma versão completa e evolutiva, utilizando **três implementações da mesma API**:
